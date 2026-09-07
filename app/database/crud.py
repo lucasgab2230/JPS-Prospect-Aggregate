@@ -92,8 +92,7 @@ def _try_enhanced_matching(df_in, preserve_ai_data, enable_smart_matching):
             )
             logger.info(f"Enhanced upsert stats: {stats}")
             return stats
-        else:
-            logger.warning("No source_id found, falling back to standard upsert")
+        logger.warning("No source_id found, falling back to standard upsert")
     except Exception as e:
         logger.error(f"Enhanced matching failed, falling back to standard upsert: {e}")
 
@@ -239,7 +238,7 @@ def _process_standard_upserts(session, data_to_insert, ids_to_upsert):
             .delete(synchronize_session=False)
         )
         logger.info(
-            f"Deleted {delete_count} existing records from batch {i//batch_size + 1}"
+            f"Deleted {delete_count} existing records from batch {i // batch_size + 1}"
         )
 
     # Insert all records in batches
@@ -248,7 +247,7 @@ def _process_standard_upserts(session, data_to_insert, ids_to_upsert):
         batch_data = data_to_insert[i : i + batch_size]
         session.bulk_insert_mappings(Prospect, batch_data)
         regular_inserts += len(batch_data)
-        logger.info(f"Inserted batch {i//batch_size + 1}: {len(batch_data)} records")
+        logger.info(f"Inserted batch {i // batch_size + 1}: {len(batch_data)} records")
 
     logger.info(f"Standard upsert: {regular_inserts} records processed")
     return 0, regular_inserts  # 0 ai_safe_updates, regular_inserts

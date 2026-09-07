@@ -67,7 +67,7 @@ export function DataSourcesTab({
           </div>
         </div>
       )}
-      
+
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Data Sources</CardTitle>

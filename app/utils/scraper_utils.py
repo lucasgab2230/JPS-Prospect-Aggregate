@@ -6,8 +6,9 @@ Provides scraper execution, status management, and error handling.
 
 import asyncio
 import threading
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime
 
 from app.config import active_config

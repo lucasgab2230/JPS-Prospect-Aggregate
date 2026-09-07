@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Check the results of set-aside enhancement to verify it's working correctly.
-"""
+"""Check the results of set-aside enhancement to verify it's working correctly."""
 
 import os
 import sys
@@ -68,7 +67,9 @@ def check_enhancement_results():
         print("=" * 80)
         print(f"Total prospects with set-aside data: {total_with_set_aside:,}")
         print(f"Total prospects with enhanced set-aside: {total_enhanced:,}")
-        print(f"Enhancement coverage: {(total_enhanced/total_with_set_aside*100):.1f}%")
+        print(
+            f"Enhancement coverage: {(total_enhanced / total_with_set_aside * 100):.1f}%"
+        )
 
 
 if __name__ == "__main__":

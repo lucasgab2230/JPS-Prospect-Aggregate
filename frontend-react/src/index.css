@@ -25,7 +25,7 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
   }
- 
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -48,7 +48,7 @@
     --ring: 224.3 76.3% 94.1%;
   }
 }
- 
+
 @layer base {
   * {
     @apply border-border;
@@ -77,27 +77,27 @@
       transform: scale(1);
     }
   }
-  
+
   .animate-field-update {
     animation: highlightUpdate 2s ease-in-out;
   }
-  
+
   /* Specific field animations */
   @keyframes valueUpdate {
     0% { color: #16a34a; font-weight: 600; }
     100% { color: inherit; font-weight: inherit; }
   }
-  
+
   @keyframes naicsUpdate {
     0% { color: #2563eb; font-weight: 600; }
     100% { color: inherit; font-weight: inherit; }
   }
-  
+
   @keyframes contactUpdate {
     0% { color: #7c3aed; font-weight: 600; }
     100% { color: inherit; font-weight: inherit; }
   }
-  
+
   @keyframes titleUpdate {
     0% { color: #dc2626; font-weight: 600; }
     100% { color: inherit; font-weight: inherit; }

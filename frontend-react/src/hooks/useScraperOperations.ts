@@ -16,7 +16,7 @@ export function useScraperOperations() {
   const queryClient = useQueryClient();
   const [runningScrapers, setRunningScrapers] = useState<Set<number>>(new Set());
   const [runAllInProgress, setRunAllInProgress] = useState(false);
-  
+
   // Track which scrapers are actually working based on API status
   const [workingScrapers] = useState(() => new Set<number>());
 
@@ -47,7 +47,7 @@ export function useScraperOperations() {
     const currentlyWorking = new Set(
       sources.filter(source => source.status === 'working').map(source => source.id)
     );
-    
+
     // Update the working scrapers set
     workingScrapers.clear();
     currentlyWorking.forEach(id => workingScrapers.add(id));
@@ -77,11 +77,11 @@ export function useScraperOperations() {
     const isApiCallInProgress = runningScrapers.has(source.id);
     const isScraperWorking = source.status === 'working';
     const isDisabled = runAllInProgress || isScraperWorking || isApiCallInProgress;
-    
+
     // Determine button text and loading state
     let buttonText = 'Run Scraper';
     let isLoading = false;
-    
+
     if (isScraperWorking) {
       buttonText = 'Running...';
       isLoading = true;
@@ -89,7 +89,7 @@ export function useScraperOperations() {
       buttonText = 'Starting...';
       isLoading = true;
     }
-    
+
     return {
       buttonText,
       isLoading,
@@ -104,10 +104,10 @@ export function useScraperOperations() {
     runningScrapers,
     runAllInProgress,
     workingScrapers,
-    
+
     // Mutations
     runScraperMutation,
-    
+
     // Handlers
     handleRunScraper,
     handleRunAllScrapers,

@@ -31,11 +31,11 @@ export function useProspectFilters() {
   }, []);
 
   const clearFilters = useCallback(() => {
-    setFilters({ 
-      naics: '', 
-      keywords: '', 
-      ai_enrichment: 'all', 
-      dataSourceIds: [] 
+    setFilters({
+      naics: '',
+      keywords: '',
+      ai_enrichment: 'all',
+      dataSourceIds: []
     });
   }, []);
 

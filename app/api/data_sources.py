@@ -20,7 +20,7 @@ def get_data_sources():
     logger.info("GET /api/data-sources/ called")
     logger.info(f"User: {request.headers.get('User-Agent', 'Unknown')}")
     logger.info(f"Origin: {request.headers.get('Origin', 'No origin')}")
-    
+
     session = db.session
     try:
         # Subquery for prospect counts

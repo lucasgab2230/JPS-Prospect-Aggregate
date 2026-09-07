@@ -8,7 +8,7 @@ department of energy - ? (may 2025)
 ✅ department of homeland security - https://apfs-cloud.dhs.gov/forecast/
 department of housing and urban development - https://www.hud.gov/program_offices/sdb/4cast
 ✅ department of justice - https://www.justice.gov/jmd/doj-forecast-contracting-opportunities
-✅ department of labor - acq gateway 
+✅ department of labor - acq gateway
 ✅ department of state - https://www.state.gov/procurement-forecast
 ✅ department of the interior - acq gateway
 ✅ department of the treasury - https://osdbu.forecast.treasury.gov/
@@ -20,6 +20,6 @@ national science foundation - https://www.nsf.gov/osdbu/nsf-acquisition-forecast
 ✅ nuclear regulatory commission - acq gateway
 office of personnel management - ?
 ✅ social security administration - https://www.ssa.gov/osdbu/contract-forecast-intro.html
-FedBizOpps? - 
+FedBizOpps? -
 
 https://www.acquisition.gov/procurement-forecasts

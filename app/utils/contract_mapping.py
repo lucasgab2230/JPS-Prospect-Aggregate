@@ -6,8 +6,9 @@ Handles mapping from various government contract sources to standardized schema.
 
 import hashlib
 import re
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime
 
 from app.database.models import Prospect

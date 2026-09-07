@@ -106,12 +106,11 @@ def read_file_data(file_path: Path, config: "ScraperConfig") -> pd.DataFrame:
                     "engine": "python",
                 }
             return pd.read_csv(file_path, **csv_options)
-        elif file_path.suffix.lower() in [".xlsx", ".xls", ".xlsm"]:
+        if file_path.suffix.lower() in [".xlsx", ".xls", ".xlsm"]:
             # Use Excel reading options from scraper config if available
             excel_options = getattr(config, "excel_read_options", {})
             return pd.read_excel(file_path, **excel_options)
-        else:
-            raise ValueError(f"Unsupported file type: {file_path.suffix}")
+        raise ValueError(f"Unsupported file type: {file_path.suffix}")
     except Exception as e:
         logger.error(f"Error reading file {file_path}: {e}")
         return pd.DataFrame()

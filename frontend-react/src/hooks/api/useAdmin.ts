@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { get, put } from '@/utils/apiUtils';
-import { 
-  ApiResponse, 
+import {
+  ApiResponse,
   GoNoGoDecision,
   AdminDecisionStats,
   UserWithStats,
@@ -37,7 +37,7 @@ const adminApi = {
     if (params?.per_page) searchParams.set('per_page', params.per_page.toString());
     if (params?.decision) searchParams.set('decision', params.decision);
     if (params?.user_id) searchParams.set('user_id', params.user_id.toString());
-    
+
     const url = `${API_BASE}/decisions/all${searchParams.toString() ? `?${searchParams}` : ''}`;
     return await get<ApiResponse<{
       decisions: GoNoGoDecision[];
@@ -92,7 +92,7 @@ const adminApi = {
     const searchParams = new URLSearchParams();
     if (params?.page) searchParams.set('page', params.page.toString());
     if (params?.per_page) searchParams.set('per_page', params.per_page.toString());
-    
+
     const url = `${API_BASE}/users${searchParams.toString() ? `?${searchParams}` : ''}`;
     return await get<ApiResponse<{
       users: UserWithStats[];
@@ -161,7 +161,7 @@ export const useAdminUsers = (params?: {
 // Hook to update user role
 export const useUpdateUserRole = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ userId, data }: { userId: number; data: UpdateUserRoleRequest }) =>
       adminApi.updateUserRole(userId, data),

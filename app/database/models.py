@@ -1,5 +1,6 @@
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 
 from sqlalchemy import (
     JSON,
@@ -91,9 +92,9 @@ class Prospect(db.Model):  # Renamed back to Prospect
             """Clean NaN and infinity values from data."""
             if isinstance(v, float) and (math.isnan(v) or math.isinf(v)):
                 return None
-            elif isinstance(v, dict):
+            if isinstance(v, dict):
                 return {k: clean_value(vv) for k, vv in v.items()}
-            elif isinstance(v, list):
+            if isinstance(v, list):
                 return [clean_value(vv) for vv in v]
             return v
 

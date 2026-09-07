@@ -257,8 +257,8 @@ def analyze(fixtures_root: str, min_threshold: float) -> int:
         return 1
 
     total = len(sources)
-    coverage_after = {f: 0 for f in STANDARD_FIELDS}
-    coverage_before = {f: 0 for f in STANDARD_FIELDS}
+    coverage_after = dict.fromkeys(STANDARD_FIELDS, 0)
+    coverage_before = dict.fromkeys(STANDARD_FIELDS, 0)
 
     def present_after(df: pd.DataFrame, field: str) -> bool:
         return field in df.columns and df[field].notna().any()

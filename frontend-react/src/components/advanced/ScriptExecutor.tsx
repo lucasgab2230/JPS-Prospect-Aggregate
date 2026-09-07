@@ -26,7 +26,7 @@ export function ScriptExecutor({ script, onClose }: ScriptExecutorProps) {
   const [error, setError] = useState<string | null>(null);
   const outputRef = useRef<HTMLDivElement>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
-  
+
   const executeScript = useExecuteScript();
 
   // Initialize default parameters
@@ -66,7 +66,7 @@ export function ScriptExecutor({ script, onClose }: ScriptExecutorProps) {
         confirmLabel: 'Execute Script',
         variant: script.dangerous ? 'destructive' : 'default'
       });
-      
+
       if (!confirmed) return;
     }
 
@@ -89,7 +89,7 @@ export function ScriptExecutor({ script, onClose }: ScriptExecutorProps) {
 
         eventSource.onmessage = (event) => {
           const data = JSON.parse(event.data);
-          
+
           switch (data.type) {
             case 'output':
               setOutput(prev => [...prev, data.line]);
@@ -282,8 +282,8 @@ export function ScriptExecutor({ script, onClose }: ScriptExecutorProps) {
               <X className="w-4 h-4 mr-2" />
               Close
             </Button>
-            <Button 
-              onClick={handleExecute} 
+            <Button
+              onClick={handleExecute}
               disabled={status === 'running'}
               variant={script.dangerous ? 'destructive' : 'default'}
             >

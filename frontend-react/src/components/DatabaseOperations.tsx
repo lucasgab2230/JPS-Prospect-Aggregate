@@ -13,10 +13,10 @@ import { DatabaseBackup } from '@/types';
 
 export function DatabaseOperations() {
   const [isConfirmingReset, setIsConfirmingReset] = useState(false);
-  
+
   const { data: status, isLoading: statusLoading } = useDatabaseStatus();
   const { data: backups, isLoading: backupsLoading } = useDatabaseBackups();
-  
+
   const { mutate: rebuildDatabase, isPending: isRebuilding } = useRebuildDatabase();
   const { mutate: initializeDatabase, isPending: isInitializing } = useInitializeDatabase();
   const { mutate: resetDatabase, isPending: isResetting } = useResetDatabase();
@@ -56,7 +56,7 @@ export function DatabaseOperations() {
     restoreBackup({ backupId });
   };
 
-  const isLoading = statusLoading || backupsLoading || isRebuilding || 
+  const isLoading = statusLoading || backupsLoading || isRebuilding ||
                     isInitializing || isResetting || isBackingUp || isRestoring;
 
   return (
@@ -174,4 +174,4 @@ export function DatabaseOperations() {
       </CardContent>
     </Card>
   );
-} 
+}

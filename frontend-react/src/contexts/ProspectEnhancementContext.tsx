@@ -42,7 +42,7 @@ export function ProspectEnhancementProvider({ children }: { children: ReactNode 
     cancelEnhancement,
     enhancementStates
   } = useEnhancementSimple();
-  
+
   // Derive queue length and processing status from enhancement states
   const queueLength = Object.values(enhancementStates).filter(s => s.status === 'queued').length;
   const isProcessing = Object.values(enhancementStates).some(s => s.status === 'processing');
@@ -54,11 +54,11 @@ export function ProspectEnhancementProvider({ children }: { children: ReactNode 
       if (!prospect_id) return null;
       const state = getEnhancementState(prospect_id);
       if (!state) return null;
-      
+
       // Initialize progress object with all possible enhancement types
       const progress: any = {};
       const allEnhancementTypes = state.enhancementTypes || ['titles', 'values', 'naics', 'set_asides'];
-      
+
       // Initialize all enhancement types based on planned steps
       allEnhancementTypes.forEach(type => {
         // Check if this step is planned to be skipped
@@ -66,8 +66,8 @@ export function ProspectEnhancementProvider({ children }: { children: ReactNode 
           const planned = state.plannedSteps[type];
           if (!planned.will_process) {
             // This step will be skipped
-            progress[type] = { 
-              completed: false, 
+            progress[type] = {
+              completed: false,
               skipped: true,
               skipReason: planned.reason || 'already_enhanced'
             };
@@ -80,7 +80,7 @@ export function ProspectEnhancementProvider({ children }: { children: ReactNode 
           progress[type] = { completed: false, skipped: false };
         }
       });
-      
+
       // Mark completed steps
       if (state.completedSteps) {
         state.completedSteps.forEach(step => {
@@ -93,18 +93,18 @@ export function ProspectEnhancementProvider({ children }: { children: ReactNode 
           }
         });
       }
-      
+
       // Determine if a step was skipped during processing (runtime skip)
       // This is inferred when a step is in completedSteps but the currentStep mentions "already"
       if (state.currentStep?.toLowerCase().includes('already')) {
-        const currentType = allEnhancementTypes.find(type => 
+        const currentType = allEnhancementTypes.find(type =>
           state.currentStep?.toLowerCase().includes(type.replace('_', ' '))
         );
         if (currentType && progress[currentType]) {
           progress[currentType].skipped = true;
         }
       }
-      
+
       return {
         prospect_id,
         status: state.status,
