@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { get, post, del, buildQueryString } from '@/utils/apiUtils';
-import { 
-  ApiResponse, 
-  GoNoGoDecision, 
+import {
+  ApiResponse,
+  GoNoGoDecision,
   DecisionStats,
   CreateDecisionRequest,
   PaginationMeta
@@ -83,24 +83,24 @@ export const useDecisionStats = () => {
 // Hook to create or update a decision
 export const useCreateDecision = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: decisionsApi.createDecision,
     onSuccess: (_, variables) => {
       // Invalidate queries related to this prospect
-      queryClient.invalidateQueries({ 
-        queryKey: ['decisions', 'prospect', variables.prospect_id] 
+      queryClient.invalidateQueries({
+        queryKey: ['decisions', 'prospect', variables.prospect_id]
       });
       // Invalidate user's decisions and stats
-      queryClient.invalidateQueries({ 
-        queryKey: ['decisions', 'my'] 
+      queryClient.invalidateQueries({
+        queryKey: ['decisions', 'my']
       });
-      queryClient.invalidateQueries({ 
-        queryKey: ['decisions', 'stats'] 
+      queryClient.invalidateQueries({
+        queryKey: ['decisions', 'stats']
       });
       // Invalidate admin queries to refresh admin dashboard
-      queryClient.invalidateQueries({ 
-        queryKey: ['admin'] 
+      queryClient.invalidateQueries({
+        queryKey: ['admin']
       });
     },
   });
@@ -109,17 +109,17 @@ export const useCreateDecision = () => {
 // Hook to delete a decision
 export const useDeleteDecision = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: decisionsApi.deleteDecision,
     onSuccess: () => {
       // Invalidate all decision queries
-      queryClient.invalidateQueries({ 
-        queryKey: ['decisions'] 
+      queryClient.invalidateQueries({
+        queryKey: ['decisions']
       });
       // Invalidate admin queries to refresh admin dashboard
-      queryClient.invalidateQueries({ 
-        queryKey: ['admin'] 
+      queryClient.invalidateQueries({
+        queryKey: ['admin']
       });
     },
   });

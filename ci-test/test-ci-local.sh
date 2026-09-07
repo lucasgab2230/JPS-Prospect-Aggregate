@@ -174,7 +174,7 @@ print_success "Test containers built"
 # Run Python tests
 if [ "$RUN_PYTHON_TESTS" = "true" ]; then
     print_header "Running Python Tests & Linting"
-    
+
     docker-compose -f "$PROJECT_ROOT/ci-test/docker-compose.test.yml" run --rm \
         -e CI=true \
         python-test \
@@ -183,14 +183,14 @@ if [ "$RUN_PYTHON_TESTS" = "true" ]; then
             echo '==> Installing dependencies'
             pip install -r requirements.txt
             pip install ruff mypy pytest-asyncio pytest-mock
-            
+
             echo '==> Running ruff linting'
             ruff check app/ --output-format=text
             ruff format app/ --check
-            
+
             echo '==> Running type checking with mypy'
             mypy app/ --ignore-missing-imports --disallow-untyped-defs
-            
+
             echo '==> Setting up test database'
             python -c '
 from app import create_app
@@ -199,7 +199,7 @@ app = create_app()
 with app.app_context():
     db.create_all()
 '
-            
+
             echo '==> Running pytest with coverage'
             python -m pytest tests/ -v \
                 --cov=app \
@@ -212,14 +212,14 @@ with app.app_context():
             print_error "Python tests failed"
             exit 1
         }
-    
+
     print_success "Python tests passed"
 fi
 
 # Run Frontend tests
 if [ "$RUN_FRONTEND_TESTS" = "true" ]; then
     print_header "Running Frontend Tests & Linting"
-    
+
     docker-compose -f "$PROJECT_ROOT/ci-test/docker-compose.test.yml" run --rm \
         -e CI=true \
         frontend-test \
@@ -228,33 +228,33 @@ if [ "$RUN_FRONTEND_TESTS" = "true" ]; then
             cd /app/frontend-react
             echo '==> Installing dependencies'
             npm ci
-            
+
             echo '==> Running TypeScript type checking'
             npx tsc --noEmit || {
                 echo 'TypeScript errors found, attempting fixes...'
                 exit 1
             }
-            
+
             echo '==> Running ESLint'
             npm run lint -- --max-warnings 0
-            
+
             echo '==> Running frontend tests with coverage'
             npm run test:coverage -- --run
-            
+
             echo '==> Building frontend'
             npm run build
         " || {
             print_error "Frontend tests failed"
             exit 1
         }
-    
+
     print_success "Frontend tests passed"
 fi
 
 # Run Integration tests
 if [ "$RUN_INTEGRATION_TESTS" = "true" ]; then
     print_header "Running Integration Tests"
-    
+
     docker-compose -f "$PROJECT_ROOT/ci-test/docker-compose.test.yml" run --rm \
         -e CI=true \
         python-test \
@@ -262,7 +262,7 @@ if [ "$RUN_INTEGRATION_TESTS" = "true" ]; then
             set -e
             echo '==> Installing dependencies'
             pip install -r requirements.txt
-            
+
             echo '==> Setting up test database'
             python -c '
 from app import create_app
@@ -271,7 +271,7 @@ app = create_app()
 with app.app_context():
     db.create_all()
 '
-            
+
             echo '==> Running integration tests'
             python -m pytest tests/integration/ -v \
                 --tb=short \
@@ -280,16 +280,16 @@ with app.app_context():
             print_error "Integration tests failed"
             exit 1
         }
-    
+
     print_success "Integration tests passed"
 fi
 
 # Run E2E tests
 if [ "$RUN_E2E_TESTS" = "true" ]; then
     print_header "Running End-to-End Tests"
-    
+
     print_warning "E2E tests require both backend and frontend to be running"
-    
+
     # This would require a more complex setup with multiple containers running
     # For now, we'll skip the implementation
     print_warning "E2E tests are not yet implemented in local CI"

@@ -25,12 +25,12 @@ export default function Prospects() {
   });
   const parentRef = useRef<HTMLDivElement>(null);
   const { showInfoToast } = useToast();
-  
+
   // Data sources hook
   const { data: dataSourcesData } = useListDataSources();
   const dataSources = dataSourcesData?.data || [];
   const { formatUserDate } = useTimezoneDate();
-  
+
   const {
     data: prospects,
     fetchNextPage,
@@ -43,23 +43,23 @@ export default function Prospects() {
 
 
   const { data: statisticsData, isLoading: isLoadingStats } = useProspectStatistics();
-  
+
   // Filter handlers
   const handleFilterChange = useCallback((filterKey: keyof ProspectFilters, value: string) => {
     setFilters(prev => ({ ...prev, [filterKey]: value }));
   }, []);
-  
+
   const clearFilters = useCallback(() => {
     setFilters({ keywords: '', naics: '', agency: '', dataSourceIds: [] });
   }, []);
-  
+
   const hasActiveFilters = Object.entries(filters).some(([key, value]) => {
     if (key === 'dataSourceIds') {
       return Array.isArray(value) && value.length > 0;
     }
     return value && value.trim() !== '';
   });
-  
+
   const handleDataSourceToggle = useCallback((sourceId: number) => {
     setFilters(prev => {
       const currentIds = prev.dataSourceIds || [];
@@ -87,9 +87,9 @@ export default function Prospects() {
   // Auto-load more data when scrolling near the end
   useEffect(() => {
     const [lastItem] = [...virtualizer.getVirtualItems()].reverse();
-    
+
     if (!lastItem) return;
-    
+
     if (
       prospects && lastItem.index >= prospects.length - 1 - 5 && // Load when 5 items from the end
       hasNextPage &&
@@ -116,9 +116,9 @@ export default function Prospects() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg font-semibold text-black">Filters</CardTitle>
                 {hasActiveFilters && (
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={clearFilters}
                     className="text-xs px-2 py-1 h-7"
                   >
@@ -141,7 +141,7 @@ export default function Prospects() {
                   className="text-sm"
                 />
               </div>
-              
+
               {/* NAICS Code Filter */}
               <div className="space-y-2">
                 <Label htmlFor="naics" className="text-sm font-medium text-gray-700">
@@ -155,7 +155,7 @@ export default function Prospects() {
                   className="text-sm"
                 />
               </div>
-              
+
               {/* Agency Filter */}
               <div className="space-y-2">
                 <Label htmlFor="agency" className="text-sm font-medium text-gray-700">
@@ -169,7 +169,7 @@ export default function Prospects() {
                   className="text-sm"
                 />
               </div>
-              
+
               {/* Data Source Filter */}
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700">
@@ -177,8 +177,8 @@ export default function Prospects() {
                 </Label>
                 <div className="max-h-48 overflow-y-auto border rounded-md p-3 space-y-2">
                   {dataSources.map((source: DataSource) => (
-                    <label 
-                      key={source.id} 
+                    <label
+                      key={source.id}
                       className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
                     >
                       <input
@@ -197,7 +197,7 @@ export default function Prospects() {
                   )}
                 </div>
               </div>
-              
+
               {/* Filter Summary */}
               {hasActiveFilters && (
                 <div className="pt-2 border-t border-gray-200">
@@ -206,7 +206,7 @@ export default function Prospects() {
                     {filters.keywords && (
                       <div className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded flex justify-between items-center">
                         <span>Keywords: {filters.keywords}</span>
-                        <button 
+                        <button
                           onClick={() => handleFilterChange('keywords', '')}
                           className="ml-1 text-blue-500 hover:text-blue-700"
                         >
@@ -217,7 +217,7 @@ export default function Prospects() {
                     {filters.naics && (
                       <div className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded flex justify-between items-center">
                         <span>NAICS: {filters.naics}</span>
-                        <button 
+                        <button
                           onClick={() => handleFilterChange('naics', '')}
                           className="ml-1 text-green-500 hover:text-green-700"
                         >
@@ -228,7 +228,7 @@ export default function Prospects() {
                     {filters.agency && (
                       <div className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded flex justify-between items-center">
                         <span>Agency: {filters.agency}</span>
-                        <button 
+                        <button
                           onClick={() => handleFilterChange('agency', '')}
                           className="ml-1 text-purple-500 hover:text-purple-700"
                         >
@@ -242,7 +242,7 @@ export default function Prospects() {
                         return (
                           <div key={sourceId} className="text-xs bg-orange-50 text-orange-700 px-2 py-1 rounded flex justify-between items-center">
                             <span>Source: {source ? source.name : sourceId}</span>
-                            <button 
+                            <button
                               onClick={() => handleDataSourceToggle(sourceId)}
                               className="ml-1 text-orange-500 hover:text-orange-700"
                             >
@@ -258,7 +258,7 @@ export default function Prospects() {
             </CardContent>
           </Card>
         </div>
-        
+
         {/* Prospects List Card - Main content */}
         <div className="flex-grow">
           <Card className="shadow-lg">
@@ -288,7 +288,7 @@ export default function Prospects() {
                       <div>Decision</div>
                       <div>Actions</div>
                     </div>
-                    
+
                     {/* Virtualized Table Body */}
                     <div
                       ref={parentRef}
@@ -332,10 +332,10 @@ export default function Prospects() {
                                 {formatUserDate(prospect?.loaded_at, 'date')}
                               </div>
                               <div>
-                                <GoNoGoDecision 
-                                  prospectId={prospect?.id} 
+                                <GoNoGoDecision
+                                  prospectId={prospect?.id}
                                   prospectTitle={prospect?.title}
-                                  compact={true} 
+                                  compact={true}
                                 />
                               </div>
                               <div>
@@ -353,7 +353,7 @@ export default function Prospects() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {hasNextPage && (
                     <div className="flex justify-center mt-6">
                       <LoadingButton

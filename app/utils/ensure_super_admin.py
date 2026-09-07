@@ -30,15 +30,14 @@ def ensure_super_admin_exists():
             if existing_user.role == "super_admin":
                 logger.debug(f"Super admin '{email}' already exists")
                 return True
-            else:
-                # Update existing user to super_admin
-                logger.info(
-                    f"Upgrading user '{email}' from role '{existing_user.role}' to super_admin"
-                )
-                existing_user.role = "super_admin"
-                db.session.commit()
-                logger.info(f"✅ Successfully upgraded '{email}' to super_admin")
-                return True
+            # Update existing user to super_admin
+            logger.info(
+                f"Upgrading user '{email}' from role '{existing_user.role}' to super_admin"
+            )
+            existing_user.role = "super_admin"
+            db.session.commit()
+            logger.info(f"✅ Successfully upgraded '{email}' to super_admin")
+            return True
 
         # Create new super admin user
         user = User(email=email.lower(), first_name=first_name, role="super_admin")

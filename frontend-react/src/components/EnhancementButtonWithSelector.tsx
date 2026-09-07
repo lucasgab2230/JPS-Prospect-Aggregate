@@ -22,18 +22,18 @@ interface EnhancementButtonWithSelectorProps {
   onEnhancementStart?: () => void;
 }
 
-export function EnhancementButtonWithSelector({ 
-  prospect, 
-  userId = 1, 
+export function EnhancementButtonWithSelector({
+  prospect,
+  userId = 1,
   forceRedo = false,
-  onEnhancementStart 
+  onEnhancementStart
 }: EnhancementButtonWithSelectorProps) {
   const { addToQueue, getProspectStatus, cancelEnhancement } = useProspectEnhancement();
   const { handleError } = useEnhancementErrorHandler();
-  
+
   const status = getProspectStatus(prospect.id);
   const isAlreadyEnhanced = !!prospect.ollama_processed_at;
-  
+
   // Enhancement types state
   const [selectedEnhancementTypes, setSelectedEnhancementTypes] = useState({
     values: true,
@@ -41,27 +41,27 @@ export function EnhancementButtonWithSelector({
     naics: true,
     set_asides: true,
   });
-  
+
   const enhancementOptions = [
     { key: 'titles', label: 'Titles' },
     { key: 'values', label: 'Values' },
     { key: 'naics', label: 'NAICS' },
     { key: 'set_asides', label: 'Set-Asides' },
   ] as const;
-  
+
   const handleEnhancementTypeChange = (type: string, checked: boolean) => {
     setSelectedEnhancementTypes(prev => ({
       ...prev,
       [type]: checked
     }));
   };
-  
+
   const getSelectedEnhancementTypes = () => {
     return Object.entries(selectedEnhancementTypes)
       .filter(([_, selected]) => selected)
       .map(([type, _]) => type);
   };
-  
+
   const selectAllEnhancements = () => {
     setSelectedEnhancementTypes({
       values: true,
@@ -70,7 +70,7 @@ export function EnhancementButtonWithSelector({
       set_asides: true,
     });
   };
-  
+
   const deselectAllEnhancements = () => {
     setSelectedEnhancementTypes({
       values: false,
@@ -79,17 +79,17 @@ export function EnhancementButtonWithSelector({
       set_asides: false,
     });
   };
-  
+
   const hasAnySelected = Object.values(selectedEnhancementTypes).some(selected => selected);
   const hasAllSelected = Object.values(selectedEnhancementTypes).every(selected => selected);
-  
+
   const handleEnhanceClick = async () => {
     try {
       // Immediately trigger the start callback to show progress box
       onEnhancementStart?.();
-      
+
       const selectedTypes = getSelectedEnhancementTypes();
-      
+
       await addToQueue({
         prospect_id: prospect.id,
         user_id: userId,
@@ -100,7 +100,7 @@ export function EnhancementButtonWithSelector({
       handleError(error as Error, 'Enhancement Queue');
     }
   };
-  
+
   const handleCancelClick = async () => {
     try {
       const success = await cancelEnhancement(prospect.id);
@@ -111,12 +111,12 @@ export function EnhancementButtonWithSelector({
       handleError(error as Error, 'Enhancement Cancellation');
     }
   };
-  
+
   const isQueued = status?.status === 'queued';
   const isProcessing = status?.status === 'processing';
   const isActive = isQueued || isProcessing;
   const isDisabled = isActive || !hasAnySelected;
-  
+
   const getButtonContent = () => {
     if (isActive) {
       // Show queue position in x/y format
@@ -129,35 +129,35 @@ export function EnhancementButtonWithSelector({
         </>
       );
     }
-    
+
     return isAlreadyEnhanced ? 'Redo Enhancement' : 'Enhance with AI';
   };
-  
+
   // Show cancel button alongside main button when active
   const showCancelButton = isActive;
-  
+
   // Build the main button UI
   const mainButton = (
     <Button
       onClick={handleEnhanceClick}
       disabled={isDisabled}
       className={`
-        ${isActive ? 'bg-gray-600' : isAlreadyEnhanced ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'} 
+        ${isActive ? 'bg-gray-600' : isAlreadyEnhanced ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'}
         text-white disabled:bg-gray-600 disabled:opacity-100 min-w-[140px]
       `}
     >
       {getButtonContent()}
     </Button>
   );
-  
+
   // Show selector only when already enhanced (redo scenario) and not active
   if (isAlreadyEnhanced && !isActive) {
     return (
       <div className="flex items-center gap-1">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="icon"
               className="h-[38px] w-[38px]"
               disabled={isActive}
@@ -168,7 +168,7 @@ export function EnhancementButtonWithSelector({
           <DropdownMenuContent align="start" className="w-56">
             <DropdownMenuLabel>Select Enhancements</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            
+
             {enhancementOptions.map((option) => (
               <DropdownMenuCheckboxItem
                 key={option.key}
@@ -179,9 +179,9 @@ export function EnhancementButtonWithSelector({
                 {option.label}
               </DropdownMenuCheckboxItem>
             ))}
-            
+
             <DropdownMenuSeparator />
-            
+
             <DropdownMenuCheckboxItem
               checked={hasAllSelected}
               onCheckedChange={(checked) => {
@@ -197,12 +197,12 @@ export function EnhancementButtonWithSelector({
             </DropdownMenuCheckboxItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        
+
         {mainButton}
       </div>
     );
   }
-  
+
   // Show button with cancel option if active
   if (showCancelButton) {
     return (
@@ -222,7 +222,7 @@ export function EnhancementButtonWithSelector({
       </div>
     );
   }
-  
+
   // Not enhanced yet and not active, show simple button
   return mainButton;
 }

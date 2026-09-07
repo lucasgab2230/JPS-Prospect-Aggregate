@@ -11,7 +11,7 @@ export function Navigation() {
   const isAdmin = useIsAdmin();
   const signOutMutation = useSignOut();
   const { handleError } = useError();
-  
+
   const navItems = [
     { path: '/', label: 'Dashboard' },
     ...(isAdmin ? [
@@ -30,7 +30,7 @@ export function Navigation() {
       });
     }
   };
-  
+
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="px-4 sm:px-6 lg:px-8">
@@ -56,7 +56,7 @@ export function Navigation() {
               ))}
             </div>
           </div>
-          
+
           {/* User menu */}
           <div className="flex items-center space-x-4">
             {user && (

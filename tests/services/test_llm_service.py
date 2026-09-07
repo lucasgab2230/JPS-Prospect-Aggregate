@@ -13,8 +13,9 @@ import json
 import random
 import threading
 import time
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime
 from decimal import Decimal
 from unittest.mock import patch
@@ -39,7 +40,7 @@ class TestLLMService:
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
         return app
 
-    @pytest.fixture()
+    @pytest.fixture
     def app_context(self, app):
         """Create Flask app context with real database."""
         with app.app_context():
@@ -48,7 +49,7 @@ class TestLLMService:
             db.session.rollback()
             db.drop_all()
 
-    @pytest.fixture()
+    @pytest.fixture
     def llm_service(self):
         """Create LLM service instance for testing."""
         # Use random model name and batch size to avoid hardcoding
@@ -56,7 +57,7 @@ class TestLLMService:
         batch_size = random.randint(5, 20)
         return LLMService(model_name=model_name, batch_size=batch_size)
 
-    @pytest.fixture()
+    @pytest.fixture
     def test_prospect(self, app_context):
         """Create a real prospect in the database for testing."""
         prospect = Prospect(
@@ -79,7 +80,7 @@ class TestLLMService:
         """Test that LLM service initializes with correct configuration."""
         # Test with various configurations
         for _ in range(3):
-            model = f'model_{random.choice(["a", "b", "c"])}'
+            model = f"model_{random.choice(['a', 'b', 'c'])}"
             batch = random.randint(1, 50)
             service = LLMService(model_name=model, batch_size=batch)
 
@@ -130,17 +131,19 @@ class TestLLMService:
             ]
 
             # Mock NAICS validation (external service)
-            with patch(
-                "app.services.llm_service.validate_naics_code", return_value=True
-            ):
-                with patch(
+            with (
+                patch(
+                    "app.services.llm_service.validate_naics_code", return_value=True
+                ),
+                patch(
                     "app.services.llm_service.get_naics_description",
                     return_value="Some NAICS Description",
-                ):
-                    # Enhance the prospect
-                    result = llm_service.enhance_prospect(
-                        test_prospect, enhancement_types=["values", "titles", "naics"]
-                    )
+                ),
+            ):
+                # Enhance the prospect
+                result = llm_service.enhance_prospect(
+                    test_prospect, enhancement_types=["values", "titles", "naics"]
+                )
 
             # Verify enhancement succeeded
             assert result is True
@@ -221,26 +224,28 @@ class TestLLMService:
                 else:
                     mock_ollama.return_value = "null"
 
-                with patch(
-                    "app.services.llm_service.validate_naics_code"
-                ) as mock_validate:
-                    with patch(
+                with (
+                    patch(
+                        "app.services.llm_service.validate_naics_code"
+                    ) as mock_validate,
+                    patch(
                         "app.services.llm_service.get_naics_description"
-                    ) as mock_desc:
-                        # Set up validation behavior
-                        mock_validate.return_value = bool(title and description)
-                        mock_desc.return_value = "Some Description" if title else None
+                    ) as mock_desc,
+                ):
+                    # Set up validation behavior
+                    mock_validate.return_value = bool(title and description)
+                    mock_desc.return_value = "Some Description" if title else None
 
-                        result = llm_service._classify_naics(title, description)
+                    result = llm_service._classify_naics(title, description)
 
-                        # Verify behavior
-                        if title and description:
-                            assert result is not None
-                            if result:
-                                assert "code" in result
-                                assert "description" in result
-                        else:
-                            assert result is None or result == {}
+                    # Verify behavior
+                    if title and description:
+                        assert result is not None
+                        if result:
+                            assert "code" in result
+                            assert "description" in result
+                    else:
+                        assert result is None or result == {}
 
     def test_set_aside_standardization_patterns(self, llm_service, app_context):
         """Test set-aside standardization with various input patterns."""
@@ -377,9 +382,7 @@ class TestLLMService:
                 if i % 2 == 0
                 else None,
                 title_enhanced=f"Enhanced {i}" if i % 4 == 0 else None,
-                ollama_processed_at=datetime.now(UTC)
-                if i < processed_count
-                else None,
+                ollama_processed_at=datetime.now(UTC) if i < processed_count else None,
                 loaded_at=datetime.now(UTC),
             )
             db.session.add(prospect)
@@ -450,22 +453,25 @@ class TestLLMService:
             with patch("app.services.llm_service.call_ollama") as mock_ollama:
                 mock_ollama.side_effect = scenario
 
-                with patch(
-                    "app.services.llm_service.validate_naics_code", return_value=True
-                ):
-                    with patch(
+                with (
+                    patch(
+                        "app.services.llm_service.validate_naics_code",
+                        return_value=True,
+                    ),
+                    patch(
                         "app.services.llm_service.get_naics_description",
                         return_value="Description",
-                    ):
-                        # Should not raise exception
-                        result = llm_service.enhance_prospect(
-                            test_prospect,
-                            enhancement_types=["values", "titles", "naics"],
-                        )
+                    ),
+                ):
+                    # Should not raise exception
+                    result = llm_service.enhance_prospect(
+                        test_prospect,
+                        enhancement_types=["values", "titles", "naics"],
+                    )
 
-                        # Should return True if at least one enhancement worked
-                        # or False if all failed
-                        assert isinstance(result, bool)
+                    # Should return True if at least one enhancement worked
+                    # or False if all failed
+                    assert isinstance(result, bool)
 
     def test_concurrent_enhancement_safety(self, app):
         """Test thread safety of concurrent enhancement operations."""
@@ -555,16 +561,18 @@ class TestLLMService:
             else:
                 mock_ollama.return_value = "SMALL_BUSINESS"
 
-            with patch(
-                "app.services.llm_service.validate_naics_code", return_value=True
-            ):
-                with patch(
+            with (
+                patch(
+                    "app.services.llm_service.validate_naics_code", return_value=True
+                ),
+                patch(
                     "app.services.llm_service.get_naics_description",
                     return_value="Description",
-                ):
-                    result = llm_service.enhance_prospect(
-                        prospect, enhancement_types=[enhancement_type]
-                    )
+                ),
+            ):
+                result = llm_service.enhance_prospect(
+                    prospect, enhancement_types=[enhancement_type]
+                )
 
         # Verify enhancement was attempted
         assert isinstance(result, bool)

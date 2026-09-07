@@ -150,7 +150,7 @@ print_status "Web application is running!"
 print_status "Checking Ollama LLM service..."
 if curl -f http://localhost:11434/api/version >/dev/null 2>&1; then
     print_status "Ollama is running!"
-    
+
     # Check if model is installed
     if docker exec jps-ollama ollama list | grep -q "qwen3:latest"; then
         print_status "qwen3:latest model is installed and ready!"

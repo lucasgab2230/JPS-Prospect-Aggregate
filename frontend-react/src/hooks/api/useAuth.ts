@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { get, post } from '@/utils/apiUtils';
-import { 
-  ApiResponse, 
-  User, 
-  AuthStatus, 
-  SignUpRequest, 
-  SignInRequest 
+import {
+  ApiResponse,
+  User,
+  AuthStatus,
+  SignUpRequest,
+  SignInRequest
 } from '../../types/api';
 
 const API_BASE = '/api/auth';
@@ -14,7 +14,7 @@ const API_BASE = '/api/auth';
 const authApi = {
   signUp: async (data: SignUpRequest): Promise<ApiResponse<{ user: User; message: string }>> => {
     return await post<ApiResponse<{ user: User; message: string }>>(
-      `${API_BASE}/signup`, 
+      `${API_BASE}/signup`,
       data,
       { credentials: 'include' }
     );
@@ -68,7 +68,7 @@ export const useAuthStatus = () => {
 // Hook to get current user
 export const useCurrentUser = () => {
   const { data: authStatus } = useAuthStatus();
-  
+
   return useQuery({
     queryKey: ['auth', 'user'],
     queryFn: authApi.getCurrentUser,
@@ -80,7 +80,7 @@ export const useCurrentUser = () => {
 // Hook for sign up
 export const useSignUp = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: authApi.signUp,
     onSuccess: () => {
@@ -93,7 +93,7 @@ export const useSignUp = () => {
 // Hook for sign in
 export const useSignIn = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: authApi.signIn,
     onSuccess: () => {
@@ -106,7 +106,7 @@ export const useSignIn = () => {
 // Hook for sign out
 export const useSignOut = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: authApi.signOut,
     onSuccess: () => {
@@ -117,10 +117,10 @@ export const useSignOut = () => {
           user: null
         }
       });
-      
+
       // Invalidate all queries to force refetch
       queryClient.invalidateQueries();
-      
+
       // Clear all other cached data after a small delay
       setTimeout(() => {
         queryClient.removeQueries({

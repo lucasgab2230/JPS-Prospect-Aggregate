@@ -11,19 +11,19 @@ export interface EnhancementStepData {
     estimated_value_single?: string;
     estimated_value_min?: string;
     estimated_value_max?: string;
-    
+
     // NAICS step data
     naics?: string;
     naics_description?: string;
     naics_source?: string;
-    
+
     // Titles step data
     ai_enhanced_title?: string;
-    
+
     // Set-aside step data
     inferred_set_aside?: string;
     standardized_set_aside?: string;
-    
+
     // Common fields
     skipped?: boolean;
     [key: string]: unknown; // For additional data
@@ -91,9 +91,9 @@ export interface SetAsidesResult {
   standardized_set_aside?: string;
 }
 
-export type LLMParsedResult = 
-  | ValuesResult 
-  | NaicsResult 
-  | TitlesResult 
+export type LLMParsedResult =
+  | ValuesResult
+  | NaicsResult
+  | TitlesResult
   | SetAsidesResult
   | Record<string, unknown>;

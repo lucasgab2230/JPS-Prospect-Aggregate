@@ -28,11 +28,10 @@ def check_ollama_status(model_name: str = "qwen3:latest") -> bool:
         if response:
             logger.info(f"✓ Ollama is running with {model_name} model")
             return True
-        else:
-            logger.error(
-                f"✗ Ollama is not responding or {model_name} model is not available"
-            )
-            return False
+        logger.error(
+            f"✗ Ollama is not responding or {model_name} model is not available"
+        )
+        return False
     except Exception as e:
         logger.error(f"✗ Error checking Ollama: {e}")
         return False
@@ -122,13 +121,13 @@ def run_targeted_enhancement(
     # Run enhancement based on type
     if enhancement_type == "values":
         return llm_service.enhance_prospect_values(prospects)
-    elif enhancement_type == "titles":
+    if enhancement_type == "titles":
         return llm_service.enhance_prospect_titles(prospects)
-    elif enhancement_type == "naics":
+    if enhancement_type == "naics":
         return llm_service.enhance_prospect_naics(prospects)
-    elif enhancement_type == "set_asides":
+    if enhancement_type == "set_asides":
         return llm_service.enhance_prospect_set_asides(prospects)
-    elif enhancement_type == "all":
+    if enhancement_type == "all":
         results = llm_service.enhance_all_prospects(limit=limit)
         return sum(results.values()) - results["total_prospects"]
 

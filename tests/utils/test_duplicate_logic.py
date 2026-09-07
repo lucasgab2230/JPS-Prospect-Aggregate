@@ -18,7 +18,7 @@ from app.utils.duplicate_prevention import DuplicateDetector
 class TestDuplicateLogic:
     """Test suite for duplicate prevention logic."""
 
-    @pytest.fixture()
+    @pytest.fixture
     def detector(self):
         """Create a DuplicateDetector instance."""
         return DuplicateDetector()
@@ -60,9 +60,9 @@ class TestDuplicateLogic:
             elif pair_type == "different":
                 assert similarity < 0.5, "Different texts should score low"
             elif pair_type == "abbreviation":
-                assert (
-                    0.3 < similarity < 0.95
-                ), "Abbreviations should score moderate to high"
+                assert 0.3 < similarity < 0.95, (
+                    "Abbreviations should score moderate to high"
+                )
             elif pair_type in ["empty", "null"]:
                 assert similarity < 0.1, "Empty/null should score minimal"
 
@@ -92,9 +92,9 @@ class TestDuplicateLogic:
                 different = "".join(random.choices(string.ascii_uppercase, k=2))
 
             diff_sim = detector._calculate_text_similarity(str1, different)
-            assert (
-                diff_sim < exact_sim
-            ), "Different strings should score lower than exact"
+            assert diff_sim < exact_sim, (
+                "Different strings should score lower than exact"
+            )
 
     def test_configuration_thresholds_exist(self):
         """Test that configuration thresholds are properly defined."""
@@ -148,24 +148,24 @@ class TestDuplicateLogic:
                 # Medium confidence path
                 weighted_sim = title_sim * 0.4 + desc_sim * 0.3 + 0.5 * 0.2 + 0.5 * 0.1
                 confidence = 0.3 + (weighted_sim * 0.5)
-                assert (
-                    0.2 < confidence < 0.8
-                ), "Medium similarity should yield medium confidence"
+                assert 0.2 < confidence < 0.8, (
+                    "Medium similarity should yield medium confidence"
+                )
 
             else:
                 # High confidence path
                 weighted_sim = title_sim * 0.4 + desc_sim * 0.3 + 0.5 * 0.2 + 0.5 * 0.1
                 confidence = 0.4 + (weighted_sim * 0.6)
-                assert (
-                    confidence > 0.4
-                ), "High similarity should yield higher confidence"
+                assert confidence > 0.4, (
+                    "High similarity should yield higher confidence"
+                )
 
             # Apply penalty for very low title similarity
             if title_sim < 0.1:
                 confidence *= 0.5
-                assert (
-                    confidence < 0.5
-                ), "Very low title similarity should penalize confidence"
+                assert confidence < 0.5, (
+                    "Very low title similarity should penalize confidence"
+                )
 
     def test_native_id_matching_prevents_false_positives(self):
         """Test that native ID matching logic prevents false positives."""
@@ -189,9 +189,9 @@ class TestDuplicateLogic:
             confidence *= 0.5
 
         # With very different content, confidence should be below threshold
-        assert (
-            confidence < min_confidence or confidence < 0.3
-        ), "Very different content should not match even with same native_id"
+        assert confidence < min_confidence or confidence < 0.3, (
+            "Very different content should not match even with same native_id"
+        )
 
     @patch("app.config.active_config.DUPLICATE_MIN_CONFIDENCE", 0.7)
     @patch("app.config.active_config.DUPLICATE_NATIVE_ID_MIN_CONTENT_SIM", 0.4)
@@ -249,15 +249,15 @@ class TestDuplicateLogic:
                 similarity = detector._calculate_text_similarity(base_title, variation)
 
                 # Should recognize these as related
-                assert (
-                    similarity > 0.3
-                ), f"'{base_title}' and '{variation}' should be recognized as related"
+                assert similarity > 0.3, (
+                    f"'{base_title}' and '{variation}' should be recognized as related"
+                )
 
                 # But not identical (except case variations)
                 if variation not in [base_title.lower(), base_title.upper()]:
-                    assert (
-                        similarity < 0.95
-                    ), f"'{base_title}' and '{variation}' should not be identical"
+                    assert similarity < 0.95, (
+                        f"'{base_title}' and '{variation}' should not be identical"
+                    )
 
     def test_edge_cases_in_similarity_calculation(self, detector):
         """Test edge cases in text similarity calculation."""
@@ -278,14 +278,14 @@ class TestDuplicateLogic:
         special3 = "Different@#$%"
 
         sim_special_same = detector._calculate_text_similarity(special1, special2)
-        assert (
-            sim_special_same > 0.95
-        ), "Identical special character strings should match"
+        assert sim_special_same > 0.95, (
+            "Identical special character strings should match"
+        )
 
         sim_special_diff = detector._calculate_text_similarity(special1, special3)
-        assert (
-            sim_special_diff < sim_special_same
-        ), "Different special strings should score lower"
+        assert sim_special_diff < sim_special_same, (
+            "Different special strings should score lower"
+        )
 
         # Unicode characters
         unicode1 = "Test with émojis 🚀"
@@ -296,6 +296,6 @@ class TestDuplicateLogic:
         assert sim_unicode_same > 0.95, "Identical unicode strings should match"
 
         sim_unicode_diff = detector._calculate_text_similarity(unicode1, unicode3)
-        assert (
-            sim_unicode_diff < sim_unicode_same
-        ), "Different unicode strings should score lower"
+        assert sim_unicode_diff < sim_unicode_same, (
+            "Different unicode strings should score lower"
+        )

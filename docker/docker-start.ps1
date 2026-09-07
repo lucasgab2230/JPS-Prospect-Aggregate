@@ -161,7 +161,7 @@ while ($attempt -le $maxAttempts) {
     } catch {
         # Ignore errors and continue
     }
-    
+
     Write-Host "." -NoNewline
     Start-Sleep -Seconds 2
     $attempt++
@@ -184,7 +184,7 @@ try {
     $ollamaResponse = Invoke-WebRequest -Uri "http://localhost:11434/api/version" -UseBasicParsing -TimeoutSec 5
     if ($ollamaResponse.StatusCode -eq 200) {
         Write-Success "Ollama is running!"
-        
+
         # Check if model is installed
         $modelList = docker exec jps-ollama ollama list 2>$null
         if ($modelList -match "qwen3:latest") {

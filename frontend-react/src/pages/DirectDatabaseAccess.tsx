@@ -9,7 +9,7 @@ export default function DirectDatabaseAccess() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<QueryResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
+
   const { mutate: executeQuery, isPending: isLoading } = useExecuteQuery();
 
   const handleExecute = () => {
@@ -65,7 +65,7 @@ export default function DirectDatabaseAccess() {
             className="h-32 font-mono w-full p-2 border border-gray-200 dark:border-gray-700 rounded resize-none focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
-        
+
         <div className="flex gap-2">
           <Button
             onClick={handleExecute}
@@ -97,4 +97,4 @@ export default function DirectDatabaseAccess() {
       </div>
     </DataPageLayout>
   );
-} 
+}

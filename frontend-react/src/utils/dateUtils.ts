@@ -23,9 +23,9 @@ export const formatDate = (
   dateString: string | null | undefined,
   options: DateFormatOptions = {}
 ): string => {
-  const { 
-    fallback = 'N/A', 
-    format = 'datetime', 
+  const {
+    fallback = 'N/A',
+    format = 'datetime',
     locale = 'en-US',
     timezone,
     showTimezone = false
@@ -49,7 +49,7 @@ export const formatDate = (
 
     // Create formatting options with timezone support
     const formatOptions: Intl.DateTimeFormatOptions = {};
-    
+
     if (timezone) {
       formatOptions.timeZone = timezone;
     }

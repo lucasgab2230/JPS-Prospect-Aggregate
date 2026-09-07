@@ -11,8 +11,9 @@ Following production-level testing principles:
 
 import random
 import string
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import date, datetime, timedelta
 from unittest.mock import patch
 
@@ -70,7 +71,7 @@ def generate_random_prospect(data_source_id):
     return prospect
 
 
-@pytest.mark.integration()
+@pytest.mark.integration
 class TestLLMAPIIntegration:
     """Integration tests for LLM processing API with dynamic data."""
 
@@ -82,7 +83,7 @@ class TestLLMAPIIntegration:
         app.config["WTF_CSRF_ENABLED"] = False
         return app
 
-    @pytest.fixture()
+    @pytest.fixture
     def client(self, app):
         """Create test client."""
         return app.test_client()
@@ -98,8 +99,7 @@ class TestLLMAPIIntegration:
             data_source = DataSource(
                 name=source_name,
                 url=f"https://{generate_random_string(8)}.gov",
-                last_scraped=datetime.now(UTC)
-                - timedelta(hours=random.randint(1, 72)),
+                last_scraped=datetime.now(UTC) - timedelta(hours=random.randint(1, 72)),
             )
             db.session.add(data_source)
             db.session.flush()
