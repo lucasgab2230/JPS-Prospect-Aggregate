@@ -12,8 +12,9 @@ import json
 import random
 import string
 import time
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
@@ -36,7 +37,7 @@ class TestProspectsAPI:
         app.config["WTF_CSRF_ENABLED"] = False
         return app
 
-    @pytest.fixture()
+    @pytest.fixture
     def client(self, app):
         """Create test client."""
         return app.test_client()
@@ -58,7 +59,7 @@ class TestProspectsAPI:
             for agency in agencies:
                 ds = DataSource(
                     name=agency,
-                    url=f'https://{agency.lower().replace(" ", "")}.gov',
+                    url=f"https://{agency.lower().replace(' ', '')}.gov",
                     last_scraped=datetime.now(UTC)
                     - timedelta(days=random.randint(0, 7)),
                 )
@@ -246,9 +247,9 @@ class TestProspectsAPI:
                     in (prospect.get("description", "") or "").lower()
                     or search_term.lower() in (prospect.get("agency", "") or "").lower()
                 )
-                assert (
-                    found_in_fields
-                ), f"Search term '{search_term}' not found in prospect fields"
+                assert found_in_fields, (
+                    f"Search term '{search_term}' not found in prospect fields"
+                )
 
         # Search for non-existent term should return empty or no results
         random_string = "".join(random.choices(string.ascii_letters, k=20))
@@ -378,9 +379,9 @@ class TestProspectsAPI:
         if test_prospect:
             # Apply combined filters
             response = client.get(
-                f'/api/prospects?agency={test_prospect["agency"]}'
-                f'&naics={test_prospect["naics"]}'
-                f'&ai_enrichment=enhanced'
+                f"/api/prospects?agency={test_prospect['agency']}"
+                f"&naics={test_prospect['naics']}"
+                f"&ai_enrichment=enhanced"
             )
             assert response.status_code == 200
             data = response.get_json()

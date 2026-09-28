@@ -39,11 +39,11 @@ const generateProspect = (): Prospect => {
   const naicsCodes = ['541511', '541512', '541519', '517311', '236220'];
   const contractTypes = ['Fixed Price', 'Time and Materials', 'Cost Plus', 'IDIQ'];
   const setAsides = ['Small Business', '8(a)', 'WOSB', 'HubZone', 'VOSB'];
-  
+
   const randomId = Math.random().toString(36).substr(2, 9);
   const baseValue = Math.floor(Math.random() * 1000000) + 50000;
   const enhancementStatuses = ['pending', 'processing', 'completed', 'error', null];
-  
+
   return {
     id: randomId,
     native_id: `CONT-${Math.floor(Math.random() * 10000)}`,
@@ -111,7 +111,7 @@ describe('ProspectDetailsModal', () => {
 
   it('renders prospect details when open', () => {
     render(<ProspectDetailsModal {...defaultProps} />);
-    
+
     expect(screen.getByText('Prospect Details')).toBeInTheDocument();
     if (testProspect.title) {
       expect(screen.getByText(testProspect.title)).toBeInTheDocument();
@@ -123,13 +123,13 @@ describe('ProspectDetailsModal', () => {
 
   it('does not render when closed', () => {
     render(<ProspectDetailsModal {...defaultProps} isOpen={false} />);
-    
+
     expect(screen.queryByText('Prospect Details')).not.toBeInTheDocument();
   });
 
   it('handles null prospect gracefully', () => {
     render(<ProspectDetailsModal {...defaultProps} selectedProspect={null} />);
-    
+
     // Should not display any prospect-specific content
     if (testProspect.title) {
       expect(screen.queryByText(testProspect.title)).not.toBeInTheDocument();
@@ -142,9 +142,9 @@ describe('ProspectDetailsModal', () => {
   it('toggles AI enhanced data display', async () => {
     const user = userEvent.setup();
     render(<ProspectDetailsModal {...defaultProps} />);
-    
+
     const toggle = screen.getByRole('switch', { name: /show ai enhanced/i });
-    
+
     // Initially shows original data
     if (testProspect.title) {
       expect(screen.getByText(testProspect.title)).toBeInTheDocument();
@@ -152,7 +152,7 @@ describe('ProspectDetailsModal', () => {
     if (testProspect.ai_enhanced_title) {
       expect(screen.queryByText(testProspect.ai_enhanced_title)).not.toBeInTheDocument();
     }
-    
+
     // Toggle to show AI enhanced
     await user.click(toggle);
     expect(defaultProps.onShowAIEnhancedChange).toHaveBeenCalledWith(true);
@@ -170,9 +170,9 @@ describe('ProspectDetailsModal', () => {
         contacts: { completed: false }
       }
     }));
-    
+
     render(<ProspectDetailsModal {...defaultProps} getProspectStatus={getProspectStatus} />);
-    
+
     expect(screen.getByTestId('enhancement-progress')).toBeInTheDocument();
     expect(screen.getByText('Progress: processing')).toBeInTheDocument();
   });
@@ -180,18 +180,18 @@ describe('ProspectDetailsModal', () => {
   it('handles enhancement button click', async () => {
     const user = userEvent.setup();
     render(<ProspectDetailsModal {...defaultProps} />);
-    
+
     // Click enhancement button
     const enhanceButton = screen.getByTestId('enhancement-button');
     await user.click(enhanceButton);
-    
+
     // Button should trigger onEnhancementStart callback
     expect(enhanceButton).toBeInTheDocument();
   });
 
   it('displays all prospect fields correctly', () => {
     render(<ProspectDetailsModal {...defaultProps} />);
-    
+
     // Basic Information - use the generated prospect data
     if (testProspect.set_aside) {
       expect(screen.getByText(testProspect.set_aside)).toBeInTheDocument();
@@ -202,7 +202,7 @@ describe('ProspectDetailsModal', () => {
     if (testProspect.estimated_value_text) {
       expect(screen.getByText(testProspect.estimated_value_text)).toBeInTheDocument();
     }
-    
+
     // Contact Information - use the generated prospect data
     if (testProspect.primary_contact_name) {
       expect(screen.getByText(testProspect.primary_contact_name)).toBeInTheDocument();
@@ -213,7 +213,7 @@ describe('ProspectDetailsModal', () => {
     if (testProspect.place_city && testProspect.place_state) {
       expect(screen.getByText(`${testProspect.place_city}, ${testProspect.place_state}`)).toBeInTheDocument();
     }
-    
+
     // Description - use the generated prospect data
     if (testProspect.description) {
       expect(screen.getByText(testProspect.description)).toBeInTheDocument();
@@ -223,12 +223,12 @@ describe('ProspectDetailsModal', () => {
   it('shows raw data toggle for super admin', async () => {
     const user = userEvent.setup();
     render(<ProspectDetailsModal {...defaultProps} />);
-    
+
     const rawDataToggle = screen.getByText(/Show Raw Data/i);
     expect(rawDataToggle).toBeInTheDocument();
-    
+
     await user.click(rawDataToggle);
-    
+
     // Should show raw data section
     expect(screen.getByText(/Complete Raw Prospect Object/i)).toBeInTheDocument();
   });
@@ -236,18 +236,18 @@ describe('ProspectDetailsModal', () => {
   it('handles enhancement button interactions', async () => {
     const user = userEvent.setup();
     render(<ProspectDetailsModal {...defaultProps} />);
-    
+
     // Click enhancement button
     const enhanceButton = screen.getByTestId('enhancement-button');
     await user.click(enhanceButton);
-    
+
     // Verify button is rendered and clickable
     expect(enhanceButton).toBeInTheDocument();
   });
 
   it('displays AI enrichment indicators', () => {
     render(<ProspectDetailsModal {...defaultProps} />);
-    
+
     // Look for AI enrichment badges
     const badges = screen.getAllByText('✨');
     expect(badges.length).toBeGreaterThan(0);
@@ -261,12 +261,12 @@ describe('ProspectDetailsModal', () => {
       estimated_value_single: null,
       ollama_processed_at: null
     };
-    
+
     render(<ProspectDetailsModal {...defaultProps} selectedProspect={basicProspect} />);
-    
+
     // Should still render without errors
     expect(screen.getByText(basicProspect.title)).toBeInTheDocument();
-    
+
     // Should not show AI badges
     const badges = screen.queryAllByText('✨');
     expect(badges.length).toBe(0);
@@ -275,7 +275,7 @@ describe('ProspectDetailsModal', () => {
   it('formats dates using the provided formatter', () => {
     const formatUserDate = vi.fn((_date: string) => 'Formatted Date');
     render(<ProspectDetailsModal {...defaultProps} formatUserDate={formatUserDate} />);
-    
+
     expect(formatUserDate).toHaveBeenCalled();
     expect(screen.queryAllByText('Formatted Date').length).toBeGreaterThanOrEqual(0);
   });
@@ -283,10 +283,10 @@ describe('ProspectDetailsModal', () => {
   it('closes modal when close button is clicked', async () => {
     const user = userEvent.setup();
     render(<ProspectDetailsModal {...defaultProps} />);
-    
+
     const closeButton = screen.getByRole('button', { name: /close/i });
     await user.click(closeButton);
-    
+
     expect(defaultProps.onOpenChange).toHaveBeenCalledWith(false);
   });
 });

@@ -1,7 +1,8 @@
 import json
 import time
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime, timedelta
 
 from flask import Blueprint, jsonify, request
@@ -468,7 +469,6 @@ def _ensure_extra_is_dict(prospect):
 
 def _process_value_enhancement(prospect, llm_service, force_redo):
     """Process value parsing enhancement for a prospect."""
-
     # Values enhancement starting
 
     value_to_parse = None
@@ -580,12 +580,11 @@ def _process_naics_enhancement(prospect, llm_service, force_redo):
 
             # NAICS enhancement completed with backfilled description
             return True
-        else:
-            # NAICS code not in our lookup table
-            # NAICS enhancement skipped - no description available
-            return False
+        # NAICS code not in our lookup table
+        # NAICS enhancement skipped - no description available
+        return False
 
-    elif prospect.description and should_classify:
+    if prospect.description and should_classify:
         # Run AI classification ONLY for prospects without NAICS codes
         classification = llm_service.classify_naics_with_llm(
             title=prospect.title,
@@ -617,11 +616,10 @@ def _process_naics_enhancement(prospect, llm_service, force_redo):
 
             # NAICS enhancement completed with classification
             return True
-        else:
-            # NAICS enhancement failed - no valid classification
-            return False
+        # NAICS enhancement failed - no valid classification
+        return False
 
-    elif prospect.naics and prospect.naics_description or prospect.naics:
+    if prospect.naics and prospect.naics_description or prospect.naics:
         pass
     else:
         pass
@@ -633,11 +631,9 @@ def _process_naics_enhancement(prospect, llm_service, force_redo):
 
 def _process_title_enhancement(prospect, llm_service, force_redo):
     """Process title enhancement for a prospect."""
-
     # Title enhancement starting
 
     if prospect.title and (force_redo or not prospect.ai_enhanced_title):
-
         try:
             enhanced_title = llm_service.enhance_title_with_llm(
                 prospect.title,
@@ -646,9 +642,7 @@ def _process_title_enhancement(prospect, llm_service, force_redo):
                 prospect_id=prospect.id,
             )
         except Exception as e:
-            logger.error(
-                f"LLM service error for prospect {prospect.id}: {e}"
-            )
+            logger.error(f"LLM service error for prospect {prospect.id}: {e}")
             # Title enhancement failed - LLM service error
             return False
 
@@ -671,15 +665,13 @@ def _process_title_enhancement(prospect, llm_service, force_redo):
 
             # Title enhancement completed
             return True
-        else:
-            # Title enhancement failed - no title generated
-            return False
+        # Title enhancement failed - no title generated
+        return False
+    # Not processing title - emit skipped completion
+    if not prospect.title:
+        reason = "No title available to enhance"
     else:
-        # Not processing title - emit skipped completion
-        if not prospect.title:
-            reason = "No title available to enhance"
-        else:
-            reason = "Already has enhanced title"
+        reason = "Already has enhanced title"
 
         # Title enhancement skipped
 
@@ -742,12 +734,10 @@ def _process_set_aside_enhancement(prospect, llm_service, force_redo):
                     if prospect.set_aside_standardized:
                         # Set-aside enhancement completed with standardized data
                         return True
-                    else:
-                        # Set-aside enhancement failed - no standardized data
-                        return False
-                else:
-                    # Set-aside enhancement failed - processing error
+                    # Set-aside enhancement failed - no standardized data
                     return False
+                # Set-aside enhancement failed - processing error
+                return False
 
             except Exception as e:
                 logger.error(
@@ -792,17 +782,16 @@ def _finalize_enhancement(prospect, llm_service, processed, enhancements, force_
                 "enhancements": enhancements,
             }
         ), 200
-    else:
-        # Enhancement completed - no processing needed
+    # Enhancement completed - no processing needed
 
-        return jsonify(
-            {
-                "status": "success",
-                "message": "Prospect already fully enhanced or no data to enhance",
-                "processed": False,
-                "enhancements": [],
-            }
-        ), 200
+    return jsonify(
+        {
+            "status": "success",
+            "message": "Prospect already fully enhanced or no data to enhance",
+            "processed": False,
+            "enhancements": [],
+        }
+    ), 200
 
 
 @llm_bp.route("/enhance-single", methods=["POST"])
@@ -876,58 +865,62 @@ def enhance_single_prospect():
                         "queue_user_id": existing_item.user_id,
                     }
                 ), 409
-            else:
-                # Same user, return existing queue item
-                logger.info(
-                    f"Returning existing queue item {existing_item.id} for same user {user_id}"
-                )
-                return jsonify(
-                    {
-                        "status": "queued",
-                        "message": f"Enhancement request already queued for prospect {prospect_id}",
-                        "queue_item_id": existing_item.id,
-                        "prospect_id": prospect_id,
-                        "priority": "high",
-                        "was_existing": True,
-                    }
-                ), 200
+            # Same user, return existing queue item
+            logger.info(
+                f"Returning existing queue item {existing_item.id} for same user {user_id}"
+            )
+            return jsonify(
+                {
+                    "status": "queued",
+                    "message": f"Enhancement request already queued for prospect {prospect_id}",
+                    "queue_item_id": existing_item.id,
+                    "prospect_id": prospect_id,
+                    "priority": "high",
+                    "was_existing": True,
+                }
+            ), 200
 
         # Determine which steps will be skipped
         planned_steps = {}
-        enhancement_types_list = enhancement_type.split(',') if enhancement_type else ['all']
-        
+        enhancement_types_list = (
+            enhancement_type.split(",") if enhancement_type else ["all"]
+        )
+
         # Check each enhancement type to see if it will be skipped
-        if 'all' in enhancement_types_list or 'titles' in enhancement_types_list:
+        if "all" in enhancement_types_list or "titles" in enhancement_types_list:
             will_skip = bool(prospect.ai_enhanced_title) and not force_redo
-            planned_steps['titles'] = {
-                'will_process': not will_skip,
-                'reason': 'already_enhanced' if will_skip else None
+            planned_steps["titles"] = {
+                "will_process": not will_skip,
+                "reason": "already_enhanced" if will_skip else None,
             }
-        
-        if 'all' in enhancement_types_list or 'values' in enhancement_types_list:
-            will_skip = (bool(prospect.estimated_value_single) or 
-                        bool(prospect.estimated_value_min) or 
-                        bool(prospect.estimated_value_max)) and not force_redo
-            planned_steps['values'] = {
-                'will_process': not will_skip,
-                'reason': 'already_parsed' if will_skip else None
+
+        if "all" in enhancement_types_list or "values" in enhancement_types_list:
+            will_skip = (
+                bool(prospect.estimated_value_single)
+                or bool(prospect.estimated_value_min)
+                or bool(prospect.estimated_value_max)
+            ) and not force_redo
+            planned_steps["values"] = {
+                "will_process": not will_skip,
+                "reason": "already_parsed" if will_skip else None,
             }
-        
-        if 'all' in enhancement_types_list or 'naics' in enhancement_types_list:
-            will_skip = (bool(prospect.naics) and 
-                        prospect.naics_source == 'llm_inferred') and not force_redo
-            planned_steps['naics'] = {
-                'will_process': not will_skip,
-                'reason': 'already_classified' if will_skip else None
+
+        if "all" in enhancement_types_list or "naics" in enhancement_types_list:
+            will_skip = (
+                bool(prospect.naics) and prospect.naics_source == "llm_inferred"
+            ) and not force_redo
+            planned_steps["naics"] = {
+                "will_process": not will_skip,
+                "reason": "already_classified" if will_skip else None,
             }
-        
-        if 'all' in enhancement_types_list or 'set_asides' in enhancement_types_list:
+
+        if "all" in enhancement_types_list or "set_asides" in enhancement_types_list:
             will_skip = bool(prospect.set_aside_standardized) and not force_redo
-            planned_steps['set_asides'] = {
-                'will_process': not will_skip,
-                'reason': 'already_standardized' if will_skip else None
+            planned_steps["set_asides"] = {
+                "will_process": not will_skip,
+                "reason": "already_standardized" if will_skip else None,
             }
-        
+
         # Add to priority queue (returns dict with queue_item_id and was_existing)
         enhancement_result = add_individual_enhancement(
             prospect_id=prospect_id,
@@ -1059,10 +1052,9 @@ def cancel_queue_item(item_id):
             return jsonify(
                 {"message": f"Queue item {item_id} cancelled successfully"}
             ), 200
-        else:
-            return jsonify(
-                {"error": "Cannot cancel item (not found or already processing)"}
-            ), 400
+        return jsonify(
+            {"error": "Cannot cancel item (not found or already processing)"}
+        ), 400
     except Exception as e:
         logger.error(f"Error cancelling queue item: {e}", exc_info=True)
         return jsonify({"error": f"Failed to cancel queue item: {str(e)}"}), 500
@@ -1113,16 +1105,15 @@ def cancel_enhancement(queue_item_id):
                     "message": "Enhancement request cancelled successfully",
                 }
             ), 200
-        else:
-            logger.warning(
-                f"Failed to cancel enhancement queue item: {queue_item_id} (not found or already processing)"
-            )
-            return jsonify(
-                {
-                    "success": False,
-                    "error": "Queue item not found or already processing",
-                }
-            ), 404
+        logger.warning(
+            f"Failed to cancel enhancement queue item: {queue_item_id} (not found or already processing)"
+        )
+        return jsonify(
+            {
+                "success": False,
+                "error": "Queue item not found or already processing",
+            }
+        ), 404
 
     except Exception as e:
         logger.error(

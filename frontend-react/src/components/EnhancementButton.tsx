@@ -13,23 +13,23 @@ interface EnhancementButtonProps {
   onEnhancementStart?: () => void;
 }
 
-export function EnhancementButton({ 
-  prospect, 
-  userId = 1, 
+export function EnhancementButton({
+  prospect,
+  userId = 1,
   forceRedo = false,
-  onEnhancementStart 
+  onEnhancementStart
 }: EnhancementButtonProps) {
   const { addToQueue, getProspectStatus, cancelEnhancement } = useProspectEnhancement();
   const { handleError } = useEnhancementErrorHandler();
-  
+
   const status = getProspectStatus(prospect.id);
   const isAlreadyEnhanced = !!prospect.ollama_processed_at;
-  
+
   const handleEnhanceClick = async () => {
     try {
       // Immediately trigger the start callback to show progress box
       onEnhancementStart?.();
-      
+
       await addToQueue({
         prospect_id: prospect.id,
         user_id: userId,
@@ -39,7 +39,7 @@ export function EnhancementButton({
       handleError(error as Error, 'Enhancement Queue');
     }
   };
-  
+
   const handleCancelClick = async () => {
     try {
       const success = await cancelEnhancement(prospect.id);
@@ -50,11 +50,11 @@ export function EnhancementButton({
       handleError(error as Error, 'Enhancement Cancellation');
     }
   };
-  
+
   const isQueued = status?.status === 'queued';
   const isProcessing = status?.status === 'processing';
   const isDisabled = isQueued || isProcessing;
-  
+
   const getButtonContent = () => {
     if (isProcessing) {
       // Show queue position if available, along with current step
@@ -66,11 +66,11 @@ export function EnhancementButton({
         </>
       );
     }
-    
-    
+
+
     return isAlreadyEnhanced ? 'Redo Enhancement' : 'Enhance with AI';
   };
-  
+
   if (isQueued) {
     return (
       <div className="flex items-center">
@@ -102,13 +102,13 @@ export function EnhancementButton({
       </div>
     );
   }
-  
+
   return (
     <Button
       onClick={handleEnhanceClick}
       disabled={isDisabled}
       className={`
-        ${isProcessing ? 'bg-blue-600' : 'bg-blue-600 hover:bg-blue-700'} 
+        ${isProcessing ? 'bg-blue-600' : 'bg-blue-600 hover:bg-blue-700'}
         text-white disabled:bg-gray-400 min-w-[140px]
       `}
     >

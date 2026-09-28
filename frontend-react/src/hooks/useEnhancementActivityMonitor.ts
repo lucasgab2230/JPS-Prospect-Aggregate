@@ -21,7 +21,7 @@ export function useEnhancementActivityMonitor() {
   const queryClient = useQueryClient();
   const { enhancementStates } = useEnhancementSimple();
   const { isWorkerRunning, isIterativeProcessing } = useEnhancementQueueService();
-  
+
   const [activityState, setActivityState] = useState<ActivityState>({
     hasActiveEnhancements: false,
     totalActiveCount: 0,
@@ -31,30 +31,30 @@ export function useEnhancementActivityMonitor() {
     iterativeActive: false,
     lastActivityTime: null
   });
-  
+
   const [pollingInterval, setPollingInterval] = useState(5000); // Default 5 seconds
   const lastActivityRef = useRef<Date | null>(null);
-  
+
   // Calculate activity state
   useEffect(() => {
     const processingCount = Object.values(enhancementStates).filter(
       state => state.status === 'processing'
     ).length;
-    
+
     const queuedCount = Object.values(enhancementStates).filter(
       state => state.status === 'queued'
     ).length;
-    
+
     const totalActiveCount = processingCount + queuedCount;
     const hasActive = totalActiveCount > 0 || isWorkerRunning || isIterativeProcessing;
-    
+
     // Update activity timestamp if there's activity
     if (hasActive && !lastActivityRef.current) {
       lastActivityRef.current = new Date();
     } else if (!hasActive && lastActivityRef.current) {
       lastActivityRef.current = null;
     }
-    
+
     setActivityState({
       hasActiveEnhancements: hasActive,
       totalActiveCount,
@@ -65,11 +65,11 @@ export function useEnhancementActivityMonitor() {
       lastActivityTime: lastActivityRef.current
     });
   }, [enhancementStates, isWorkerRunning, isIterativeProcessing]);
-  
+
   // Intelligently adjust polling interval based on activity
   useEffect(() => {
     let interval: number;
-    
+
     if (activityState.processingCount > 0) {
       // Very frequent polling when actively processing
       interval = 1000; // 1 second
@@ -93,30 +93,30 @@ export function useEnhancementActivityMonitor() {
       // Default slow polling when idle
       interval = 30000; // 30 seconds
     }
-    
+
     setPollingInterval(interval);
   }, [activityState]);
-  
+
   // Apply polling interval to queries
   useEffect(() => {
     // Update query defaults for enhancement-related queries
     queryClient.setQueryDefaults(['prospects'], {
       refetchInterval: activityState.hasActiveEnhancements ? pollingInterval : false
     });
-    
+
     queryClient.setQueryDefaults(['enhancement-queue-status'], {
       refetchInterval: pollingInterval
     });
-    
+
     queryClient.setQueryDefaults(['iterative-progress'], {
       refetchInterval: activityState.iterativeActive ? 1000 : pollingInterval
     });
-    
+
     queryClient.setQueryDefaults(['ai-enrichment-status'], {
       refetchInterval: activityState.hasActiveEnhancements ? pollingInterval * 2 : 60000
     });
   }, [pollingInterval, activityState, queryClient]);
-  
+
   // Force refresh all enhancement-related queries
   const refreshAll = useCallback(() => {
     queryClient.invalidateQueries({ queryKey: ['prospects'] });
@@ -125,44 +125,44 @@ export function useEnhancementActivityMonitor() {
     queryClient.invalidateQueries({ queryKey: ['ai-enrichment-status'] });
     queryClient.invalidateQueries({ queryKey: ['llm-outputs'] });
   }, [queryClient]);
-  
+
   // Check if any enhancement activity is happening
   const hasAnyActivity = activityState.hasActiveEnhancements;
-  
+
   // Get a summary message of current activity
   const getActivitySummary = useCallback(() => {
     const parts: string[] = [];
-    
+
     if (activityState.processingCount > 0) {
       parts.push(`${activityState.processingCount} processing`);
     }
-    
+
     if (activityState.queuedCount > 0) {
       parts.push(`${activityState.queuedCount} queued`);
     }
-    
+
     if (activityState.iterativeActive) {
       parts.push('bulk enhancement running');
     }
-    
+
     if (parts.length === 0 && activityState.workerActive) {
       parts.push('worker idle');
     }
-    
+
     return parts.join(', ') || 'No activity';
   }, [activityState]);
-  
+
   return {
     // Activity state
     ...activityState,
     hasAnyActivity,
-    
+
     // Polling control
     currentPollingInterval: pollingInterval,
-    
+
     // Actions
     refreshAll,
-    
+
     // Helpers
     getActivitySummary,
   };

@@ -196,6 +196,7 @@ YOUR_AGENCY_CONFIG = ScraperConfig(
 from app.core.consolidated_scraper_base import ConsolidatedScraperBase
 from app.core.scraper_configs import YOUR_AGENCY_CONFIG
 
+
 class YourAgencyScraper(ConsolidatedScraperBase):
     def __init__(self):
         super().__init__(YOUR_AGENCY_CONFIG)

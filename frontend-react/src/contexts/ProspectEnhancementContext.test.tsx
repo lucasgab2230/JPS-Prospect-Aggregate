@@ -111,11 +111,11 @@ describe('ProspectEnhancementContext', () => {
   it('throws error when useProspectEnhancement is used outside provider', () => {
     // Suppress console.error for this test
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    
+
     expect(() => {
       render(<TestComponentWithoutProvider />);
     }).toThrow('useProspectEnhancement must be used within a ProspectEnhancementProvider');
-  
+
     consoleSpy.mockRestore();
   });
 
@@ -165,7 +165,7 @@ describe('ProspectEnhancementContext', () => {
     fireEvent.click(screen.getByTestId('get-status'));
 
     expect(mockGetEnhancementState).toHaveBeenCalledWith('test-prospect-123');
-    
+
     // Check that status was displayed correctly
     const statusElement = screen.getByTestId('prospect-status');
     expect(statusElement).toHaveTextContent('processing-2');
@@ -183,7 +183,7 @@ describe('ProspectEnhancementContext', () => {
     fireEvent.click(screen.getByTestId('get-status'));
 
     expect(mockGetEnhancementState).toHaveBeenCalledWith('test-prospect-123');
-    
+
     // Should not create status element when status is null
     expect(screen.queryByTestId('prospect-status')).not.toBeInTheDocument();
   });
@@ -191,7 +191,7 @@ describe('ProspectEnhancementContext', () => {
   it('returns null when prospect ID is undefined', () => {
     const TestComponentWithUndefinedId = () => {
       const { getProspectStatus } = useProspectEnhancement();
-      
+
       const handleGetStatus = () => {
         const status = getProspectStatus(undefined);
         const resultElement = document.createElement('div');
@@ -331,7 +331,7 @@ describe('ProspectEnhancementContext', () => {
 
     const ComplexStatusComponent = () => {
       const { getProspectStatus } = useProspectEnhancement();
-      
+
       const handleGetComplexStatus = () => {
         const status = getProspectStatus('complex-prospect');
         if (status) {
@@ -385,14 +385,14 @@ describe('ProspectEnhancementContext', () => {
 
   it('provides stable function references', () => {
     let firstRenderFunctions: any;
-    
+
     const FunctionRefComponent = () => {
       const context = useProspectEnhancement();
-      
+
       if (!firstRenderFunctions) {
         firstRenderFunctions = context;
       }
-      
+
       return (
         <div data-testid="functions-stable">
           {Object.is(context.addToQueue, firstRenderFunctions.addToQueue) ? 'stable' : 'changed'}
@@ -421,7 +421,7 @@ describe('ProspectEnhancementContext', () => {
   it('handles enhancement types correctly in addToQueue', () => {
     const EnhancementTypesComponent = () => {
       const { addToQueue } = useProspectEnhancement();
-      
+
       const handleAddWithTypes = () => {
         addToQueue({
           prospect_id: 'typed-prospect',

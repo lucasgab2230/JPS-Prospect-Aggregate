@@ -3,4 +3,4 @@ export default {
     // '@tailwindcss/postcss': {}, // Removed as Tailwind CLI handles Tailwind processing
     'autoprefixer': {},
   },
-}; 
+};

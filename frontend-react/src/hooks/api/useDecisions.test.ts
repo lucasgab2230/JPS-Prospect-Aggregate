@@ -40,7 +40,7 @@ const generateUser = () => ({
 const generateDecision = (): GoNoGoDecision => {
   const decisions = ['go', 'no-go'] as const;
   const reasons = ['Good fit for our services', 'Not aligned with strategy', 'Excellent opportunity', 'Budget constraints', 'Timeline mismatch'];
-  
+
   return {
     id: Math.floor(Math.random() * 10000),
     prospect_id: `prospect-${Math.random().toString(36).substr(2, 9)}`,
@@ -59,15 +59,15 @@ const generateDecisionStats = (): DecisionStats => {
   const goDecisions = Math.floor(Math.random() * totalDecisions);
   const noGoDecisions = totalDecisions - goDecisions;
   const userCount = Math.floor(Math.random() * 10) + 2;
-  
+
   const decisionsByUser = Array.from({ length: userCount }, () => ({
     user_id: Math.floor(Math.random() * 1000),
     username: `user_${Math.random().toString(36).substr(2, 6)}`,
     decision_count: Math.floor(Math.random() * 50) + 1
   }));
-  
+
   const recentDecisions = Array.from({ length: Math.min(5, totalDecisions) }, () => generateDecision());
-  
+
   return {
     total_decisions: totalDecisions,
     go_decisions: goDecisions,
@@ -82,7 +82,7 @@ const generatePaginationMeta = (): PaginationMeta => {
   const perPage = Math.floor(Math.random() * 50) + 10;
   const totalPages = Math.ceil(totalItems / perPage);
   const currentPage = Math.floor(Math.random() * totalPages) + 1;
-  
+
   return {
     page: currentPage,
     per_page: perPage,
@@ -96,7 +96,7 @@ const generatePaginationMeta = (): PaginationMeta => {
 const generateCreateDecisionRequest = (): CreateDecisionRequest => {
   const decisions = ['go', 'no-go'] as const;
   const reasons = ['Excellent opportunity for growth', 'Strategic alignment', 'Budget constraints', 'Timeline concerns', 'Resource availability'];
-  
+
   return {
     prospect_id: `prospect-${Math.random().toString(36).substr(2, 9)}`,
     decision: decisions[Math.floor(Math.random() * decisions.length)],
@@ -112,8 +112,8 @@ const createWrapper = () => {
       mutations: { retry: false }
     }
   });
-  
-  return ({ children }: { children: React.ReactNode }) => 
+
+  return ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: queryClient }, children);
 };
 
@@ -124,11 +124,11 @@ describe('useProspectDecisions', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    
+
     // Generate fresh test data
     testDecision = generateDecision();
     testProspectId = `prospect-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     // Get mocked functions
     const { get } = await import('@/utils/apiUtils');
     mockGet = get;
@@ -236,12 +236,12 @@ describe('useMyDecisions', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    
+
     // Get mocked functions
     const { get, buildQueryString } = await import('@/utils/apiUtils');
     mockGet = get;
     mockBuildQueryString = buildQueryString;
-    
+
     mockBuildQueryString.mockImplementation((params) => {
       const searchParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
@@ -359,7 +359,7 @@ describe('useDecisionStats', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    
+
     // Get mocked functions
     const { get } = await import('@/utils/apiUtils');
     mockGet = get;
@@ -439,18 +439,18 @@ describe('useCreateDecision', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    
+
     // Get mocked functions
     const { post } = await import('@/utils/apiUtils');
     mockPost = post;
-    
+
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
         mutations: { retry: false }
       }
     });
-    
+
     // Spy on invalidateQueries
     vi.spyOn(queryClient, 'invalidateQueries');
   });
@@ -460,7 +460,7 @@ describe('useCreateDecision', () => {
   });
 
   const createWrapperWithClient = () => {
-    return ({ children }: { children: React.ReactNode }) => 
+    return ({ children }: { children: React.ReactNode }) =>
       React.createElement(QueryClientProvider, { client: queryClient }, children);
   };
 
@@ -552,7 +552,7 @@ describe('useCreateDecision', () => {
 
     expect(thrownError).toBe(error);
     expect(result.current.error).toBe(error);
-    
+
     // Should not invalidate queries on error
     expect(queryClient.invalidateQueries).not.toHaveBeenCalled();
   });
@@ -612,18 +612,18 @@ describe('useDeleteDecision', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    
+
     // Get mocked functions
     const { del } = await import('@/utils/apiUtils');
     mockDel = del;
-    
+
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
         mutations: { retry: false }
       }
     });
-    
+
     vi.spyOn(queryClient, 'invalidateQueries');
   });
 
@@ -632,7 +632,7 @@ describe('useDeleteDecision', () => {
   });
 
   const createWrapperWithClient = () => {
-    return ({ children }: { children: React.ReactNode }) => 
+    return ({ children }: { children: React.ReactNode }) =>
       React.createElement(QueryClientProvider, { client: queryClient }, children);
   };
 
@@ -705,7 +705,7 @@ describe('useDeleteDecision', () => {
 
     expect(thrownError).toBe(error);
     expect(result.current.error).toBe(error);
-    
+
     // Should not invalidate queries on error
     expect(queryClient.invalidateQueries).not.toHaveBeenCalled();
   });

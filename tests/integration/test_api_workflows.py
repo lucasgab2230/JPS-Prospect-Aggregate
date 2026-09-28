@@ -13,8 +13,9 @@ import os
 import random
 import string
 import tempfile
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import date, datetime, timedelta
 from unittest.mock import patch
 
@@ -107,13 +108,13 @@ def app():
     os.unlink(db_path)
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app):
     """Create a test client."""
     return app.test_client()
 
 
-@pytest.fixture()
+@pytest.fixture
 def auth_client(app, client):
     """Create an authenticated test client with dynamic user data."""
     # Mock authentication for testing
@@ -191,8 +192,8 @@ class TestProspectWorkflow:
             naics_codes = ["541511", "541512", "541519"]
 
             created_prospects = []
-            agency_counts = {agency: 0 for agency in agencies}
-            naics_counts = {naics: 0 for naics in naics_codes}
+            agency_counts = dict.fromkeys(agencies, 0)
+            naics_counts = dict.fromkeys(naics_codes, 0)
             keyword_prospects = []
 
             for i in range(num_prospects):
@@ -614,7 +615,7 @@ class TestConcurrencyWorkflow:
             decision_data = {
                 "prospect_id": prospect_id,
                 "decision": decision_type,
-                "reason": f"Decision {i+1}: {generate_random_string(10)}",
+                "reason": f"Decision {i + 1}: {generate_random_string(10)}",
             }
             decisions.append(decision_data)
 

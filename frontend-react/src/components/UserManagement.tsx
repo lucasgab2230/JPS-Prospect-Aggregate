@@ -23,11 +23,11 @@ export default function UserManagement() {
     newRole: 'user' | 'admin';
     userName: string;
   } | null>(null);
-  
+
   // Hooks must be called unconditionally
   const { data: usersData, isLoading: usersLoading } = useAdminUsers({ page: 1, per_page: 100 });
   const updateUserRoleMutation = useUpdateUserRole();
-  
+
   // Only allow super admins to access this component
   if (!isSuperAdmin) {
     return (
@@ -41,14 +41,14 @@ export default function UserManagement() {
   }
 
   const users = usersData?.data?.users || [];
-  
+
   // Filter users based on search and role filter
   const filteredUsers = users.filter((user: User) => {
     const matchesSearch = user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          user.first_name.toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
-    
+
     return matchesSearch && matchesRole;
   });
 
@@ -63,13 +63,13 @@ export default function UserManagement() {
 
   const confirmRoleChange = async () => {
     if (!confirmDialog) return;
-    
+
     try {
       await updateUserRoleMutation.mutateAsync({
         userId: confirmDialog.userId,
         data: { role: confirmDialog.newRole }
       });
-      
+
       setConfirmDialog(null);
     } catch (error) {
       handleError(error, { fallbackMessage: 'Failed to update user role' });
@@ -168,7 +168,7 @@ export default function UserManagement() {
                       ) : (
                         <Select
                           value={user.role}
-                          onValueChange={(newRole: 'user' | 'admin') => 
+                          onValueChange={(newRole: 'user' | 'admin') =>
                             handleRoleChange(user.id, newRole, user.first_name)
                           }
                           disabled={updateUserRoleMutation.isPending}

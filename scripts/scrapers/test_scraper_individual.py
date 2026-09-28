@@ -105,10 +105,10 @@ async def run_scraper(scraper_key: str, app):
     scraper_info = AVAILABLE_SCRAPERS[scraper_key]
     scraper_class = scraper_info["class"]
 
-    logger.info(f"\n{'='*60}")
+    logger.info(f"\n{'=' * 60}")
     logger.info(f"Testing: {scraper_info['name']}")
     logger.info(f"Description: {scraper_info['description']}")
-    logger.info(f"{'='*60}")
+    logger.info(f"{'=' * 60}")
 
     try:
         # Initialize scraper
@@ -218,9 +218,9 @@ async def run_scraper(scraper_key: str, app):
 
 async def run_all_scrapers(app):
     """Run all scrapers and summarize results."""
-    logger.info(f"\n{'='*60}")
+    logger.info(f"\n{'=' * 60}")
     logger.info("RUNNING ALL SCRAPERS")
-    logger.info(f"{'='*60}")
+    logger.info(f"{'=' * 60}")
 
     results = {}
     total_start_time = asyncio.get_event_loop().time()
@@ -236,9 +236,9 @@ async def run_all_scrapers(app):
     total_duration = total_end_time - total_start_time
 
     # Summary report
-    logger.info(f"\n{'='*60}")
+    logger.info(f"\n{'=' * 60}")
     logger.info("SUMMARY REPORT")
-    logger.info(f"{'='*60}")
+    logger.info(f"{'=' * 60}")
 
     successful_scrapers = []
     failed_scrapers = []

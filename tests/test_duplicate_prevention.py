@@ -5,8 +5,9 @@ Tests the various matching strategies and edge cases in the duplicate
 prevention system.
 """
 
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime
 from unittest.mock import Mock, patch
 
@@ -131,9 +132,9 @@ class TestDuplicateDetector:
 
         # Should have low confidence due to different content
         if candidates:
-            assert (
-                candidates[0].confidence_score < 0.5
-            ), f"Expected low confidence for different content, got {candidates[0].confidence_score:.3f}"
+            assert candidates[0].confidence_score < 0.5, (
+                f"Expected low confidence for different content, got {candidates[0].confidence_score:.3f}"
+            )
 
     def test_native_id_matching_with_similar_content(self):
         """Test native_id matching with similar content."""
@@ -170,9 +171,9 @@ class TestDuplicateDetector:
 
         # Should have high confidence due to similar content
         assert candidates
-        assert (
-            candidates[0].confidence_score > 0.8
-        ), f"Expected high confidence for similar content, got {candidates[0].confidence_score:.3f}"
+        assert candidates[0].confidence_score > 0.8, (
+            f"Expected high confidence for similar content, got {candidates[0].confidence_score:.3f}"
+        )
 
     def test_deduplicate_candidates(self):
         """Test candidate deduplication."""

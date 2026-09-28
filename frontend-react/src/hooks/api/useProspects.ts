@@ -16,15 +16,15 @@ async function fetchProspectsAPI(
   { pageParam = 0, filters }: { pageParam?: number; filters?: ProspectFilters }
 ): Promise<PaginatedProspectsResponse> {
   // Fetching prospects with pagination
-  
+
   const params: Record<string, string | number | boolean | Array<string | number>> = {
     page: pageParam + 1, // Backend is 1-indexed
     limit: 10,
     ...filters
   };
-  
+
   // Backend uses 1-indexed pagination
-  
+
   const url = `/api/prospects${buildQueryString(params)}`;
   const responseJson = await get<{
     prospects: Prospect[];
@@ -34,7 +34,7 @@ async function fetchProspectsAPI(
       total_items: number;
     };
   }>(url);
-  
+
   // Transform backend response
 
   const transformedData = {
@@ -50,7 +50,7 @@ async function fetchProspectStatisticsAPI(): Promise<ProspectStatistics> {
   // Fetching prospect statistics
   await new Promise(resolve => setTimeout(resolve, 300));
   return {
-    data: { 
+    data: {
         total: 0,
         approved: 0,
         pending: 0,
@@ -120,4 +120,3 @@ export function useProspect(prospectId: string | number | null) {
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 }
-

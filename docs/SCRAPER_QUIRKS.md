@@ -85,7 +85,7 @@ Complex fiscal quarter format requiring special parsing:
 ### Link Text Navigation
 DOC doesn't use standard selectors. Instead, finds links by text:
 ```python
-download_link_text="DOC Weekly Forecast Report"
+download_link_text = "DOC Weekly Forecast Report"
 ```
 
 ### Date Derivation
@@ -94,7 +94,7 @@ Release dates are derived from fiscal year/quarter combinations since they're no
 ### Excel Header Location
 Excel files have headers at row 4 (0-indexed):
 ```python
-excel_read_options={"header": 3}
+excel_read_options = {"header": 3}
 ```
 
 ## Department of Justice (DOJ)
@@ -107,7 +107,7 @@ DOJ has two-stage award date parsing:
 ### Excel Structure
 Headers located at row 12:
 ```python
-excel_read_options={"header": 11}
+excel_read_options = {"header": 11}
 ```
 
 ### Country Defaulting
@@ -144,9 +144,9 @@ DOT opens downloads in new pages/tabs requiring special handling:
 ### Retry Configuration
 Complex retry logic for handling transient failures:
 ```python
-retry_attempts=[
+retry_attempts = [
     {"selector": "button[specific-id]", "wait_ms": 5000},
-    {"selector": "a.download-link", "wait_ms": 10000}
+    {"selector": "a.download-link", "wait_ms": 10000},
 ]
 ```
 
@@ -155,7 +155,7 @@ retry_attempts=[
 ### XLSM Files
 SSA uses macro-enabled Excel files (.xlsm) requiring:
 ```python
-excel_read_options={"engine": "openpyxl"}
+excel_read_options = {"engine": "openpyxl"}
 ```
 
 ### Invalid Value Handling
@@ -183,7 +183,7 @@ Consistent naming pattern:
 ### Duplicate Detection
 Each scraper defines fields for ID generation:
 ```python
-fields_for_id_hash=['native_id', 'naics_code', 'title', 'description']
+fields_for_id_hash = ["native_id", "naics_code", "title", "description"]
 ```
 
 ## Adding New Scrapers

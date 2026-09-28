@@ -18,7 +18,7 @@ export default function AdminDecisions() {
   const { handleError } = useError();
   const [decisionFilter, setDecisionFilter] = useState<'go' | 'no-go' | 'all'>('all');
   const [selectedUserId, setSelectedUserId] = useState<number | undefined>();
-  
+
   // Call hooks before any conditional returns
   const { data: decisionsData, isLoading: decisionsLoading } = useAdminDecisions({
     page: 1,
@@ -30,7 +30,7 @@ export default function AdminDecisions() {
   const { data: statsData } = useAdminDecisionStats();
   const { data: usersData, isLoading: usersLoading } = useAdminUsers({ page: 1, per_page: 100 });
   const exportMutation = useExportDecisions();
-  
+
   // Redirect if not admin
   if (!isAdmin) {
     return (
@@ -46,48 +46,48 @@ export default function AdminDecisions() {
   const handleExport = async () => {
     try {
       const result = await exportMutation.mutateAsync();
-      
+
       // Convert to CSV and download
       if (result.data?.decisions) {
         const headers = [
           // Decision fields
           'Decision ID', 'Decision', 'Reason', 'Decision Created At', 'Decision Updated At',
-          
+
           // User fields
           'User ID', 'User Email', 'User Name',
-          
+
           // Prospect identification
           'Prospect ID', 'Prospect Native ID',
-          
+
           // Prospect basic info
           'Prospect Title', 'AI Enhanced Title', 'Description', 'Agency',
-          
+
           // NAICS classification
           'NAICS Code', 'NAICS Description', 'NAICS Source',
-          
+
           // Financial information
           'Estimated Value', 'Est Value Unit', 'Estimated Value Text',
           'Estimated Value Min', 'Estimated Value Max', 'Estimated Value Single',
-          
+
           // Important dates
           'Release Date', 'Award Date', 'Award Fiscal Year',
-          
+
           // Location information
           'Place City', 'Place State', 'Place Country',
-          
+
           // Contract details
           'Contract Type', 'Set Aside',
-          
+
           // Contact information
           'Primary Contact Email', 'Primary Contact Name',
-          
+
           // Processing metadata
           'Loaded At', 'Ollama Processed At', 'Ollama Model Version',
           'Enhancement Status', 'Enhancement Started At', 'Enhancement User ID'
         ];
-        
+
         const escapeCSV = (text: string) => `"${(text || '').replace(/"/g, '""')}"`;
-        
+
         const csvContent = [
           headers.join(','),
           ...result.data.decisions.map(decision => [
@@ -97,27 +97,27 @@ export default function AdminDecisions() {
             escapeCSV(decision.reason),
             decision.decision_created_at,
             decision.decision_updated_at,
-            
+
             // User fields
             decision.user_id,
             decision.user_email,
             decision.user_name,
-            
+
             // Prospect identification
             decision.prospect_id,
             escapeCSV(decision.prospect_native_id),
-            
+
             // Prospect basic info
             escapeCSV(decision.prospect_title),
             escapeCSV(decision.prospect_ai_enhanced_title),
             escapeCSV(decision.prospect_description),
             escapeCSV(decision.prospect_agency),
-            
+
             // NAICS classification
             escapeCSV(decision.prospect_naics),
             escapeCSV(decision.prospect_naics_description),
             escapeCSV(decision.prospect_naics_source),
-            
+
             // Financial information
             escapeCSV(decision.prospect_estimated_value),
             escapeCSV(decision.prospect_est_value_unit),
@@ -125,25 +125,25 @@ export default function AdminDecisions() {
             escapeCSV(decision.prospect_estimated_value_min),
             escapeCSV(decision.prospect_estimated_value_max),
             escapeCSV(decision.prospect_estimated_value_single),
-            
+
             // Important dates
             decision.prospect_release_date,
             decision.prospect_award_date,
             decision.prospect_award_fiscal_year,
-            
+
             // Location information
             escapeCSV(decision.prospect_place_city),
             escapeCSV(decision.prospect_place_state),
             escapeCSV(decision.prospect_place_country),
-            
+
             // Contract details
             escapeCSV(decision.prospect_contract_type),
             escapeCSV(decision.prospect_set_aside),
-            
+
             // Contact information
             escapeCSV(decision.prospect_primary_contact_email),
             escapeCSV(decision.prospect_primary_contact_name),
-            
+
             // Processing metadata
             decision.prospect_loaded_at,
             decision.prospect_ollama_processed_at,
@@ -263,7 +263,7 @@ export default function AdminDecisions() {
               <CardDescription>
                 View and filter all Go/No-Go decisions across all users
               </CardDescription>
-              
+
               <div className="flex space-x-4">
                 <Select value={decisionFilter} onValueChange={(value: 'go' | 'no-go' | 'all') => setDecisionFilter(value)}>
                   <SelectTrigger className="w-[180px]">
@@ -276,8 +276,8 @@ export default function AdminDecisions() {
                   </SelectContent>
                 </Select>
 
-                <Select 
-                  value={selectedUserId?.toString() || 'all'} 
+                <Select
+                  value={selectedUserId?.toString() || 'all'}
                   onValueChange={(value) => setSelectedUserId(value === 'all' ? undefined : parseInt(value))}
                 >
                   <SelectTrigger className="w-[200px]">

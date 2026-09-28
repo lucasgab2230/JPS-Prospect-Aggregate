@@ -88,12 +88,12 @@ export interface AuthErrorDetails extends BaseError {
 }
 
 // Union type for all error types
-export type AppError = 
-  | ApiErrorDetails 
-  | ValidationErrorDetails 
-  | NetworkErrorDetails 
-  | BusinessErrorDetails 
-  | AuthErrorDetails 
+export type AppError =
+  | ApiErrorDetails
+  | ValidationErrorDetails
+  | NetworkErrorDetails
+  | BusinessErrorDetails
+  | AuthErrorDetails
   | BaseError;
 
 // Error code constants
@@ -104,25 +104,25 @@ export const ERROR_CODES = {
   API_CLIENT_ERROR: 'API_CLIENT_ERROR',
   API_NETWORK_ERROR: 'API_NETWORK_ERROR',
   API_PARSE_ERROR: 'API_PARSE_ERROR',
-  
+
   // Validation Errors
   VALIDATION_REQUIRED: 'VALIDATION_REQUIRED',
   VALIDATION_FORMAT: 'VALIDATION_FORMAT',
   VALIDATION_RANGE: 'VALIDATION_RANGE',
   VALIDATION_UNIQUE: 'VALIDATION_UNIQUE',
-  
+
   // Business Errors
   BUSINESS_RULE_VIOLATION: 'BUSINESS_RULE_VIOLATION',
   DUPLICATE_ENTITY: 'DUPLICATE_ENTITY',
   ENTITY_NOT_FOUND: 'ENTITY_NOT_FOUND',
   OPERATION_NOT_ALLOWED: 'OPERATION_NOT_ALLOWED',
-  
+
   // Auth Errors
   AUTH_UNAUTHORIZED: 'AUTH_UNAUTHORIZED',
   AUTH_FORBIDDEN: 'AUTH_FORBIDDEN',
   AUTH_SESSION_EXPIRED: 'AUTH_SESSION_EXPIRED',
   AUTH_INVALID_CREDENTIALS: 'AUTH_INVALID_CREDENTIALS',
-  
+
   // System Errors
   SYSTEM_UNAVAILABLE: 'SYSTEM_UNAVAILABLE',
   SYSTEM_MAINTENANCE: 'SYSTEM_MAINTENANCE',
@@ -147,7 +147,7 @@ export function isBusinessError(error: AppError): error is BusinessErrorDetails 
 }
 
 export function isAuthError(error: AppError): error is AuthErrorDetails {
-  return error.category === ErrorCategory.AUTHENTICATION || 
+  return error.category === ErrorCategory.AUTHENTICATION ||
          error.category === ErrorCategory.AUTHORIZATION;
 }
 
@@ -260,25 +260,25 @@ function getDefaultUserMessage(category: ErrorCategory, status?: number): string
         if (status >= 400) return 'There was a problem with your request.';
       }
       return 'An error occurred while processing your request.';
-    
+
     case ErrorCategory.NETWORK:
       return 'Network connection issue. Please check your internet connection.';
-    
+
     case ErrorCategory.VALIDATION:
       return 'Please check your input and try again.';
-    
+
     case ErrorCategory.AUTHENTICATION:
       return 'Authentication required. Please sign in.';
-    
+
     case ErrorCategory.AUTHORIZATION:
       return 'You do not have permission to perform this action.';
-    
+
     case ErrorCategory.BUSINESS:
       return 'This operation cannot be completed due to business rules.';
-    
+
     case ErrorCategory.SYSTEM:
       return 'A system error occurred. Please try again later.';
-    
+
     default:
       return 'An unexpected error occurred.';
   }

@@ -89,10 +89,10 @@ describe('TimezoneContext', () => {
     // Clean up any elements added to body during tests
     document.querySelectorAll('[data-testid="system-timezone"]').forEach(el => el.remove());
     document.querySelectorAll('[data-testid="timezone-offset"]').forEach(el => el.remove());
-    
+
     // Clear storage
     storageMap.clear();
-    
+
     // Reset Intl mock to return dynamic timezone
     const systemTimezones = ['America/Chicago', 'Europe/London', 'Asia/Tokyo', 'Australia/Sydney'];
     const randomSystemTz = systemTimezones[Math.floor(Math.random() * systemTimezones.length)];
@@ -118,7 +118,7 @@ describe('TimezoneContext', () => {
     // Should have a timezone and locale set
     const timezoneElement = screen.getByTestId('current-timezone');
     const localeElement = screen.getByTestId('current-locale');
-    
+
     expect(timezoneElement.textContent).toBeTruthy();
     expect(localeElement.textContent).toBeTruthy();
     // Timezone should be a valid format
@@ -128,11 +128,11 @@ describe('TimezoneContext', () => {
   it('throws error when useTimezone is used outside provider', () => {
     // Suppress console.error for this test
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    
+
     expect(() => {
       render(<TestComponentWithoutProvider />);
     }).toThrow('useTimezone must be used within a TimezoneProvider');
-  
+
     consoleSpy.mockRestore();
   });
 
@@ -141,7 +141,7 @@ describe('TimezoneContext', () => {
     const timezones = Object.keys(COMMON_TIMEZONES);
     const userTimezone = timezones[Math.floor(Math.random() * timezones.length)];
     const userLocale = ['en-US', 'es-ES', 'fr-FR'][Math.floor(Math.random() * 3)];
-    
+
     const mockUser: User = {
       id: Math.floor(Math.random() * 10000),
       first_name: `User${Math.floor(Math.random() * 100)}`,
@@ -168,7 +168,7 @@ describe('TimezoneContext', () => {
     // Set dynamic values in storage
     const storedTimezone = ['America/Denver', 'Europe/Paris', 'Asia/Shanghai'][Math.floor(Math.random() * 3)];
     const storedLocale = ['fr-FR', 'de-DE', 'it-IT'][Math.floor(Math.random() * 3)];
-    
+
     storageMap.set('userTimezone', storedTimezone);
     storageMap.set('userLocale', storedLocale);
 
@@ -252,12 +252,12 @@ describe('TimezoneContext', () => {
 
     const newTimezone = screen.getByTestId('current-timezone').textContent;
     const newLocale = screen.getByTestId('current-locale').textContent;
-    
+
     // Verify that timezone changed and is a valid format
     expect(newTimezone).not.toBe(initialTimezone);
     expect(newTimezone).toMatch(/^[A-Za-z_]+\/[A-Za-z_]+$/);
     expect(newLocale).toMatch(/^[a-z]{2}-[A-Z]{2}$/);
-    
+
     // Verify storage was called with the new values
     expect(mockLocalStorage.setItem).toHaveBeenCalledWith('userTimezone', newTimezone);
     expect(mockLocalStorage.setItem).toHaveBeenCalledWith('userLocale', newLocale);
@@ -266,7 +266,7 @@ describe('TimezoneContext', () => {
   it('sets timezone without changing locale when locale not provided', () => {
     const TimezoneOnlyComponent = () => {
       const { setUserTimezone } = useTimezone();
-      
+
       const handleSetTimezoneOnly = () => {
         setUserTimezone('Europe/Paris');
       };
@@ -286,12 +286,12 @@ describe('TimezoneContext', () => {
     );
 
     const originalLocale = screen.getByTestId('current-locale').textContent;
-    
+
     fireEvent.click(screen.getByTestId('set-timezone-only'));
 
     expect(screen.getByTestId('current-timezone')).toHaveTextContent('Europe/Paris');
     expect(screen.getByTestId('current-locale')).toHaveTextContent(originalLocale || '');
-    
+
     expect(mockLocalStorage.setItem).toHaveBeenCalledWith('userTimezone', 'Europe/Paris');
     expect(mockLocalStorage.setItem).not.toHaveBeenCalledWith('userLocale', expect.anything());
   });
@@ -392,10 +392,10 @@ describe('TimezoneContext', () => {
     // Generate dynamic user data
     const timezones = Object.keys(COMMON_TIMEZONES);
     const locales = ['en-US', 'fr-FR', 'de-DE', 'es-ES', 'ja-JP'];
-    
+
     const initialTimezone = timezones[Math.floor(Math.random() * timezones.length)];
     const initialLocale = locales[Math.floor(Math.random() * locales.length)];
-    
+
     const initialUser: User = {
       id: Math.floor(Math.random() * 10000),
       first_name: `User${Math.floor(Math.random() * 100)}`,
@@ -420,7 +420,7 @@ describe('TimezoneContext', () => {
     // Change to different timezone and locale
     const updatedTimezone = timezones.find(tz => tz !== initialTimezone) || 'UTC';
     const updatedLocale = locales.find(loc => loc !== initialLocale) || 'en-US';
-    
+
     const updatedUser: User = {
       ...initialUser,
       timezone: updatedTimezone,
@@ -441,7 +441,7 @@ describe('TimezoneContext', () => {
     // Generate dynamic storage values
     const storageTimezone = ['America/Denver', 'Europe/Berlin', 'Australia/Sydney'][Math.floor(Math.random() * 3)];
     const storageLocale = ['es-ES', 'fr-FR', 'it-IT'][Math.floor(Math.random() * 3)];
-    
+
     mockLocalStorage.getItem.mockImplementation((key) => {
       if (key === 'userTimezone') return storageTimezone;
       if (key === 'userLocale') return storageLocale;
@@ -451,7 +451,7 @@ describe('TimezoneContext', () => {
     // Generate different user preferences
     const userTimezone = ['Asia/Tokyo', 'Europe/London', 'America/New_York'][Math.floor(Math.random() * 3)];
     const userLocale = ['ja-JP', 'en-GB', 'en-US'][Math.floor(Math.random() * 3)];
-    
+
     const mockUser: User = {
       id: Math.floor(Math.random() * 10000),
       first_name: `User${Math.floor(Math.random() * 100)}`,
@@ -485,7 +485,7 @@ describe('TimezoneContext', () => {
   it('handles user without timezone/locale properties', () => {
     // Generate dynamic storage value
     const storageTimezone = ['America/Denver', 'Europe/Paris', 'Asia/Shanghai'][Math.floor(Math.random() * 3)];
-    
+
     const userWithoutTimezone: User = {
       id: Math.floor(Math.random() * 10000),
       first_name: `User${Math.floor(Math.random() * 100)}`,
@@ -515,7 +515,7 @@ describe('TimezoneContext', () => {
   it('saves locale to localStorage when provided', () => {
     const LocaleTestComponent = () => {
       const { setUserTimezone } = useTimezone();
-      
+
       const handleSetWithLocale = () => {
         setUserTimezone('Europe/Berlin', 'de-DE');
       };
@@ -541,10 +541,10 @@ describe('TimezoneContext', () => {
 
   it('provides stable function references across re-renders', () => {
     let firstRenderFunctions: any;
-    
+
     const FunctionRefComponent = () => {
       const context = useTimezone();
-      
+
       if (!firstRenderFunctions) {
         firstRenderFunctions = {
           setUserTimezone: context.setUserTimezone,
@@ -552,12 +552,12 @@ describe('TimezoneContext', () => {
           getTimezoneOffset: context.getTimezoneOffset
         };
       }
-      
-      const isStable = 
+
+      const isStable =
         Object.is(context.setUserTimezone, firstRenderFunctions.setUserTimezone) &&
         Object.is(context.detectSystemTimezone, firstRenderFunctions.detectSystemTimezone) &&
         Object.is(context.getTimezoneOffset, firstRenderFunctions.getTimezoneOffset);
-      
+
       return (
         <div data-testid="functions-stable">
           {isStable ? 'stable' : 'changed'}
@@ -592,23 +592,23 @@ describe('COMMON_TIMEZONES', () => {
 
   it('contains expected US timezones', () => {
     const usTimezones = COMMON_TIMEZONES.filter(tz => tz.group === 'US');
-    
+
     // Test that US timezone group exists and has proper structure
     expect(usTimezones.length).toBeGreaterThan(0);
-    
+
     // Test that all US timezones have America/ prefix
     usTimezones.forEach(tz => {
       expect(tz.value).toMatch(/^America\/)/);
       expect(tz.group).toBe('US');
       expect(typeof tz.label).toBe('string');
     });
-    
+
     // Test for presence of major US timezones (behavioral, not hardcoded)
     const timezoneValues = usTimezones.map(tz => tz.value);
     const hasEasternTime = timezoneValues.some(tz => tz.includes('New_York'));
     const hasCentralTime = timezoneValues.some(tz => tz.includes('Chicago'));
     const hasPacificTime = timezoneValues.some(tz => tz.includes('Los_Angeles'));
-    
+
     expect(hasEasternTime).toBe(true);
     expect(hasCentralTime).toBe(true);
     expect(hasPacificTime).toBe(true);
@@ -616,23 +616,23 @@ describe('COMMON_TIMEZONES', () => {
 
   it('contains international timezones', () => {
     const intlTimezones = COMMON_TIMEZONES.filter(tz => tz.group === 'International');
-    
+
     // Test that international timezone group exists
     expect(intlTimezones.length).toBeGreaterThan(0);
-    
+
     // Test structure of international timezones
     intlTimezones.forEach(tz => {
       expect(tz.group).toBe('International');
       expect(typeof tz.value).toBe('string');
       expect(typeof tz.label).toBe('string');
     });
-    
+
     // Test for presence of UTC and major international timezones (behavioral)
     const timezoneValues = intlTimezones.map(tz => tz.value);
     const hasUTC = timezoneValues.includes('UTC');
     const hasEuropeanTimezone = timezoneValues.some(tz => tz.startsWith('Europe/'));
     const hasAsianTimezone = timezoneValues.some(tz => tz.startsWith('Asia/'));
-    
+
     expect(hasUTC).toBe(true);
     expect(hasEuropeanTimezone).toBe(true);
     expect(hasAsianTimezone).toBe(true);

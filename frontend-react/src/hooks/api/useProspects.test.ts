@@ -96,8 +96,8 @@ const createWrapper = () => {
       mutations: { retry: false }
     }
   });
-  
-  return ({ children }: { children: React.ReactNode }) => 
+
+  return ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: queryClient }, children);
 };
 
@@ -107,12 +107,12 @@ describe('useInfiniteProspects', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    
+
     // Get mocked functions
     const { get, buildQueryString } = await import('@/utils/apiUtils');
     mockGet = get;
     mockBuildQueryString = buildQueryString;
-    
+
     mockGet.mockResolvedValue(mockPaginatedResponse);
     mockBuildQueryString.mockImplementation((params) => {
       const searchParams = new URLSearchParams();
@@ -434,7 +434,7 @@ describe('useProspect', () => {
 
   it('fetches single prospect by ID', async () => {
     const prospectId = 'prospect-123';
-    
+
     const { result } = renderHook(() => useProspect(prospectId), {
       wrapper: createWrapper()
     });
@@ -466,7 +466,7 @@ describe('useProspect', () => {
 
   it('handles numeric prospect IDs', async () => {
     const prospectId = 123;
-    
+
     const { result } = renderHook(() => useProspect(prospectId), {
       wrapper: createWrapper()
     });
