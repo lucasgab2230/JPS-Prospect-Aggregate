@@ -31,7 +31,7 @@ test-python:
 	@echo "Running Python tests..."
 	@ci-test/test-ci-local.sh --python-only
 
-# Run only frontend tests  
+# Run only frontend tests
 test-frontend:
 	@echo "Running frontend tests..."
 	@ci-test/test-ci-local.sh --frontend-only

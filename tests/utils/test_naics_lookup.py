@@ -28,9 +28,9 @@ class TestNAICSValidation:
             result = validate_naics_code(code)
 
             # The function should return a boolean for well-formatted codes
-            assert isinstance(
-                result, bool
-            ), f"validate_naics_code should return bool for {code}"
+            assert isinstance(result, bool), (
+                f"validate_naics_code should return bool for {code}"
+            )
 
             # If it starts with certain prefixes, it might be valid
             # We're testing the function behavior, not specific codes
@@ -76,9 +76,9 @@ class TestNAICSDescriptions:
         # Test that existing codes return their descriptions
         for code, expected_desc in test_descriptions.items():
             result = get_naics_description(code)
-            assert (
-                result == expected_desc
-            ), "Description lookup should return the mapped description"
+            assert result == expected_desc, (
+                "Description lookup should return the mapped description"
+            )
 
     @patch("app.utils.naics_lookup.NAICS_DESCRIPTIONS")
     def test_get_naics_description_non_existing_codes(self, mock_naics_codes):
@@ -110,9 +110,9 @@ class TestNAICSDescriptions:
 
         for invalid_input in invalid_inputs:
             result = get_naics_description(invalid_input)
-            assert (
-                result is None
-            ), f"Should return None for invalid input {invalid_input}"
+            assert result is None, (
+                f"Should return None for invalid input {invalid_input}"
+            )
 
 
 class TestNAICSInfo:

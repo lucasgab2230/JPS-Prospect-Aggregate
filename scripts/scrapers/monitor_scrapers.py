@@ -13,9 +13,9 @@ from app.utils.scraper_utils import trigger_scraper
 
 def monitor_scraper(source_id, source_name, timeout=300):
     """Monitor a scraper until completion or timeout."""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Starting {source_name} (ID: {source_id})")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     # Trigger the scraper
     try:
@@ -72,11 +72,11 @@ def main():
             # Small delay between scrapers
             time.sleep(2)
 
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(
             f"Summary: {success_count}/{len(sources)} scrapers completed successfully"
         )
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
 
 
 if __name__ == "__main__":

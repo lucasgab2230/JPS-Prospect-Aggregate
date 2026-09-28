@@ -4,8 +4,8 @@ Handles user decisions on prospects for company preferences.
 """
 
 import datetime
-from datetime import timezone
-UTC = timezone.utc
+
+UTC = datetime.UTC
 
 from flask import Blueprint, jsonify, request, session
 from sqlalchemy import desc, func
@@ -92,36 +92,35 @@ def create_decision():
                     },
                 }
             )
-        else:
-            # Create new decision
-            new_decision = GoNoGoDecision(
-                prospect_id=prospect_id,
-                user_id=user_id,
-                decision=decision,
-                reason=reason,
-            )
+        # Create new decision
+        new_decision = GoNoGoDecision(
+            prospect_id=prospect_id,
+            user_id=user_id,
+            decision=decision,
+            reason=reason,
+        )
 
-            db.session.add(new_decision)
-            db.session.commit()
+        db.session.add(new_decision)
+        db.session.commit()
 
-            # Get user data for response
-            user_data = get_user_data_dict(get_user_by_id(user_id))
+        # Get user data for response
+        user_data = get_user_data_dict(get_user_by_id(user_id))
 
-            logger.info(
-                f"Created decision for prospect {prospect_id} by user {user_id}: {decision}"
-            )
+        logger.info(
+            f"Created decision for prospect {prospect_id} by user {user_id}: {decision}"
+        )
 
-            return jsonify(
-                {
-                    "status": "success",
-                    "data": {
-                        "decision": new_decision.to_dict(
-                            include_user=True, user_data=user_data
-                        ),
-                        "message": "Decision created successfully",
-                    },
-                }
-            )
+        return jsonify(
+            {
+                "status": "success",
+                "data": {
+                    "decision": new_decision.to_dict(
+                        include_user=True, user_data=user_data
+                    ),
+                    "message": "Decision created successfully",
+                },
+            }
+        )
 
     except Exception as e:
         logger.error(f"Error creating/updating decision: {str(e)}", exc_info=True)
@@ -292,9 +291,7 @@ def get_decision_stats():
         )
 
         # Get recent activity (last 30 days)
-        thirty_days_ago = datetime.datetime.now(UTC) - datetime.timedelta(
-            days=30
-        )
+        thirty_days_ago = datetime.datetime.now(UTC) - datetime.timedelta(days=30)
         recent_decisions = (
             db.session.query(func.count(GoNoGoDecision.id))
             .filter(

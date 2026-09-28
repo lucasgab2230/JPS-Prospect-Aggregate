@@ -60,15 +60,15 @@ export function useEnhancementSimple() {
   const pollEnhancementStatus = useCallback(async (prospectId: string, queueItemId: string) => {
     try {
       console.log(`[Enhancement] Polling status for ${prospectId} with queue item ${queueItemId}`);
-      
+
       // Use the queue item status endpoint
       const response = await get<any>(`/api/llm/queue/item/${queueItemId}`);
-      
+
       console.log(`[Enhancement] Poll response for ${prospectId}:`, response);
-      
+
       // Get previous state from ref to preserve queue position
       const prevState = enhancementStatesRef.current[prospectId];
-      
+
       // Map the response to our simple state
       const status: EnhancementState = {
         status: response.status || 'processing',
@@ -88,7 +88,7 @@ export function useEnhancementSimple() {
         ...prev,
         [prospectId]: status
       }));
-      
+
       // Reset retry count on successful poll
       pollingRetryCountRef.current.delete(prospectId);
 
@@ -107,7 +107,7 @@ export function useEnhancementSimple() {
             delete updated[prospectId];
             return updated;
           });
-          
+
           // Invalidate queries to refresh data
           queryClient.invalidateQueries({ queryKey: ['prospects'] });
           queryClient.invalidateQueries({ queryKey: ['prospect', prospectId] }); // Also invalidate individual prospect
@@ -116,11 +116,11 @@ export function useEnhancementSimple() {
       }
     } catch (error) {
       console.error(`Failed to poll status for ${prospectId}:`, error);
-      
+
       // Track retry count
       const currentRetries = pollingRetryCountRef.current.get(prospectId) || 0;
       pollingRetryCountRef.current.set(prospectId, currentRetries + 1);
-      
+
       // If too many retries, mark as failed
       if (currentRetries >= 5) {
         const interval = pollingIntervalsRef.current.get(prospectId);
@@ -129,7 +129,7 @@ export function useEnhancementSimple() {
           pollingIntervalsRef.current.delete(prospectId);
         }
         pollingRetryCountRef.current.delete(prospectId);
-        
+
         // Update state to show error
         setEnhancementStates(prev => ({
           ...prev,
@@ -141,7 +141,7 @@ export function useEnhancementSimple() {
             completedSteps: prev[prospectId]?.completedSteps || []
           }
         }));
-        
+
         // Clean up after delay
         setTimeout(() => {
           setEnhancementStates(prev => {
@@ -158,14 +158,14 @@ export function useEnhancementSimple() {
   // Queue enhancement
   const queueEnhancement = useCallback(async (request: EnhancementRequest): Promise<string> => {
     const { prospect_id } = request;
-    
+
     try {
-      const enhancementType = request.enhancement_types?.length 
+      const enhancementType = request.enhancement_types?.length
         ? request.enhancement_types.join(',')
         : 'all';
-      
+
       console.log(`[Enhancement] Queueing enhancement for ${prospect_id}`, { enhancementType, force_redo: request.force_redo });
-      
+
       // Set initial state immediately before making the request
       setEnhancementStates(prev => ({
         ...prev,
@@ -205,10 +205,10 @@ export function useEnhancementSimple() {
       const interval = setInterval(() => {
         pollEnhancementStatus(prospect_id, queueItemId);
       }, 2500); // Poll every 2.5 seconds
-      
+
       pollingIntervalsRef.current.set(prospect_id, interval);
       pollingRetryCountRef.current.delete(prospect_id); // Reset retry count
-      
+
       // Do initial poll immediately
       pollEnhancementStatus(prospect_id, queueItemId);
 
@@ -225,7 +225,7 @@ export function useEnhancementSimple() {
       return queueItemId;
     } catch (error: unknown) {
       const apiError = error as ApiError;
-      
+
       // Update state to show error
       setEnhancementStates(prev => ({
         ...prev,
@@ -258,34 +258,34 @@ export function useEnhancementSimple() {
     try {
       // Get the queue item ID from state
       const state = enhancementStatesRef.current[prospectId];
-      
+
       if (state?.queueItemId) {
         // Call backend cancel API
         console.log(`[Enhancement] Cancelling enhancement for ${prospectId} with queue item ${state.queueItemId}`);
-        
+
         // Try the cancel endpoint
         await post(`/api/llm/queue/item/${state.queueItemId}/cancel`, {});
-        
+
         console.log(`[Enhancement] Successfully cancelled enhancement for ${prospectId}`);
       }
-      
+
       // Stop polling
       const interval = pollingIntervalsRef.current.get(prospectId);
       if (interval) {
         clearInterval(interval);
         pollingIntervalsRef.current.delete(prospectId);
       }
-      
+
       // Clear retry count
       pollingRetryCountRef.current.delete(prospectId);
-      
+
       // Clear state
       setEnhancementStates(prev => {
         const updated = { ...prev };
         delete updated[prospectId];
         return updated;
       });
-      
+
       // Show toast
       if (window.showToast) {
         window.showToast({
@@ -295,26 +295,26 @@ export function useEnhancementSimple() {
           duration: 2000
         });
       }
-      
+
       return true;
     } catch (error) {
       console.error(`Failed to cancel enhancement for ${prospectId}:`, error);
-      
+
       // Still clean up local state even if backend cancel fails
       const interval = pollingIntervalsRef.current.get(prospectId);
       if (interval) {
         clearInterval(interval);
         pollingIntervalsRef.current.delete(prospectId);
       }
-      
+
       pollingRetryCountRef.current.delete(prospectId);
-      
+
       setEnhancementStates(prev => {
         const updated = { ...prev };
         delete updated[prospectId];
         return updated;
       });
-      
+
       if (window.showToast) {
         window.showToast({
           title: 'Cancel Warning',
@@ -323,7 +323,7 @@ export function useEnhancementSimple() {
           duration: 3000
         });
       }
-      
+
       return false;
     }
   }, []);

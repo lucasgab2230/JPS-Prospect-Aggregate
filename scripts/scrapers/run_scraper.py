@@ -61,11 +61,10 @@ def main():
                 if result.get("message"):
                     print(f"Status: {result['message']}")
                 return 0
-            else:
-                print(f"Failed to run scraper for {source.name}")
-                if result.get("error"):
-                    print(f"Error: {result['error']}")
-                return 1
+            print(f"Failed to run scraper for {source.name}")
+            if result.get("error"):
+                print(f"Error: {result['error']}")
+            return 1
 
         except Exception as e:
             print(f"Error running scraper: {e}")

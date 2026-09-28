@@ -16,7 +16,7 @@ import { ProspectDetailsModal } from '@/components/prospect/ProspectDetailsModal
 
 export default function Dashboard() {
   const [showAIEnhanced, setShowAIEnhanced] = useState(true);
-  
+
   // Use the new hooks
   const {
     filters,
@@ -25,7 +25,7 @@ export default function Dashboard() {
     clearFilters,
     hasActiveFilters
   } = useProspectFilters();
-  
+
   const {
     prospects,
     total,
@@ -39,7 +39,7 @@ export default function Dashboard() {
     resetPagination,
     refetch: _refetch
   } = usePaginatedProspects(filters);
-  
+
   const {
     selectedProspect,
     isOpen: isDialogOpen,
@@ -48,7 +48,7 @@ export default function Dashboard() {
     handleOpenChange,
     setIsOpen: _setIsDialogOpen
   } = useProspectModal(prospects);
-  
+
   const { columns } = useProspectColumns(showAIEnhanced);
 
   // Data sources hook
@@ -57,8 +57,8 @@ export default function Dashboard() {
 
   // Enhancement hook
   const { addToQueue, getProspectStatus } = useProspectEnhancement();
-  
-  
+
+
   // Timezone hook for date formatting
   const { formatUserDate } = useTimezoneDate();
 
@@ -82,21 +82,21 @@ export default function Dashboard() {
     updateFilter(filterKey, value);
     resetPagination();
   }, [updateFilter, resetPagination]);
-  
+
   const handleDataSourceToggle = useCallback((sourceId: number) => {
     toggleDataSource(sourceId);
     resetPagination();
   }, [toggleDataSource, resetPagination]);
-  
+
   const handleRowClick = useCallback((prospect: Prospect) => {
     openModal(prospect);
   }, [openModal]);
-  
+
   const handleClearFilters = useCallback(() => {
     clearFilters();
     resetPagination();
   }, [clearFilters, resetPagination]);
-  
+
 
   return (
     <PageLayout
@@ -116,7 +116,7 @@ export default function Dashboard() {
           showAIEnhanced={showAIEnhanced}
           onShowAIEnhancedChange={setShowAIEnhanced}
         />
-        
+
         {/* Prospects List Card - Main content */}
         <div className="flex-grow">
           <Card className="shadow-lg">

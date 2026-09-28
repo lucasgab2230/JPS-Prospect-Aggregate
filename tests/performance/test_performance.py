@@ -7,8 +7,9 @@ import json
 import os
 import tempfile
 import time
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime
 from unittest.mock import patch
 
@@ -62,13 +63,13 @@ def app():
     os.unlink(db_path)
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app):
     """Create a test client."""
     return app.test_client()
 
 
-@pytest.fixture()
+@pytest.fixture
 def auth_client(app, client):
     """Create an authenticated test client."""
     with patch("app.api.auth.get_current_user") as mock_auth:
@@ -80,7 +81,7 @@ def auth_client(app, client):
         yield client
 
 
-@pytest.fixture()
+@pytest.fixture
 def large_dataset(app):
     """Create a large dataset for performance testing."""
     with app.app_context():
@@ -107,8 +108,8 @@ def large_dataset(app):
             if i % 10 == 0:
                 prospect_data.update(
                     {
-                        "ai_enhanced_title": f'Enhanced: {prospect_data["title"]}',
-                        "ai_enhanced_description": f'AI Enhanced: {prospect_data["description"]}',
+                        "ai_enhanced_title": f"Enhanced: {prospect_data['title']}",
+                        "ai_enhanced_description": f"AI Enhanced: {prospect_data['description']}",
                         "ollama_processed_at": datetime.now(UTC),
                     }
                 )
@@ -213,9 +214,9 @@ class TestAPIResponseTimes:
         avg_time = sum(page_times) / len(page_times)
         max_time = max(page_times)
         # Performance should be relatively consistent
-        assert (
-            max_time < avg_time * 2
-        ), "Page load times should be relatively consistent"
+        assert max_time < avg_time * 2, (
+            "Page load times should be relatively consistent"
+        )
 
 
 class TestDatabasePerformance:
@@ -505,9 +506,9 @@ class TestConcurrencyPerformance:
         # Concurrent requests should all complete
         assert len(response_times) == 10, "All concurrent requests should complete"
         # Performance should not degrade catastrophically under load
-        assert (
-            max_response_time < avg_response_time * 5
-        ), "Max response time should not be excessive compared to average"
+        assert max_response_time < avg_response_time * 5, (
+            "Max response time should not be excessive compared to average"
+        )
 
 
 class TestScalabilityLimits:

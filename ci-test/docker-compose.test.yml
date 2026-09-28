@@ -18,7 +18,7 @@ services:
     working_dir: /app
     command: sleep infinity  # Keep container running
 
-  # Frontend test runner - matches CI environment  
+  # Frontend test runner - matches CI environment
   frontend-test:
     build:
       context: ..

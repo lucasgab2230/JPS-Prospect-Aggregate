@@ -6,7 +6,7 @@
     "noUnusedParameters": false,
     "exactOptionalPropertyTypes": false,
     "noUncheckedIndexedAccess": false,
-    
+
     /* Test-specific settings */
     "types": ["vitest/globals", "@testing-library/jest-dom", "node"]
   },

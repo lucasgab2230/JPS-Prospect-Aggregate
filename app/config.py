@@ -43,9 +43,11 @@ class Config:
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
     HOST: str = os.getenv("HOST", "0.0.0.0")
     PORT: int = int(os.getenv("PORT", 5001))
-    
+
     # Session configuration for authentication
-    SESSION_COOKIE_SECURE: bool = os.getenv("SESSION_COOKIE_SECURE", "False").lower() == "true"  # Set to True in production with HTTPS
+    SESSION_COOKIE_SECURE: bool = (
+        os.getenv("SESSION_COOKIE_SECURE", "False").lower() == "true"
+    )  # Set to True in production with HTTPS
     SESSION_COOKIE_HTTPONLY: bool = True  # Prevent JavaScript access to session cookies
     SESSION_COOKIE_SAMESITE: str = "Lax"  # CSRF protection
     SESSION_PERMANENT: bool = False  # Sessions expire when browser closes
@@ -174,23 +176,26 @@ class ProductionConfig(Config):
 
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
-    
+
     # Enforce secure session cookies in production
     SESSION_COOKIE_SECURE: bool = True
     SESSION_COOKIE_HTTPONLY: bool = True
     SESSION_COOKIE_SAMESITE: str = "Lax"
-    
+
     # Force HTTPS URL generation in production
     PREFERRED_URL_SCHEME: str = "https"
-    
+
     def __init__(self):
         """Initialize production config and validate critical settings."""
         super().__init__()
         # Ensure SECRET_KEY is set and not using the default
-        if not os.getenv("SECRET_KEY") or self.SECRET_KEY == "dev-secret-key-change-in-production-4f8a5c6e9b1d3a7f":
+        if (
+            not os.getenv("SECRET_KEY")
+            or self.SECRET_KEY == "dev-secret-key-change-in-production-4f8a5c6e9b1d3a7f"
+        ):
             raise ValueError(
                 "SECRET_KEY must be set in production environment! "
-                "Generate one with: python -c \"import secrets; print(secrets.token_hex(32))\""
+                'Generate one with: python -c "import secrets; print(secrets.token_hex(32))"'
             )
 
 

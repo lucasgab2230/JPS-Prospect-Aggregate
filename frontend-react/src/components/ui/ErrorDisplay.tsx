@@ -108,8 +108,8 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   const severityStyles = severityClasses[severity];
   const sizeStyles = sizeClasses[size];
 
-  const IconComponent = severity === 'error' ? ErrorIcon 
-    : severity === 'warning' ? WarningIcon 
+  const IconComponent = severity === 'error' ? ErrorIcon
+    : severity === 'warning' ? WarningIcon
     : InfoIcon;
 
   const containerClasses = [
@@ -129,20 +129,20 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
             <IconComponent className={`${sizeStyles.icon} ${severityStyles.icon}`} />
           </div>
         )}
-        
+
         <div className="flex-1">
           {title && (
             <h3 className={`${sizeStyles.title} ${severityStyles.title} mb-1`}>
               {title}
             </h3>
           )}
-          
+
           {errorMessage && (
             <div className="mb-0">
               {errorMessage}
             </div>
           )}
-          
+
           {children && (
             <div className={errorMessage ? 'mt-2' : ''}>
               {children}
@@ -213,7 +213,7 @@ export const ErrorFallback: React.FC<{
           Try again
         </button>
       </div>
-      
+
       {process.env.NODE_ENV === 'development' && error && (
         <details className="mt-4">
           <summary className="text-sm font-medium cursor-pointer">

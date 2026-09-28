@@ -79,7 +79,7 @@ export function ProspectTablePagination({
 
       // Middle pages - show fewer pages to avoid cramping
       let startPage, endPage;
-      
+
       if (currentPage <= 3) {
         // Near the beginning
         startPage = 2;

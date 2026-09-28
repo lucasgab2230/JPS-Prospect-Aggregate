@@ -37,12 +37,12 @@ const createWrapper = () => {
       mutations: { retry: false }
     }
   });
-  
+
   // Spy on setQueryDefaults to verify polling configuration
   vi.spyOn(queryClient, 'setQueryDefaults');
   vi.spyOn(queryClient, 'invalidateQueries');
-  
-  return ({ children }: { children: React.ReactNode }) => 
+
+  return ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: queryClient }, children);
 };
 
@@ -50,7 +50,7 @@ describe('useEnhancementActivityMonitor', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
-    
+
     // Default mock returns
     mockEnhancementStates.mockReturnValue({});
     mockIsWorkerRunning.mockReturnValue(false);
@@ -345,7 +345,7 @@ describe('useEnhancementActivityMonitor', () => {
 
     // Get the query client from the wrapper to check calls
     const _mockInvalidateQueries = vi.fn();
-    
+
     act(() => {
       result.current.refreshAll();
     });

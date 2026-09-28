@@ -46,7 +46,7 @@ const Login = () => {
             Simple access - no password required
           </p>
         </div>
-        
+
         <Card className="p-8">
           <form className="space-y-6" onSubmit={handleSubmit}>
             {error && (
@@ -107,8 +107,8 @@ const Login = () => {
                   setFirstName('');
                 }}
               >
-                {mode === 'signin' 
-                  ? "Don't have an account? Create one" 
+                {mode === 'signin'
+                  ? "Don't have an account? Create one"
                   : 'Already have an account? Sign in'
                 }
               </button>
