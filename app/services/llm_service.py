@@ -10,8 +10,9 @@ import re
 import threading
 import time
 from collections.abc import Callable
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime
 from typing import Any, Literal, Optional
 
@@ -255,9 +256,8 @@ class LLMService:
                                 code = parsed["code"]
                                 description = parsed["description"]
                                 break
-                            else:
-                                code = potential_code
-                                break
+                            code = potential_code
+                            break
 
                 if code:
                     break
@@ -645,19 +645,17 @@ class LLMService:
                 comprehensive_data = f"Set-aside: {main_set_aside}; Small Business Program: {additional_data}"
                 logger.info(f"Combined set-aside data: '{comprehensive_data}'")
                 return comprehensive_data
-            else:
-                logger.info(f"Same data in both sources, using: '{main_set_aside}'")
-                return main_set_aside
-        elif main_set_aside:
+            logger.info(f"Same data in both sources, using: '{main_set_aside}'")
+            return main_set_aside
+        if main_set_aside:
             logger.info(f"Using main set_aside field: '{main_set_aside}'")
             return main_set_aside
-        elif additional_data:
+        if additional_data:
             comprehensive_data = f"Small Business Program: {additional_data}"
             logger.info(f"Using additional data source: '{comprehensive_data}'")
             return comprehensive_data
-        else:
-            logger.info("No meaningful set-aside data found in any source")
-            return ""
+        logger.info("No meaningful set-aside data found in any source")
+        return ""
 
     def _classify_set_aside_with_llm(
         self, set_aside_text: str, prospect_id: str = None
@@ -788,23 +786,23 @@ class LLMService:
 
         if "small business" in response_lower or response_lower == "small":
             return StandardSetAside.SMALL_BUSINESS
-        elif (
+        if (
             "8(a)" in response_lower
             or "eight a" in response_lower
             or response_lower == "8a"
         ):
             return StandardSetAside.EIGHT_A
-        elif "hubzone" in response_lower or "hub zone" in response_lower:
+        if "hubzone" in response_lower or "hub zone" in response_lower:
             return StandardSetAside.HUBZONE
-        elif "women" in response_lower and "owned" in response_lower:
+        if "women" in response_lower and "owned" in response_lower:
             return StandardSetAside.WOMEN_OWNED
-        elif "veteran" in response_lower and "owned" in response_lower:
+        if "veteran" in response_lower and "owned" in response_lower:
             return StandardSetAside.VETERAN_OWNED
-        elif "full and open" in response_lower or response_lower == "unrestricted":
+        if "full and open" in response_lower or response_lower == "unrestricted":
             return StandardSetAside.FULL_AND_OPEN
-        elif "sole source" in response_lower:
+        if "sole source" in response_lower:
             return StandardSetAside.SOLE_SOURCE
-        elif response_lower in ["n/a", "na", "not available", "none", "unknown"]:
+        if response_lower in ["n/a", "na", "not available", "none", "unknown"]:
             return StandardSetAside.NOT_AVAILABLE
 
         return None
@@ -1146,7 +1144,7 @@ class LLMService:
         for i in range(0, len(prospects), self.batch_size):
             batch = prospects[i : i + self.batch_size]
             logger.info(
-                f"Processing batch {i//self.batch_size + 1}/{(len(prospects) + self.batch_size - 1)//self.batch_size}"
+                f"Processing batch {i // self.batch_size + 1}/{(len(prospects) + self.batch_size - 1) // self.batch_size}"
             )
 
             for prospect in batch:

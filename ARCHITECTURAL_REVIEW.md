@@ -75,29 +75,34 @@ class DatabaseInitializer:
 # Break into focused, composable components
 class BrowserManager:
     """Handles all Playwright browser operations"""
+
     def __init__(self, config: BrowserConfig):
         self.config = config
-    
+
     async def get_page(self) -> Page:
         pass
-    
+
     async def download_file(self, url: str) -> Path:
         pass
 
+
 class DataProcessor:
     """Handles data transformation and validation"""
+
     def process_csv(self, path: Path) -> pd.DataFrame:
         pass
-    
+
     def apply_column_mapping(self, df: pd.DataFrame) -> pd.DataFrame:
         pass
 
+
 class ScraperOrchestrator:
     """Coordinates scraping workflow"""
+
     def __init__(self, browser: BrowserManager, processor: DataProcessor):
         self.browser = browser
         self.processor = processor
-    
+
     async def scrape(self):
         # Orchestrate the workflow
         pass
@@ -209,21 +214,23 @@ CREATE TABLE prospect_metadata (
 # Use Pydantic for type-safe configuration
 from pydantic import BaseSettings, Field
 
+
 class Settings(BaseSettings):
     # Database
-    database_url: str = Field(..., env='DATABASE_URL')
-    
+    database_url: str = Field(..., env="DATABASE_URL")
+
     # Scraper settings
-    scraper_timeout: int = Field(60000, env='SCRAPER_TIMEOUT')
-    use_stealth_mode: bool = Field(False, env='USE_STEALTH')
-    
+    scraper_timeout: int = Field(60000, env="SCRAPER_TIMEOUT")
+    use_stealth_mode: bool = Field(False, env="USE_STEALTH")
+
     # LLM settings
-    ollama_url: str = Field('http://localhost:11434', env='OLLAMA_URL')
-    
+    ollama_url: str = Field("http://localhost:11434", env="OLLAMA_URL")
+
     class Config:
-        env_file = '.env'
-        env_file_encoding = 'utf-8'
-        
+        env_file = ".env"
+        env_file_encoding = "utf-8"
+
+
 settings = Settings()
 ```
 
@@ -578,22 +585,25 @@ def initialize_business_database(app):
     # Approach 1: Direct SQLAlchemy
     pass
 
-# app/database/auto_init.py  
+
+# app/database/auto_init.py
 def auto_initialize_database(app):
     # Approach 2: With automatic migration
     pass
+
 
 # app/utils/database_initializer.py
 def initialize_database(app):
     # Approach 3: With validation
     pass
 
+
 # Proposed: Single unified approach
 class DatabaseManager:
     def __init__(self, app):
         self.app = app
         self.db = db
-        
+
     def initialize(self):
         """Single initialization entry point"""
         try:
@@ -616,7 +626,7 @@ class ConsolidatedScraperBase:
     def __init__(self, config):
         # 2,644 lines of mixed responsibilities
         pass
-    
+
     async def scrape(self):
         # Browser automation
         # Data download
@@ -626,6 +636,7 @@ class ConsolidatedScraperBase:
         # Error handling
         pass
 
+
 # Proposed: Composition approach
 class ScraperWorkflow:
     def __init__(self, source_name: str):
@@ -634,7 +645,7 @@ class ScraperWorkflow:
         self.downloader = FileDownloader(self.config.download)
         self.processor = DataProcessor(self.config.processing)
         self.database = DatabaseWriter(self.config.database)
-        
+
     async def execute(self):
         """Orchestrate scraping workflow"""
         async with self.browser as browser:

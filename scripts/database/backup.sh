@@ -31,13 +31,13 @@ backup_database() {
     local db_file="$1"
     local db_name="$(basename "$db_file" .db)"
     local backup_file="$BACKUP_DIR/${db_name}_${TIMESTAMP}.db"
-    
+
     if [ -f "$db_file" ]; then
         echo -n "Backing up $db_name... "
-        
+
         # Use SQLite's backup command for consistency
         sqlite3 "$db_file" ".backup '$backup_file'" 2>/dev/null
-        
+
         if [ $? -eq 0 ]; then
             # Compress the backup
             gzip "$backup_file"

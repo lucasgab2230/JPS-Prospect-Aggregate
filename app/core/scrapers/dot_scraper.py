@@ -203,8 +203,7 @@ class DotScraper(ConsolidatedScraperBase):
                         )
                         await self.wait_for_timeout(delay * 1000)
                         continue
-                    else:
-                        raise nav_error  # Re-raise unexpected errors
+                    raise nav_error  # Re-raise unexpected errors
 
             except PlaywrightTimeoutError as e:
                 self.logger.warning(f"Attempt {i} timed out: {str(e)}")
@@ -604,44 +603,36 @@ class DotScraper(ConsolidatedScraperBase):
                                 "Successfully downloaded CSV via batch processing"
                             )
                             return download_path
-                        else:
-                            self.logger.error(
-                                "Download path not found or file doesn't exist"
-                            )
-                            return None
-                    else:
                         self.logger.error(
-                            "Batch processing timed out - no download occurred"
+                            "Download path not found or file doesn't exist"
                         )
                         return None
-                else:
-                    self.logger.warning(
-                        "New tab opened but couldn't identify batch processing page"
+                    self.logger.error(
+                        "Batch processing timed out - no download occurred"
                     )
-                    # Wait a bit to see if download happens anyway
-                    await self.wait_for_timeout(30000)  # 30 seconds
-
-                    if download_occurred["completed"]:
-                        return download_occurred["file_path"]
-                    else:
-                        self.logger.error("No download occurred on new tab")
-                        return None
-            else:
-                self.logger.info(
-                    "No new tab detected - checking for download on current page"
+                    return None
+                self.logger.warning(
+                    "New tab opened but couldn't identify batch processing page"
                 )
-                # Wait for potential download on current page
+                # Wait a bit to see if download happens anyway
                 await self.wait_for_timeout(30000)  # 30 seconds
 
                 if download_occurred["completed"]:
-                    download_path = download_occurred["file_path"]
-                    self.logger.info(
-                        f"Download occurred on current page: {download_path}"
-                    )
-                    return download_path
-                else:
-                    self.logger.error("No download occurred and no new tab opened")
-                    return None
+                    return download_occurred["file_path"]
+                self.logger.error("No download occurred on new tab")
+                return None
+            self.logger.info(
+                "No new tab detected - checking for download on current page"
+            )
+            # Wait for potential download on current page
+            await self.wait_for_timeout(30000)  # 30 seconds
+
+            if download_occurred["completed"]:
+                download_path = download_occurred["file_path"]
+                self.logger.info(f"Download occurred on current page: {download_path}")
+                return download_path
+            self.logger.error("No download occurred and no new tab opened")
+            return None
 
         except Exception as e:
             self.logger.error(f"DOT CSV download failed: {e}")

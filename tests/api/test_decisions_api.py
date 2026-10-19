@@ -12,8 +12,9 @@ Following production-level testing principles:
 import json
 import random
 import string
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime, timedelta
 
 import pytest
@@ -36,7 +37,7 @@ class TestDecisionsAPI:
         app.config["WTF_CSRF_ENABLED"] = False
         return app
 
-    @pytest.fixture()
+    @pytest.fixture
     def client(self, app):
         """Create test client."""
         return app.test_client()
@@ -62,7 +63,7 @@ class TestDecisionsAPI:
 
             for i in range(num_sources):
                 source = DataSource(
-                    name=f'Agency {random.choice(["Alpha", "Beta", "Gamma"])} {i}',
+                    name=f"Agency {random.choice(['Alpha', 'Beta', 'Gamma'])} {i}",
                     url=f"https://agency{i}.gov",
                     last_scraped=datetime.now(UTC)
                     - timedelta(days=random.randint(0, 7)),
@@ -80,7 +81,7 @@ class TestDecisionsAPI:
             for i in range(num_users):
                 user = User(
                     first_name=f"User {random.choice(string.ascii_uppercase)}{i}",
-                    email=f"user{i}@test{random.randint(1,100)}.com",
+                    email=f"user{i}@test{random.randint(1, 100)}.com",
                     role=roles[i % len(roles)],
                 )
                 db.session.add(user)
@@ -95,7 +96,7 @@ class TestDecisionsAPI:
             for i in range(num_prospects):
                 prospect = Prospect(
                     id=f"PROSPECT-{random.randint(1000, 9999)}-{i}",
-                    title=f'{random.choice(["Software", "Hardware", "Consulting", "Research"])} Contract {i}',
+                    title=f"{random.choice(['Software', 'Hardware', 'Consulting', 'Research'])} Contract {i}",
                     description=f"Description for contract {i} with various requirements",
                     agency=random.choice(data_sources).name,
                     naics=random.choice(["541511", "541512", "541519", "517311", None]),
@@ -120,7 +121,7 @@ class TestDecisionsAPI:
                     prospect_id=test_prospects[i].id,
                     user_id=random.choice(test_users).id,
                     decision=random.choice(["go", "no-go"]),
-                    reason=f'Reason {i}: {random.choice(["Good fit", "Not aligned", "High competition", "Strategic opportunity"])}',
+                    reason=f"Reason {i}: {random.choice(['Good fit', 'Not aligned', 'High competition', 'Strategic opportunity'])}",
                 )
                 db.session.add(decision)
                 existing_decisions.append(decision)
@@ -421,18 +422,17 @@ class TestDecisionsAPI:
                 stored_reason = data["data"]["decision"]["reason"]
                 # Verify reason was stored (may be processed/trimmed)
                 # Empty strings may be stored as None
-                if reason == "":
+                if reason == "" or reason is None:
                     assert stored_reason is None or stored_reason == ""
-                elif reason is None:
-                    assert stored_reason is None or stored_reason == ""
+                # Non-empty, non-None reasons should be stored (possibly trimmed)
+                elif reason.strip():
+                    # If there's content after stripping, it should be stored
+                    assert stored_reason is not None, (
+                        f"Expected non-None for reason={repr(reason)}, got {repr(stored_reason)}"
+                    )
                 else:
-                    # Non-empty, non-None reasons should be stored (possibly trimmed)
-                    if reason.strip():
-                        # If there's content after stripping, it should be stored
-                        assert stored_reason is not None, f"Expected non-None for reason={repr(reason)}, got {repr(stored_reason)}"
-                    else:
-                        # If stripping results in empty, it may be stored as None
-                        assert stored_reason is None or stored_reason == ""
+                    # If stripping results in empty, it may be stored as None
+                    assert stored_reason is None or stored_reason == ""
 
     def test_concurrent_decision_updates(self, client):
         """Test handling of concurrent decision updates."""

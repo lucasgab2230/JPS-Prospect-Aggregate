@@ -21,10 +21,10 @@ const generateProspect = (): Prospect => {
   const agencies = ['Department of Defense', 'Health and Human Services', 'Department of Commerce', 'Department of Energy'];
   const naicsCodes = ['541511', '541512', '518210', '541519', '236220'];
   const statuses = ['idle', 'processing', 'completed', 'error'] as const;
-  
+
   const randomId = Math.random().toString(36).substr(2, 9);
   const baseValue = Math.floor(Math.random() * 500000) + 10000;
-  
+
   return {
     id: randomId,
     title: `Contract ${Math.floor(Math.random() * 1000)}`,
@@ -54,7 +54,7 @@ const generatePaginatedResponse = (prospectCount: number = 2) => {
   const perPage = Math.floor(Math.random() * 20) + 5;
   const totalItems = Math.floor(Math.random() * 100) + prospectCount;
   const totalPages = Math.ceil(totalItems / perPage);
-  
+
   return {
     prospects,
     pagination: {
@@ -74,21 +74,21 @@ const createWrapper = () => {
       mutations: { retry: false }
     }
   });
-  
-  return ({ children }: { children: React.ReactNode }) => 
+
+  return ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: queryClient }, children);
 };
 
 describe('usePaginatedProspects', () => {
   let testResponse: any;
-  
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseEnhancementActivityMonitor.mockReturnValue({ hasAnyActivity: false });
-    
+
     // Generate fresh test data for each test
     testResponse = generatePaginatedResponse();
-    
+
     mockFetch.mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(testResponse)
@@ -152,7 +152,7 @@ describe('usePaginatedProspects', () => {
     const testKeywords = `keyword${Math.floor(Math.random() * 1000)}`;
     const testAgency = `Agency${Math.floor(Math.random() * 100)}`;
     const testSourceIds = Array.from({ length: Math.floor(Math.random() * 5) + 1 }, () => Math.floor(Math.random() * 10) + 1);
-    
+
     const filters: ProspectFilters = {
       naics: testNaics.toString(),
       keywords: testKeywords,
@@ -331,7 +331,7 @@ describe('usePaginatedProspects', () => {
   it('adjusts refetch interval based on enhancement activity', async () => {
     // First render with no activity
     mockUseEnhancementActivityMonitor.mockReturnValue({ hasAnyActivity: false });
-    
+
     const { rerender } = renderHook(
       () => usePaginatedProspects(defaultFilters),
       { wrapper: createWrapper() }
@@ -407,7 +407,7 @@ describe('usePaginatedProspects', () => {
 
     const { result, rerender } = renderHook(
       ({ filters }) => usePaginatedProspects(filters),
-      { 
+      {
         wrapper: createWrapper(),
         initialProps: { filters: initialFilters }
       }
@@ -531,7 +531,7 @@ describe('usePaginatedProspects', () => {
   it('preserves pagination state across filter changes within same hook instance', async () => {
     const { result, rerender } = renderHook(
       ({ filters }) => usePaginatedProspects(filters),
-      { 
+      {
         wrapper: createWrapper(),
         initialProps: { filters: defaultFilters }
       }

@@ -21,12 +21,12 @@ export const GoNoGoDecision = ({ prospectId, prospectTitle, compact }: GoNoGoDec
   const createDecisionMutation = useCreateDecision();
   const deleteDecisionMutation = useDeleteDecision();
   const { data: decisionsData, isLoading: isLoadingDecisions, error: decisionsError } = useProspectDecisions(prospectId ? String(prospectId) : null);
-  
+
   // Check if current user has already made a decision
-  const existingDecision = decisionsData?.data?.decisions && Array.isArray(decisionsData.data.decisions) && decisionsData.data.decisions.length > 0 
-    ? decisionsData.data.decisions[0] 
+  const existingDecision = decisionsData?.data?.decisions && Array.isArray(decisionsData.data.decisions) && decisionsData.data.decisions.length > 0
+    ? decisionsData.data.decisions[0]
     : null;
-  
+
 
   const handleDecisionClick = (decision: 'go' | 'no-go') => {
     setPendingDecision(decision);
@@ -42,16 +42,16 @@ export const GoNoGoDecision = ({ prospectId, prospectTitle, compact }: GoNoGoDec
         decision: pendingDecision,
         reason: reason.trim(),
       });
-      
+
       setShowReasonDialog(false);
       setPendingDecision(null);
       setReason('');
     } catch (error) {
       handleError(error, {
-        context: { 
-          operation: 'saveDecision', 
-          prospectId, 
-          decision: pendingDecision 
+        context: {
+          operation: 'saveDecision',
+          prospectId,
+          decision: pendingDecision
         },
         fallbackMessage: 'Failed to save decision'
       });
@@ -66,15 +66,15 @@ export const GoNoGoDecision = ({ prospectId, prospectTitle, compact }: GoNoGoDec
 
   const handleUndoDecision = async () => {
     if (!existingDecision?.id) return;
-    
+
     try {
       await deleteDecisionMutation.mutateAsync(existingDecision.id);
     } catch (error) {
       handleError(error, {
-        context: { 
-          operation: 'undoDecision', 
+        context: {
+          operation: 'undoDecision',
           decisionId: existingDecision.id,
-          prospectId 
+          prospectId
         },
         fallbackMessage: 'Failed to undo decision'
       });
@@ -94,9 +94,9 @@ export const GoNoGoDecision = ({ prospectId, prospectTitle, compact }: GoNoGoDec
   // Show error state (optional - could be silent)
   if (decisionsError) {
     handleError(decisionsError, {
-      context: { 
-        operation: 'loadDecisions', 
-        prospectId 
+      context: {
+        operation: 'loadDecisions',
+        prospectId
       },
       fallbackMessage: 'Failed to load existing decisions',
       showToast: false // Silent error - don't show toast for read operations
@@ -109,10 +109,10 @@ export const GoNoGoDecision = ({ prospectId, prospectTitle, compact }: GoNoGoDec
       <div className="flex items-center gap-2">
         {existingDecision ? (
           <div className="flex items-center gap-2">
-            <span 
+            <span
               className={`px-2 py-1 rounded text-xs font-medium ${
-                existingDecision.decision === 'go' 
-                  ? 'bg-green-100 text-green-800' 
+                existingDecision.decision === 'go'
+                  ? 'bg-green-100 text-green-800'
                   : 'bg-red-100 text-red-800'
               }`}
             >
@@ -154,7 +154,7 @@ export const GoNoGoDecision = ({ prospectId, prospectTitle, compact }: GoNoGoDec
                 {pendingDecision === 'go' ? 'GO Decision' : 'NO-GO Decision'}
               </DialogTitle>
             </DialogHeader>
-            
+
             {prospectTitle && (
               <p className="text-sm text-gray-600 mb-4">
                 <strong>Prospect:</strong> {prospectTitle}
@@ -195,11 +195,11 @@ export const GoNoGoDecision = ({ prospectId, prospectTitle, compact }: GoNoGoDec
   }
 
   // Full version for dedicated decision pages
-  
+
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-semibold mb-4">Go/No-Go Decision</h3>
-      
+
       {prospectTitle && (
         <p className="text-gray-600 mb-4">
           <strong>Prospect:</strong> {prospectTitle}
@@ -210,28 +210,28 @@ export const GoNoGoDecision = ({ prospectId, prospectTitle, compact }: GoNoGoDec
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <span>Current Decision:</span>
-            <span 
+            <span
               className={`px-3 py-1 rounded font-medium ${
-                existingDecision.decision === 'go' 
-                  ? 'bg-green-100 text-green-800' 
+                existingDecision.decision === 'go'
+                  ? 'bg-green-100 text-green-800'
                   : 'bg-red-100 text-red-800'
               }`}
             >
               {existingDecision.decision === 'go' ? 'GO' : 'NO-GO'}
             </span>
           </div>
-          
+
           {existingDecision.reason && (
             <div>
               <strong>Reason:</strong>
               <p className="text-gray-700 mt-1">{existingDecision.reason}</p>
             </div>
           )}
-          
+
           <div className="text-sm text-gray-500">
             Decision made on {new Date(existingDecision.created_at).toLocaleDateString()}
           </div>
-          
+
           <div className="pt-4 border-t">
             <p className="text-sm text-gray-600 mb-4">Want to change your decision?</p>
             <div className="flex gap-2">
@@ -268,7 +268,7 @@ export const GoNoGoDecision = ({ prospectId, prospectTitle, compact }: GoNoGoDec
       ) : (
         <div className="space-y-4">
           <p className="text-gray-600">What's your decision on this prospect?</p>
-          
+
           <div className="flex gap-4">
             <Button
               onClick={() => handleDecisionClick('go')}

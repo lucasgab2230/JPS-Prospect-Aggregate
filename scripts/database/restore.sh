@@ -32,27 +32,27 @@ restore_database() {
     local db_name="$1"
     local backup_file="$2"
     local target_file="$DATA_DIR/${db_name}.db"
-    
+
     if [ ! -f "$backup_file" ]; then
         echo -e "${RED}Error: Backup file not found: $backup_file${NC}"
         return 1
     fi
-    
+
     echo -e "${YELLOW}Warning: This will overwrite ${target_file}${NC}"
     read -p "Are you sure you want to continue? (y/N) " -n 1 -r
     echo
-    
+
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         # Create backup of current database
         if [ -f "$target_file" ]; then
             echo "Creating backup of current database..."
             cp "$target_file" "${target_file}.before_restore_$(date +%Y%m%d_%H%M%S)"
         fi
-        
+
         # Decompress and restore
         echo "Restoring from backup..."
         gunzip -c "$backup_file" > "$target_file"
-        
+
         # Verify restored database
         if sqlite3 "$target_file" "PRAGMA integrity_check;" | grep -q "ok"; then
             echo -e "${GREEN}✓ Database restored successfully${NC}"
@@ -77,7 +77,7 @@ if [ $# -eq 0 ]; then
     echo "2) jps_users"
     echo "3) Both"
     read -p "Enter choice (1-3): " choice
-    
+
     case $choice in
         1)
             list_backups "jps_aggregate"
@@ -107,11 +107,11 @@ if [ $# -eq 0 ]; then
             ls -1t "$BACKUP_DIR"/*.db.gz | sed 's/.*_\([0-9]\{8\}_[0-9]\{6\}\).*/\1/' | sort -u | head -5
             echo ""
             read -p "Enter timestamp (YYYYMMDD_HHMMSS) or 'latest': " timestamp
-            
+
             if [ "$timestamp" = "latest" ]; then
                 timestamp=$(ls -1t "$BACKUP_DIR"/*.db.gz | sed 's/.*_\([0-9]\{8\}_[0-9]\{6\}\).*/\1/' | sort -u | head -1)
             fi
-            
+
             restore_database "jps_aggregate" "$BACKUP_DIR/jps_aggregate_${timestamp}.db.gz"
             restore_database "jps_users" "$BACKUP_DIR/jps_users_${timestamp}.db.gz"
             ;;
@@ -124,7 +124,7 @@ else
     # Command line mode
     db_name="$1"
     backup_file="$2"
-    
+
     if [ -z "$backup_file" ]; then
         # Use latest backup
         backup_file=$(ls -1t "$BACKUP_DIR"/${db_name}_*.db.gz 2>/dev/null | head -1)
@@ -134,7 +134,7 @@ else
         # Relative path, prepend backup directory
         backup_file="$BACKUP_DIR/$backup_file"
     fi
-    
+
     restore_database "$db_name" "$backup_file"
 fi
 
