@@ -1,8 +1,8 @@
 """Database utility functions."""
 
 import datetime
-from datetime import timezone
-UTC = timezone.utc
+
+UTC = datetime.UTC
 
 # import shutil # Removed as it was only used by rebuild_database
 from app.utils.file_utils import clean_old_files
@@ -137,9 +137,8 @@ def get_data_source_id_by_name(source_name: str) -> int | None:
         )
         if data_source:
             return data_source  # scalar() directly returns the ID
-        else:
-            logger.warning(f"Data source not found with name: {source_name}")
-            return None
+        logger.warning(f"Data source not found with name: {source_name}")
+        return None
     except Exception as e:
         logger.error(
             f"Error fetching data source ID for {source_name}: {str(e)}", exc_info=True

@@ -55,7 +55,7 @@ export function DataSourceTable({
         <TableBody>
           {dataSources.map((source: DataSource) => {
             const { buttonText, isLoading, isDisabled, isScraperWorking } = getScraperButtonState(source);
-            
+
             return (
               <TableRow key={source.id}>
                 <TableCell className="font-medium">{source.name}</TableCell>
@@ -65,13 +65,13 @@ export function DataSourceTable({
                     {(() => {
                       // Format status display
                       const statusText = source.status.charAt(0).toUpperCase() + source.status.slice(1);
-                      
+
                       // For completed status, show how long ago if we have last_checked
                       if (source.status === 'completed' && source.last_checked) {
                         const timeAgo = formatUserDate(source.last_checked, 'relative');
                         return `${statusText} (${timeAgo})`;
                       }
-                      
+
                       return statusText;
                     })()}
                     {isScraperWorking && (

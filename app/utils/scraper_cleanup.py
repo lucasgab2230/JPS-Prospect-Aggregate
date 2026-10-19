@@ -4,8 +4,9 @@ This module provides functions to clean up scraper statuses that may be
 stuck due to server restarts, crashes, or unexpected shutdowns.
 """
 
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime, timedelta
 
 from app.database import db

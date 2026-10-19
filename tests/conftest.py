@@ -67,7 +67,7 @@ def db_session(db):  # Depends on the session-scoped db fixture
     # _db.session.remove() # This might be too aggressive if session scope is broader than function.
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app):
     """Create a test client for the app."""
     return app.test_client()

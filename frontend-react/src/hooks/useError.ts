@@ -27,13 +27,13 @@ export function useError(defaultOptions?: UseErrorOptions): UseErrorReturn {
 
   const handleError = useCallback((error: unknown, options?: UseErrorOptions) => {
     const opts = { showToast: true, ...defaultOptions, ...options };
-    
+
     // Normalize error using error service
     const normalizedError = errorService.handleError(error, opts.context);
-    
+
     // Update local error state
     setError(normalizedError);
-    
+
     // Show toast if enabled
     if (opts.showToast) {
       if (normalizedError.severity === ErrorSeverity.WARNING) {
@@ -45,12 +45,12 @@ export function useError(defaultOptions?: UseErrorOptions): UseErrorReturn {
         showErrorToast(normalizedError);
       }
     }
-    
+
     // Call custom error handler if provided
     if (opts.onError) {
       opts.onError(normalizedError);
     }
-    
+
     return normalizedError;
   }, [showErrorToast, showWarningToast, defaultOptions]);
 

@@ -41,36 +41,36 @@ run_migrations() {
 main() {
     # Enable maintenance mode
     enable_maintenance
-    
+
     # Backup databases
     backup_databases
-    
+
     # Pull latest images
     echo -e "${YELLOW}Pulling latest images...${NC}"
     docker-compose pull
-    
+
     # Build new image
     echo -e "${YELLOW}Building application image...${NC}"
     docker-compose build web
-    
+
     # Stop current web container
     echo -e "${YELLOW}Stopping current web container...${NC}"
     docker-compose stop web
-    
+
     # Start new web container
     echo -e "${YELLOW}Starting new web container...${NC}"
     docker-compose up -d web
-    
+
     # Wait for web to be healthy
     echo -e "${YELLOW}Waiting for application to be ready...${NC}"
     sleep 10
-    
+
     # Run migrations
     run_migrations
-    
+
     # Disable maintenance mode
     disable_maintenance
-    
+
     # Health check
     if curl -f http://localhost:5001/health > /dev/null 2>&1; then
         echo -e "${GREEN}Deployment completed successfully!${NC}"
