@@ -36,7 +36,7 @@ const queryClient = new QueryClient({
 // Wrapper component to pass user data to TimezoneProvider
 function AppWithProviders() {
   const { user } = useAuth();
-  
+
   return (
     <TimezoneProvider user={user}>
       <ToastProvider>

@@ -48,15 +48,16 @@ You are an elite Python test engineer specializing in pytest framework. Your mis
    import pytest
    from unittest.mock import Mock, patch
    # Import modules under test
-   
+
+
    class TestClassName:
        """Tests for ClassName functionality"""
-       
+
        @pytest.fixture
        def setup_data(self):
            """Fixture providing test data"""
            return {...}
-       
+
        def test_method_valid_input_returns_expected(self, setup_data):
            """Test that method returns correct value for valid input"""
            # Arrange

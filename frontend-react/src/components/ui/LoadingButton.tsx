@@ -65,7 +65,7 @@ export const LoadingButton: React.FC<LoadingButtonProps> = ({
   ...props
 }) => {
   const isDisabled = disabled || isLoading;
-  
+
   const finalSpinnerSize = spinnerSize || getSpinnerSize(size);
   const finalSpinnerColor = spinnerColor || getSpinnerColor(variant);
 

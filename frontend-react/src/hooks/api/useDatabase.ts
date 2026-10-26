@@ -145,7 +145,7 @@ export const useCreateBackup = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: dbQueryKeys.backups() });
       // Optionally add the new backup to the cache immediately
-      // queryClient.setQueryData(dbQueryKeys.backups(), (oldData: DatabaseBackup[] | undefined) => 
+      // queryClient.setQueryData(dbQueryKeys.backups(), (oldData: DatabaseBackup[] | undefined) =>
       //  [...(oldData || []), newBackup]
       // );
       queryClient.invalidateQueries({ queryKey: dbQueryKeys.status() }); // Backup might affect status
@@ -164,9 +164,9 @@ export const useRestoreBackup = () => {
 };
 
 export const useExecuteQuery = () => {
-  // No cache invalidation by default for arbitrary queries, 
+  // No cache invalidation by default for arbitrary queries,
   // but component might want to refetch specific data based on query type.
   return useMutation({
     mutationFn: executeQueryAPI,
   });
-}; 
+};

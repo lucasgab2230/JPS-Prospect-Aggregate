@@ -97,7 +97,7 @@ celerybeat.pid
 frontend-react/dist/
 frontend-react/*.tsbuildinfo
 frontend-react/tsconfig.*.tsbuildinfo
-frontend-react/node_modules/ 
+frontend-react/node_modules/
 frontend-react/src/tailwind-output.css
 
 # MyPy cache

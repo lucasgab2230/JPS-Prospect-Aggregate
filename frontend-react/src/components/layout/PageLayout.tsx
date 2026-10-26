@@ -7,18 +7,18 @@ interface PageLayoutProps {
   children: React.ReactNode;
 }
 
-export function PageLayout({ 
-  title, 
+export function PageLayout({
+  title,
   description,
   subtitle,
-  children, 
+  children,
 }: PageLayoutProps) {
   return (
-    // Replaced div with CSS module class to a simple div, 
+    // Replaced div with CSS module class to a simple div,
     // or ideally one with Tailwind classes for basic layout if needed.
     // For now, a simple div to isolate styling issues.
-    <div className="py-6 px-4 md:px-6 lg:px-8"> {/* Added some basic padding with Tailwind */} 
-      <div className="mb-4"> {/* Basic spacing for header content */} 
+    <div className="py-6 px-4 md:px-6 lg:px-8"> {/* Added some basic padding with Tailwind */}
+      <div className="mb-4"> {/* Basic spacing for header content */}
         {title && (
           // Consider replacing with Tailwind classes: e.g., "text-3xl font-bold tracking-tight mb-1"
           <h1 className="text-gray-900 text-2xl font-semibold">{title}</h1>
@@ -32,7 +32,7 @@ export function PageLayout({
           <p className="text-gray-700">{description}</p>
         )}
       </div>
-      <main>{children}</main> {/* Wrapped children in <main> for semantics */} 
+      <main>{children}</main> {/* Wrapped children in <main> for semantics */}
     </div>
   );
 }
@@ -44,4 +44,4 @@ export function PageSkeleton() {
       <div>Loading content...</div>
     </div>
   );
-} 
+}

@@ -25,7 +25,7 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const { data, isLoading, error } = useAuthStatus();
-  
+
   const value: AuthContextValue = {
     user: data?.data?.user || null,
     isAuthenticated: data?.data?.authenticated || false,

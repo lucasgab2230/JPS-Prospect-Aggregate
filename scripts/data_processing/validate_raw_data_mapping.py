@@ -259,7 +259,7 @@ def print_validation_report(results: list[dict]):
                 for raw_col, info in list(result["sample_data"].items())[:3]:
                     print(f"     • '{raw_col}' → '{info['maps_to']}'")
                     print(
-                        f"       Non-null: {info['non_null_count']:,} ({info['non_null_count']/result['total_rows']*100:.1f}%)"
+                        f"       Non-null: {info['non_null_count']:,} ({info['non_null_count'] / result['total_rows'] * 100:.1f}%)"
                     )
                     if info["sample_values"]:
                         sample = str(info["sample_values"][0])[:50]
@@ -301,9 +301,8 @@ def main():
     if failed_sources:
         print(f"\n❌ Validation failed for {len(failed_sources)} sources")
         return 1
-    else:
-        print("\n✅ Validation completed successfully")
-        return 0
+    print("\n✅ Validation completed successfully")
+    return 0
 
 
 if __name__ == "__main__":

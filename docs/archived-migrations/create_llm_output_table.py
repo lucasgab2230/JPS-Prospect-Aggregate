@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Create the LLMOutput table in the database
-"""
+"""Create the LLMOutput table in the database"""
 
 import os
 import sys

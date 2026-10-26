@@ -152,9 +152,9 @@ export function useEnhancementQueueService(options?: {
   const llmOutputs = useQuery<LLMOutput[]>({
     queryKey: queryKeys.llmOutputs(llmOutputsType),
     queryFn: async () => {
-      const queryParams = buildQueryString({ 
-        limit: llmOutputsLimit, 
-        enhancement_type: llmOutputsType 
+      const queryParams = buildQueryString({
+        limit: llmOutputsLimit,
+        enhancement_type: llmOutputsType
       });
       return await get<LLMOutput[]>(`/api/llm/outputs${queryParams}`);
     },
@@ -310,10 +310,10 @@ export function useEnhancementQueueService(options?: {
   const currentItem = queueStatus.data?.current_item;
   const pendingItems = queueStatus.data?.pending_items || [];
   const recentCompleted = queueStatus.data?.recent_completed || [];
-  
+
   const isIterativeProcessing = iterativeProgress.data?.status === 'processing';
   const iterativePercentage = iterativeProgress.data?.percentage || 0;
-  
+
   const totalProspects = enrichmentStatus.data?.total_prospects || 0;
   const processedProspects = enrichmentStatus.data?.processed_prospects || 0;
 
@@ -323,13 +323,13 @@ export function useEnhancementQueueService(options?: {
     iterativeProgress: iterativeProgress.data,
     enrichmentStatus: enrichmentStatus.data,
     llmOutputs: llmOutputs.data,
-    
+
     // Loading states
     isLoadingQueue: queueStatus.isLoading,
     isLoadingIterative: iterativeProgress.isLoading,
     isLoadingEnrichment: enrichmentStatus.isLoading,
     isLoadingLLMOutputs: llmOutputs.isLoading,
-    
+
     // Computed values
     isWorkerRunning,
     queueSize,
@@ -340,7 +340,7 @@ export function useEnhancementQueueService(options?: {
     iterativePercentage,
     totalProspects,
     processedProspects,
-    
+
     // Actions
     getQueueItemOptions,
     cancelQueueItem: cancelQueueItem.mutate,
@@ -348,14 +348,14 @@ export function useEnhancementQueueService(options?: {
     stopWorker: stopWorker.mutate,
     startIterative: startIterative.mutate,
     stopIterative: stopIterative.mutate,
-    
+
     // Action states
     isCancelling: cancelQueueItem.isPending,
     isStartingWorker: startWorker.isPending,
     isStoppingWorker: stopWorker.isPending,
     isStartingIterative: startIterative.isPending,
     isStoppingIterative: stopIterative.isPending,
-    
+
     // Refetch functions
     refetchQueueStatus: queueStatus.refetch,
     refetchIterativeProgress: iterativeProgress.refetch,

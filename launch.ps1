@@ -65,7 +65,7 @@ function Show-Banner {
     Clear-Host
     Write-ColorOutput @"
 
-     ██╗██████╗ ███████╗    ██╗      █████╗ ██╗   ██╗███╗   ██╗ ██████╗██╗  ██╗███████╗██████╗ 
+     ██╗██████╗ ███████╗    ██╗      █████╗ ██╗   ██╗███╗   ██╗ ██████╗██╗  ██╗███████╗██████╗
      ██║██╔══██╗██╔════╝    ██║     ██╔══██╗██║   ██║████╗  ██║██╔════╝██║  ██║██╔════╝██╔══██╗
      ██║██████╔╝███████╗    ██║     ███████║██║   ██║██╔██╗ ██║██║     ███████║█████╗  ██████╔╝
 ██   ██║██╔═══╝ ╚════██║    ██║     ██╔══██║██║   ██║██║╚██╗██║██║     ██╔══██║██╔══╝  ██╔══██╗
@@ -90,13 +90,13 @@ function Prompt-User {
         [string]$Message,
         [string]$Default = ""
     )
-    
+
     if ($Default) {
         $prompt = "$Message [$Default]: "
     } else {
         $prompt = "${Message}: "
     }
-    
+
     $response = Read-Host $prompt
     if ([string]::IsNullOrWhiteSpace($response) -and $Default) {
         return $Default
@@ -109,7 +109,7 @@ function Confirm-Action {
         [string]$Message,
         [string]$Default = "n"
     )
-    
+
     $response = Prompt-User "$Message (y/n)" $Default
     return $response -match '^[Yy]'
 }
@@ -120,18 +120,18 @@ function Confirm-Action {
 
 function Test-Python {
     Write-Info "Checking Python installation..."
-    
+
     $pythonCommands = @("python", "python3", "python3.12", "python3.11")
     $pythonCmd = $null
     $pythonVersion = $null
-    
+
     foreach ($cmd in $pythonCommands) {
         if (Test-Command $cmd) {
             $versionOutput = & $cmd --version 2>&1
             if ($versionOutput -match "Python (\d+)\.(\d+)\.(\d+)") {
                 $major = [int]$Matches[1]
                 $minor = [int]$Matches[2]
-                
+
                 if ($major -eq 3 -and $minor -ge 11) {
                     $pythonCmd = $cmd
                     $pythonVersion = "$major.$minor.$($Matches[3])"
@@ -140,10 +140,10 @@ function Test-Python {
             }
         }
     }
-    
+
     if ($pythonCmd) {
         Write-Success "Python $pythonVersion found ($pythonCmd)"
-        
+
         # Check for conda environment
         $condaEnv = $env:CONDA_DEFAULT_ENV
         if ($condaEnv) {
@@ -152,7 +152,7 @@ function Test-Python {
                 Write-Warning "Using conda base environment - consider activating a project environment"
             }
         }
-        
+
         return $pythonCmd
     } else {
         Write-Error "Python 3.11+ not found"
@@ -163,14 +163,14 @@ function Test-Python {
 
 function Test-Node {
     Write-Info "Checking Node.js installation..."
-    
+
     if (Test-Command "node") {
         $nodeVersion = & node --version 2>&1
         if ($nodeVersion -match "v(\d+)") {
             $majorVersion = [int]$Matches[1]
             if ($majorVersion -ge 20) {
                 Write-Success "Node.js $nodeVersion found"
-                
+
                 if (Test-Command "npm") {
                     $npmVersion = & npm --version 2>&1
                     Write-Success "npm $npmVersion found"
@@ -185,7 +185,7 @@ function Test-Node {
             }
         }
     }
-    
+
     Write-Error "Node.js not found"
     Write-Info "Please install Node.js from https://nodejs.org/"
     return $false
@@ -193,16 +193,16 @@ function Test-Node {
 
 function Test-Docker {
     Write-Info "Checking Docker installation..."
-    
+
     if (Test-Command "docker") {
         $dockerVersion = & docker --version 2>&1
         Write-Success "Docker found: $dockerVersion"
-        
+
         # Check if Docker daemon is running
         try {
             & docker ps 2>&1 | Out-Null
             Write-Success "Docker daemon is running"
-            
+
             # Check Docker Compose
             if (Test-Command "docker-compose") {
                 Write-Success "Docker Compose found"
@@ -230,11 +230,11 @@ function Test-Docker {
 
 function Test-Ollama {
     Write-Info "Checking Ollama installation..."
-    
+
     if (Test-Command "ollama") {
         $ollamaVersion = & ollama --version 2>&1
         Write-Success "Ollama found: $ollamaVersion"
-        
+
         # Check if qwen3 model is available
         $models = & ollama list 2>&1
         if ($models -match "qwen3:latest") {
@@ -253,17 +253,17 @@ function Test-Ollama {
 
 function Test-Prerequisites {
     Write-Header "Checking Prerequisites"
-    
+
     $pythonCmd = Test-Python
     $hasNode = Test-Node
     $hasDocker = Test-Docker
     $hasOllama = Test-Ollama
-    
+
     if (-not $pythonCmd -or -not $hasNode) {
         Write-Error "Missing required prerequisites"
         return $null
     }
-    
+
     Write-Success "All required prerequisites found!"
     return $pythonCmd
 }
@@ -286,9 +286,9 @@ function Configure-Environment {
     param(
         [string]$Mode = "development"
     )
-    
+
     $envPath = "$PROJECT_ROOT\.env"
-    
+
     # Check if .env exists and has the right environment
     if (Test-Path $envPath) {
         $currentEnv = Get-CurrentEnvironment
@@ -297,27 +297,27 @@ function Configure-Environment {
             return $true
         }
     }
-    
+
     Write-Info "Creating $Mode configuration..."
-    
+
     # Preserve existing values if available
     $existingSecret = ""
     $existingDomain = ""
     $existingCloudflare = ""
-    
+
     if (Test-Path $envPath) {
         $content = Get-Content $envPath -Raw
         if ($content -match "SECRET_KEY=(.+)") { $existingSecret = $Matches[1] }
         if ($content -match "PRODUCTION_DOMAIN=(.+)") { $existingDomain = $Matches[1] }
         if ($content -match "CLOUDFLARE_TUNNEL_TOKEN=(.+)") { $existingCloudflare = $Matches[1] }
     }
-    
+
     # Generate or preserve SECRET_KEY
     $secretKey = $existingSecret
     if ([string]::IsNullOrWhiteSpace($secretKey)) {
         $secretKey = -join ((1..64) | ForEach {'{0:x}' -f (Get-Random -Max 16)})
     }
-    
+
     # Base configuration
     $envContent = @"
 # JPS Prospect Aggregate - $($Mode.ToUpper()) Environment
@@ -333,7 +333,7 @@ FLASK_APP=run.py
 # USER_DATABASE_URL=  # DO NOT SET - leave commented
 
 "@
-    
+
     if ($Mode -eq "development") {
         $envContent += @"
 # Development Settings
@@ -379,7 +379,7 @@ TIMEOUT=300
                 return $false
             }
         }
-        
+
         # Cloudflare tunnel (optional)
         $cloudflareToken = $existingCloudflare
         if (-not [string]::IsNullOrWhiteSpace($existingCloudflare)) {
@@ -396,7 +396,7 @@ TIMEOUT=300
                 $cloudflareToken = Prompt-User "Enter Cloudflare tunnel token"
             }
         }
-        
+
         $envContent += @"
 # Production Settings
 PRODUCTION_DOMAIN=$domain
@@ -432,7 +432,7 @@ WORKERS=12
 TIMEOUT=120
 "@
     }
-    
+
     # Write the .env file
     Set-Content -Path $envPath -Value $envContent -Encoding UTF8
     Write-Success "$Mode configuration created"
@@ -445,18 +445,18 @@ TIMEOUT=120
 
 function Install-PythonDependencies {
     param([string]$PythonCmd)
-    
+
     Write-Info "Checking Python dependencies..."
-    
+
     if (-not (Test-Path "$PROJECT_ROOT\requirements.txt")) {
         Write-Error "requirements.txt not found"
         return $false
     }
-    
+
     # Check if packages need to be installed
     $installedPackages = & $PythonCmd -m pip list --format=freeze 2>&1
     $requiredPackages = Get-Content "$PROJECT_ROOT\requirements.txt"
-    
+
     $needsInstall = $false
     foreach ($req in $requiredPackages) {
         if ($req -and -not ($req -match "^#") -and -not ($installedPackages -match $req.Split("==")[0])) {
@@ -464,13 +464,13 @@ function Install-PythonDependencies {
             break
         }
     }
-    
+
     if ($needsInstall) {
         Write-Info "Installing Python packages..."
         & $PythonCmd -m pip install -r "$PROJECT_ROOT\requirements.txt"
         if ($LASTEXITCODE -eq 0) {
             Write-Success "Python packages installed"
-            
+
             # Install Playwright browsers if needed
             if (Test-Command "playwright") {
                 Write-Info "Installing Playwright browsers..."
@@ -483,20 +483,20 @@ function Install-PythonDependencies {
     } else {
         Write-Success "Python packages ready"
     }
-    
+
     return $true
 }
 
 function Setup-Frontend {
     Write-Info "Checking frontend..."
-    
+
     if (-not (Test-Path "$PROJECT_ROOT\frontend-react")) {
         Write-Error "frontend-react directory not found"
         return $false
     }
-    
+
     Push-Location "$PROJECT_ROOT\frontend-react"
-    
+
     try {
         if (-not (Test-Path "node_modules")) {
             Write-Info "Installing frontend dependencies (first time setup)..."
@@ -518,24 +518,24 @@ function Setup-Frontend {
 
 function Setup-Databases {
     param([string]$PythonCmd)
-    
+
     Write-Info "Checking databases..."
-    
+
     # Create data directory if it doesn't exist
     if (-not (Test-Path "$PROJECT_ROOT\data")) {
         New-Item -ItemType Directory -Path "$PROJECT_ROOT\data" | Out-Null
     }
-    
+
     # Check if databases exist
     $needsInit = $false
-    if (-not (Test-Path "$PROJECT_ROOT\data\jps_aggregate.db") -or 
+    if (-not (Test-Path "$PROJECT_ROOT\data\jps_aggregate.db") -or
         -not (Test-Path "$PROJECT_ROOT\data\jps_users.db")) {
         $needsInit = $true
     }
-    
+
     if ($needsInit) {
         Write-Info "Initializing databases (first time setup)..."
-        
+
         if (Test-Path "$PROJECT_ROOT\scripts\setup_databases.py") {
             & $PythonCmd "$PROJECT_ROOT\scripts\setup_databases.py"
             if ($LASTEXITCODE -eq 0) {
@@ -558,42 +558,42 @@ function Setup-Databases {
     } else {
         Write-Success "Databases ready"
     }
-    
+
     return $true
 }
 
 function Test-Port {
     param([int]$Port)
-    
+
     $tcpConnection = Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue
     return $null -eq $tcpConnection
 }
 
 function Start-DevelopmentServers {
     param([string]$PythonCmd)
-    
+
     Write-Header "Starting Development Servers"
-    
+
     # Check port availability
     $backendPort = 5001
     $frontendPort = 3000
-    
+
     if (-not (Test-Port $backendPort)) {
         Write-Warning "Port $backendPort is already in use"
         Write-Info "You may need to kill the existing process"
     }
-    
+
     if (-not (Test-Port $frontendPort)) {
         Write-Warning "Port $frontendPort is already in use"
         Write-Info "You may need to kill the existing process"
     }
-    
+
     # Create launcher state directory
     $launcherDir = "$PROJECT_ROOT\.launcher"
     if (-not (Test-Path $launcherDir)) {
         New-Item -ItemType Directory -Path $launcherDir | Out-Null
     }
-    
+
     # Start backend
     Write-Info "Starting backend server on port $backendPort..."
     $backendProcess = Start-Process -FilePath $PythonCmd -ArgumentList "run.py" `
@@ -602,7 +602,7 @@ function Start-DevelopmentServers {
         -RedirectStandardError "$launcherDir\backend.error.log" `
         -WindowStyle Hidden `
         -PassThru
-    
+
     if ($backendProcess) {
         Set-Content -Path "$launcherDir\backend.pid" -Value $backendProcess.Id
         Write-Success "Backend server started (PID: $($backendProcess.Id))"
@@ -610,7 +610,7 @@ function Start-DevelopmentServers {
         Write-Error "Failed to start backend server"
         return $false
     }
-    
+
     # Start frontend
     Write-Info "Starting frontend server on port $frontendPort..."
     $frontendProcess = Start-Process -FilePath "cmd.exe" `
@@ -620,7 +620,7 @@ function Start-DevelopmentServers {
         -RedirectStandardError "$launcherDir\frontend.error.log" `
         -WindowStyle Hidden `
         -PassThru
-    
+
     if ($frontendProcess) {
         Set-Content -Path "$launcherDir\frontend.pid" -Value $frontendProcess.Id
         Write-Success "Frontend server started (PID: $($frontendProcess.Id))"
@@ -628,18 +628,18 @@ function Start-DevelopmentServers {
         Write-Error "Failed to start frontend server"
         return $false
     }
-    
+
     # Wait a moment for servers to start
     Start-Sleep -Seconds 3
-    
+
     # Open browser
     Write-Info "Opening browser..."
     Start-Process "http://localhost:$frontendPort"
-    
+
     Write-Success "Development servers are running!"
     Write-Info "Backend: http://localhost:$backendPort"
     Write-Info "Frontend: http://localhost:$frontendPort"
-    
+
     # Show useful commands
     Write-Header "Useful Commands"
     Write-Host "📋 Development Commands:" -ForegroundColor Yellow
@@ -660,32 +660,32 @@ function Start-DevelopmentServers {
     Write-Host "  • Press Ctrl+C to stop servers"
     Write-Host "  • Logs are in: $launcherDir\"
     Write-Host ""
-    
+
     return $true
 }
 
 function Start-Development {
     param([string]$PythonCmd)
-    
+
     Write-Header "Starting Development Mode"
-    
+
     # Configure environment for development
     if (-not (Configure-Environment "development")) {
         return $false
     }
-    
+
     # Setup everything
     if (-not (Install-PythonDependencies $PythonCmd)) { return $false }
     if (-not (Setup-Frontend)) { return $false }
     if (-not (Setup-Databases $PythonCmd)) { return $false }
     if (-not (Start-DevelopmentServers $PythonCmd)) { return $false }
-    
+
     Write-Info "Press any key to stop servers..."
     $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
-    
+
     # Stop servers
     Stop-Servers
-    
+
     return $true
 }
 
@@ -695,18 +695,18 @@ function Start-Development {
 
 function Start-Production {
     Write-Header "Production Mode Setup"
-    
+
     # Configure environment for production
     if (-not (Configure-Environment "production")) {
         return $false
     }
-    
+
     # Check Docker
     if (-not (Test-Docker)) {
         Write-Error "Docker is required for production mode"
         return $false
     }
-    
+
     # Build Docker images
     Write-Info "Building Docker images..."
     & docker-compose build
@@ -715,11 +715,11 @@ function Start-Production {
         return $false
     }
     Write-Success "Docker images built"
-    
+
     # Check for Cloudflare token
     $envContent = Get-Content "$PROJECT_ROOT\.env" -Raw
     $useCloudflare = $envContent -match "CLOUDFLARE_TUNNEL_TOKEN=.+"
-    
+
     # Start services
     if ($useCloudflare) {
         Write-Info "Starting services with Cloudflare tunnel..."
@@ -728,18 +728,18 @@ function Start-Production {
         Write-Info "Starting services..."
         & docker-compose up -d
     }
-    
+
     if ($LASTEXITCODE -ne 0) {
         Write-Error "Failed to start Docker services"
         return $false
     }
-    
+
     Write-Success "Docker services started"
-    
+
     # Wait for services
     Write-Info "Waiting for services to start..."
     Start-Sleep -Seconds 10
-    
+
     # Check health
     try {
         $response = Invoke-WebRequest -Uri "http://localhost:5001/health" -UseBasicParsing
@@ -748,11 +748,11 @@ function Start-Production {
         Write-Warning "Health check failed - checking logs..."
         & docker-compose logs --tail=50 web
     }
-    
+
     # Display status
     Write-Header "Deployment Status"
     & docker-compose ps
-    
+
     # Show commands
     Write-Header "Useful Commands"
     Write-Host "📋 Production Commands:" -ForegroundColor Yellow
@@ -762,7 +762,7 @@ function Start-Production {
     Write-Host "  Restart:          docker-compose restart"
     Write-Host "  Database backup:  docker exec jps-web sqlite3 /app/data/jps_aggregate.db '.backup /app/backups/backup.db'"
     Write-Host ""
-    
+
     if ($useCloudflare) {
         $domain = $envContent -match "PRODUCTION_DOMAIN=(.+)" | Out-Null; $Matches[1]
         Write-Info "Application should be accessible at: https://$domain"
@@ -770,7 +770,7 @@ function Start-Production {
         Write-Info "Application is running at: http://localhost:5001"
         Write-Info "Configure your reverse proxy to point to port 5001"
     }
-    
+
     return $true
 }
 
@@ -780,11 +780,11 @@ function Start-Production {
 
 function Start-QuickMode {
     param([string]$PythonCmd)
-    
+
     Write-Header "Quick Start"
-    
+
     $currentEnv = Get-CurrentEnvironment
-    
+
     if ($currentEnv -eq "production") {
         Write-Info "Detected production environment"
         return Start-Production
@@ -800,9 +800,9 @@ function Start-QuickMode {
 
 function Stop-Servers {
     Write-Info "Stopping servers..."
-    
+
     $launcherDir = "$PROJECT_ROOT\.launcher"
-    
+
     # Stop backend
     if (Test-Path "$launcherDir\backend.pid") {
         $pid = Get-Content "$launcherDir\backend.pid"
@@ -814,7 +814,7 @@ function Stop-Servers {
         }
         Remove-Item "$launcherDir\backend.pid" -Force
     }
-    
+
     # Stop frontend
     if (Test-Path "$launcherDir\frontend.pid") {
         $pid = Get-Content "$launcherDir\frontend.pid"
@@ -850,16 +850,16 @@ function Show-Help {
 
 function Show-MainMenu {
     param([string]$PythonCmd)
-    
+
     while ($true) {
         Show-Banner
-        
+
         # Show current environment
         $currentEnv = Get-CurrentEnvironment
         if ($currentEnv -ne "none") {
             Write-Info "Current environment: $currentEnv"
         }
-        
+
         Write-Header "Main Menu"
         Write-Host "  [1] Development Mode (Local)"
         Write-Host "  [2] Production Mode (Docker)"
@@ -867,12 +867,12 @@ function Show-MainMenu {
         Write-Host "  [4] Check Prerequisites"
         Write-Host "  [5] Exit"
         Write-Host ""
-        
+
         $choice = Read-Host "Select option [3]"
         if ([string]::IsNullOrWhiteSpace($choice)) {
             $choice = "3"
         }
-        
+
         switch ($choice) {
             "1" {
                 Start-Development $PythonCmd
