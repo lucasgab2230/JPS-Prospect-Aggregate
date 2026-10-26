@@ -82,7 +82,7 @@ export function ToolsTab() {
 
       {/* Scripts List */}
       <div className="space-y-8">
-        {scripts && Object.entries(scripts).map(([category, categoryScripts]) => 
+        {scripts && Object.entries(scripts).map(([category, categoryScripts]) =>
           renderCategory(category, categoryScripts)
         )}
       </div>

@@ -12,8 +12,9 @@ Following production-level testing principles:
 import os
 import random
 import tempfile
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime, timedelta
 from pathlib import Path
 from unittest.mock import AsyncMock, Mock, patch
@@ -106,7 +107,7 @@ class TestConsolidatedScraperBase:
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
         return app
 
-    @pytest.fixture()
+    @pytest.fixture
     def db_session(self, app):
         """Create test database session."""
         with app.app_context():
@@ -115,7 +116,7 @@ class TestConsolidatedScraperBase:
             db.session.rollback()
             db.drop_all()
 
-    @pytest.fixture()
+    @pytest.fixture
     def test_config(self):
         """Create test scraper configuration with dynamic values."""
         # Generate random configuration
@@ -147,7 +148,7 @@ class TestConsolidatedScraperBase:
             raw_column_rename_map=raw_column_rename_map,
         )
 
-    @pytest.fixture()
+    @pytest.fixture
     def scraper(self, test_config):
         """Create test scraper instance."""
         return ConsolidatedScraperBase(test_config)
@@ -348,7 +349,7 @@ class TestConsolidatedScraperBase:
                     f"Contract-{random.randint(1000, 9999)}",
                     f"Agency-{random.choice(['A', 'B', 'C'])}",
                     str(random.randint(10000, 1000000)),
-                    f"2024-{random.randint(1,12):02d}-{random.randint(1,28):02d}",
+                    f"2024-{random.randint(1, 12):02d}-{random.randint(1, 28):02d}",
                 ]
                 temp_file.write(",".join(row_data) + "\n")
 
@@ -391,7 +392,7 @@ class TestConsolidatedScraperBase:
                     random.randint(50000, 500000) for _ in range(num_rows)
                 ],
                 "posted_date": [
-                    f"2024-{random.randint(1,12):02d}-{random.randint(1,28):02d}"
+                    f"2024-{random.randint(1, 12):02d}-{random.randint(1, 28):02d}"
                     for _ in range(num_rows)
                 ],
             }
@@ -433,7 +434,7 @@ class TestConsolidatedScraperBase:
                 ]
             elif "date" in source_col.lower():
                 original_data[source_col] = [
-                    f"2024-{random.randint(1,12):02d}-{random.randint(1,28):02d}"
+                    f"2024-{random.randint(1, 12):02d}-{random.randint(1, 28):02d}"
                     for _ in range(num_rows)
                 ]
             else:
@@ -491,7 +492,7 @@ class TestConsolidatedScraperBase:
             # Random date formats
             if random.random() > 0.3:
                 test_data["posted_date"].append(
-                    f"2024-{random.randint(1,12):02d}-{random.randint(1,28):02d}"
+                    f"2024-{random.randint(1, 12):02d}-{random.randint(1, 28):02d}"
                 )
             else:
                 test_data["posted_date"].append(
@@ -535,8 +536,7 @@ class TestConsolidatedScraperBase:
         data_source = DataSource(
             name=source_name,
             url=f"https://test-{random.randint(1, 100)}.gov",
-            last_scraped=datetime.now(UTC)
-            - timedelta(hours=random.randint(0, 48)),
+            last_scraped=datetime.now(UTC) - timedelta(hours=random.randint(0, 48)),
         )
         db_session.add(data_source)
         db_session.flush()
@@ -557,7 +557,7 @@ class TestConsolidatedScraperBase:
                 f"{random.randint(100000, 999999)}" for _ in range(num_prospects)
             ],
             "posted_date": [
-                f"2024-{random.randint(1,12):02d}-{random.randint(1,28):02d}"
+                f"2024-{random.randint(1, 12):02d}-{random.randint(1, 28):02d}"
                 for _ in range(num_prospects)
             ],
             "estimated_value_text": [
@@ -586,7 +586,7 @@ class TestConsolidatedScraperBase:
         test_data = {
             "title": f"Contract-{random.randint(1000, 9999)}",
             "agency": f"Agency-{random.choice(['A', 'B', 'C', 'D'])}",
-            "posted_date": f"2024-{random.randint(1,12):02d}-{random.randint(1,28):02d}",
+            "posted_date": f"2024-{random.randint(1, 12):02d}-{random.randint(1, 28):02d}",
         }
 
         prospect_id = scraper._generate_prospect_id(test_data)
@@ -634,8 +634,7 @@ class TestConsolidatedScraperBase:
                 agency=source_name,
                 description=f"Test description {i}: {random.randint(1, 1000)}",
                 source_id=data_source.id,
-                loaded_at=datetime.now(UTC)
-                - timedelta(minutes=random.randint(0, 60)),
+                loaded_at=datetime.now(UTC) - timedelta(minutes=random.randint(0, 60)),
             )
             prospects.append(prospect)
 
@@ -877,7 +876,7 @@ class TestConsolidatedScraperBase:
             {"source_name": f"Config-{random.randint(1000, 9999)}"},
             {
                 "source_name": f"Config-{random.randint(1000, 9999)}",
-                "base_url": f"https://test{random.randint(1,100)}.gov",
+                "base_url": f"https://test{random.randint(1, 100)}.gov",
             },
             {
                 "source_name": f"Config-{random.randint(1000, 9999)}",

@@ -43,14 +43,14 @@ const createWrapper = () => {
       mutations: { retry: false }
     }
   });
-  
-  return ({ children }: { children: React.ReactNode }) => 
+
+  return ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: queryClient }, children);
 };
 
 describe('useAuthStatus', () => {
   let mockGet: any;
-  
+
   beforeEach(async () => {
     vi.clearAllMocks();
     const { get } = await import('@/utils/apiUtils');
@@ -64,7 +64,7 @@ describe('useAuthStatus', () => {
   it('fetches authentication status', async () => {
     const testAuthStatus = generateAuthStatus();
     mockGet.mockResolvedValue({ data: testAuthStatus });
-    
+
     const { result } = renderHook(
       () => useAuthStatus(),
       { wrapper: createWrapper() }
@@ -138,7 +138,7 @@ describe('useAuthStatus', () => {
 
 describe('useCurrentUser', () => {
   let mockGet: any;
-  
+
   beforeEach(async () => {
     vi.clearAllMocks();
     const { get } = await import('@/utils/apiUtils');
@@ -148,7 +148,7 @@ describe('useCurrentUser', () => {
   it('fetches current user when authenticated', async () => {
     const testUser = generateUser();
     const testAuthStatus = generateAuthStatus(true, testUser);
-    
+
     mockGet.mockImplementation((url: string) => {
       if (url === '/api/auth/status') {
         return Promise.resolve({ data: testAuthStatus });
@@ -158,7 +158,7 @@ describe('useCurrentUser', () => {
       }
       return Promise.reject(new Error('Unknown URL'));
     });
-    
+
     const { result } = renderHook(
       () => useCurrentUser(),
       { wrapper: createWrapper() }
@@ -179,7 +179,7 @@ describe('useCurrentUser', () => {
 
   it('does not fetch user when not authenticated', async () => {
     const unauthenticatedStatus = generateAuthStatus(false);
-    
+
     mockGet.mockImplementation((url: string) => {
       if (url === '/api/auth/status') {
         return Promise.resolve({ data: unauthenticatedStatus });
@@ -205,7 +205,7 @@ describe('useCurrentUser', () => {
 
 describe('useSignUp', () => {
   let mockPost: any;
-  
+
   beforeEach(async () => {
     vi.clearAllMocks();
     const { post } = await import('@/utils/apiUtils');
@@ -270,7 +270,7 @@ describe('useSignUp', () => {
 
 describe('useSignIn', () => {
   let mockPost: any;
-  
+
   beforeEach(async () => {
     vi.clearAllMocks();
     const { post } = await import('@/utils/apiUtils');
@@ -333,7 +333,7 @@ describe('useSignIn', () => {
 
 describe('useSignOut', () => {
   let mockPost: any;
-  
+
   beforeEach(async () => {
     vi.clearAllMocks();
     const { post } = await import('@/utils/apiUtils');
@@ -386,7 +386,7 @@ describe('useSignOut', () => {
 
 describe('useIsAdmin', () => {
   let mockGet: any;
-  
+
   beforeEach(async () => {
     vi.clearAllMocks();
     const { get } = await import('@/utils/apiUtils');
@@ -460,7 +460,7 @@ describe('useIsAdmin', () => {
 
 describe('useIsSuperAdmin', () => {
   let mockGet: any;
-  
+
   beforeEach(async () => {
     vi.clearAllMocks();
     const { get } = await import('@/utils/apiUtils');
@@ -518,7 +518,7 @@ describe('useIsSuperAdmin', () => {
 
 describe('useUserRole', () => {
   let mockGet: any;
-  
+
   beforeEach(async () => {
     vi.clearAllMocks();
     const { get } = await import('@/utils/apiUtils');
@@ -593,7 +593,7 @@ describe('useUserRole', () => {
 describe('Authentication Integration', () => {
   let mockGet: any;
   let mockPost: any;
-  
+
   beforeEach(async () => {
     vi.clearAllMocks();
     const { get, post } = await import('@/utils/apiUtils');
@@ -603,7 +603,7 @@ describe('Authentication Integration', () => {
 
   it('handles complete authentication flow', async () => {
     const testUser = generateUser();
-    
+
     // Start unauthenticated
     const unauthenticatedStatus = generateAuthStatus(false);
     mockGet.mockResolvedValue({

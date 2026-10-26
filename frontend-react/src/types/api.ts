@@ -121,27 +121,27 @@ export interface DecisionExport {
   reason: string;
   decision_created_at: string;
   decision_updated_at: string;
-  
+
   // User fields
   user_id: number;
   user_email: string;
   user_name: string;
-  
+
   // Prospect identification
   prospect_id: string;
   prospect_native_id: string;
-  
+
   // Prospect basic info
   prospect_title: string;
   prospect_ai_enhanced_title: string;
   prospect_description: string;
   prospect_agency: string;
-  
+
   // NAICS classification
   prospect_naics: string;
   prospect_naics_description: string;
   prospect_naics_source: string;
-  
+
   // Financial information
   prospect_estimated_value: string;
   prospect_est_value_unit: string;
@@ -149,25 +149,25 @@ export interface DecisionExport {
   prospect_estimated_value_min: string;
   prospect_estimated_value_max: string;
   prospect_estimated_value_single: string;
-  
+
   // Important dates
   prospect_release_date: string;
   prospect_award_date: string;
   prospect_award_fiscal_year: string;
-  
+
   // Location information
   prospect_place_city: string;
   prospect_place_state: string;
   prospect_place_country: string;
-  
+
   // Contract details
   prospect_contract_type: string;
   prospect_set_aside: string;
-  
+
   // Contact information
   prospect_primary_contact_email: string;
   prospect_primary_contact_name: string;
-  
+
   // Processing metadata
   prospect_loaded_at: string;
   prospect_ollama_processed_at: string;

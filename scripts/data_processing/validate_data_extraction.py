@@ -325,9 +325,8 @@ def main():
     if report["summary"]["sources_with_issues"] > 0:
         logger.warning("Validation completed with issues found")
         return 1
-    else:
-        logger.success("Validation completed successfully")
-        return 0
+    logger.success("Validation completed successfully")
+    return 0
 
 
 if __name__ == "__main__":

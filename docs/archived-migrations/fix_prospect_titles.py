@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Script to fix prospect titles by copying data from extra.summary to title field
-"""
+"""Script to fix prospect titles by copying data from extra.summary to title field"""
 
 import os
 import sys

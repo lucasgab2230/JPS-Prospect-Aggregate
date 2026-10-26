@@ -27,7 +27,7 @@ export function EnhancementProgress({ status, isVisible }: EnhancementProgressPr
   if (!isVisible || !status) {
     return null;
   }
-  
+
   const allSteps: ProgressStep[] = [
     {
       key: 'titles',
@@ -62,16 +62,16 @@ export function EnhancementProgress({ status, isVisible }: EnhancementProgressPr
       skipReason: status.progress?.set_asides?.skipReason
     }
   ];
-  
+
   // Filter steps based on enhancement types if provided
   const steps = status.enhancementTypes && status.enhancementTypes.length > 0
     ? allSteps.filter(step => status.enhancementTypes?.includes(step.key))
     : allSteps;
-  
+
   return (
     <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
       <h4 className="text-sm font-medium text-yellow-800 mb-3">AI Enhancement Progress</h4>
-      
+
       <div className="space-y-2">
         {steps.map((step) => (
           <div key={step.key} className="flex items-center space-x-3">

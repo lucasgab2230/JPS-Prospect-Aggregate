@@ -41,11 +41,11 @@ const generateWorkflowProspect = () => {
   const naicsCodes = ['541511', '541512', '518210', '541519'];
   const statuses = ['idle', 'processing', 'completed', 'error'];
   const setAsides = ['Small Business', '8(a)', 'WOSB', 'HubZone', null];
-  
+
   const randomId = Math.random().toString(36).substr(2, 9);
   const baseValue = Math.floor(Math.random() * 500000) + 50000;
   const hasAiEnhancement = Math.random() > 0.5;
-  
+
   return {
     id: randomId,
     title: `Contract ${Math.floor(Math.random() * 1000)} - ${hasAiEnhancement ? 'Enhanced' : 'Original'}`,
@@ -75,7 +75,7 @@ const generatePaginatedWorkflowResponse = (prospectCount: number = 2) => {
   const prospects = Array.from({ length: prospectCount }, () => generateWorkflowProspect());
   const totalItems = Math.floor(Math.random() * 50) + prospectCount;
   const perPage = Math.floor(Math.random() * 15) + 5;
-  
+
   return {
     prospects,
     pagination: {
@@ -135,12 +135,12 @@ const ProspectWorkflowApp = ({ testProspects }: { testProspects: any[] }) => {
   return (
     <div>
       <div data-testid="prospect-workflow-app">
-        <ProspectFilters 
+        <ProspectFilters
           filters={filters}
           onFiltersChange={handleFiltersChange}
         />
-        
-        <ProspectTable 
+
+        <ProspectTable
           prospects={testProspects}
           onProspectSelect={handleProspectSelect}
           loading={false}
@@ -168,11 +168,11 @@ describe('Prospect Workflow Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Generate fresh test data for each test
     testResponse = generatePaginatedWorkflowResponse();
     testProspects = testResponse.prospects;
-    
+
     // Mock successful API responses
     mockFetch.mockResolvedValue({
       ok: true,
@@ -193,7 +193,7 @@ describe('Prospect Workflow Integration Tests', () => {
 
     // Verify initial state - prospects are loaded
     expect(screen.getByTestId('prospect-workflow-app')).toBeInTheDocument();
-    
+
     // Should show prospect table with data - test for dynamically generated titles
     await waitFor(() => {
       expect(screen.getByText(testProspects[0].title)).toBeInTheDocument();
@@ -216,7 +216,7 @@ describe('Prospect Workflow Integration Tests', () => {
     // Test agency filter
     const agencySelect = screen.getByLabelText(/agency/i);
     await user.click(agencySelect);
-    
+
     // Look for agency options - use dynamic agency from test data
     const testAgency = testProspects[0].agency;
     await waitFor(() => {
@@ -230,7 +230,7 @@ describe('Prospect Workflow Integration Tests', () => {
     const naicsInput = screen.getByPlaceholderText(/naics code/i);
     const testNaics = testProspects[0].naics_code;
     await user.type(naicsInput, testNaics);
-    
+
     expect(naicsInput).toHaveValue(testNaics);
   });
 
@@ -250,7 +250,7 @@ describe('Prospect Workflow Integration Tests', () => {
     // Click on first prospect to open details
     const firstProspectRow = screen.getByText(firstProspectTitle).closest('tr');
     expect(firstProspectRow).toBeInTheDocument();
-    
+
     await user.click(firstProspectRow!);
 
     // Should open prospect details modal
@@ -268,7 +268,7 @@ describe('Prospect Workflow Integration Tests', () => {
     // Test decision workflow within modal
     const goButton = screen.getByRole('button', { name: /go/i });
     const noGoButton = screen.getByRole('button', { name: /no.go/i });
-    
+
     expect(goButton).toBeInTheDocument();
     expect(noGoButton).toBeInTheDocument();
 
@@ -278,7 +278,7 @@ describe('Prospect Workflow Integration Tests', () => {
     // Should show reason input
     const reasonInput = screen.getByPlaceholderText(/reason for your decision/i);
     expect(reasonInput).toBeInTheDocument();
-    
+
     await user.type(reasonInput, 'Good fit for our development capabilities');
 
     // Submit decision
@@ -412,7 +412,7 @@ describe('Prospect Workflow Integration Tests', () => {
 
     // Use arrow keys in table if implemented
     await user.keyboard('{ArrowDown}');
-    
+
     // Use Enter to select prospect
     await user.keyboard('{Enter}');
 
@@ -539,14 +539,14 @@ describe('Prospect Workflow Integration Tests', () => {
     // Test filtering behavior
     const keywordInput = screen.getByPlaceholderText(/search prospects/i);
     const filterStartTime = performance.now();
-    
+
     // Use part of the first prospect's title for filtering
     const searchTerm = paginatedLargeResponse.prospects[0].title.split(' ')[0];
     await user.type(keywordInput, searchTerm);
-    
+
     const filterEndTime = performance.now();
     const filterTime = filterEndTime - filterStartTime;
-    
+
     // Test that filtering behavior works (no hardcoded thresholds)
     expect(filterTime).toBeGreaterThan(0);
     expect(keywordInput).toHaveValue(searchTerm);

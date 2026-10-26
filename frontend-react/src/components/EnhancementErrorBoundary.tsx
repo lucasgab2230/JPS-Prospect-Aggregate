@@ -45,7 +45,7 @@ export class EnhancementErrorBoundary extends Component<Props, State> {
         { label: 'Reload Page', action: () => window.location.reload() }
       ]
     });
-    
+
     // Handle through error service for centralized logging
     errorService.handleError(boundaryError);
 
@@ -86,7 +86,7 @@ export class EnhancementErrorBoundary extends Component<Props, State> {
               <p className="mt-1 text-sm text-red-700">
                 There was an error with the AI enhancement system. This might be due to a network issue or temporary service problem.
               </p>
-              
+
               {/* Show error details in development */}
               {process.env.NODE_ENV === 'development' && this.state.error && (
                 <details className="mt-2">
@@ -99,7 +99,7 @@ export class EnhancementErrorBoundary extends Component<Props, State> {
                   </pre>
                 </details>
               )}
-              
+
               <div className="mt-3 flex space-x-2">
                 <Button
                   size="sm"
@@ -136,21 +136,21 @@ export function useEnhancementErrorHandler() {
   const handleError = useCallback((error: Error, context: string = 'Enhancement') => {
     // Create a normalized error through error service
     const normalizedError = errorService.normalizeError(error);
-    
+
     // Add enhancement-specific context
     const enhancementError = {
       ...normalizedError,
-      context: { 
+      context: {
         ...normalizedError.context,
         feature: 'enhancement',
-        operation: context 
+        operation: context
       },
       userMessage: normalizedError.userMessage || `${context} error occurred. Please try again.`
     };
-    
+
     // Handle through error service for logging
     errorService.handleError(enhancementError);
-    
+
     // Show toast notification
     showErrorToast(enhancementError);
   }, [showErrorToast]);
@@ -165,7 +165,7 @@ export function useEnhancementErrorHandler() {
         { label: 'Reload Page', action: () => window.location.reload() }
       ]
     });
-    
+
     errorService.handleError(networkError);
     showErrorToast(networkError);
   }, [showErrorToast]);
