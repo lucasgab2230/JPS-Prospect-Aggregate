@@ -49,8 +49,9 @@ import os
 import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime
 from typing import Any
 from urllib.parse import urlparse
@@ -393,42 +394,42 @@ class ConsolidatedScraperBase:
                     get: () => undefined,
                 });
                 delete navigator.__proto__.webdriver;
-                
+
                 // Enhanced plugin system
                 Object.defineProperty(navigator, 'plugins', {
                     get: () => [1, 2, 3, 4, 5],
                 });
-                
+
                 // Realistic language settings
                 Object.defineProperty(navigator, 'languages', {
                     get: () => ['en-US', 'en'],
                 });
-                
+
                 // Enhanced hardware properties
                 Object.defineProperty(navigator, 'hardwareConcurrency', {
                     get: () => 4,
                 });
-                
+
                 Object.defineProperty(navigator, 'deviceMemory', {
                     get: () => 8,
                 });
-                
+
                 // Realistic screen properties
                 Object.defineProperty(screen, 'availWidth', {
                     get: () => 1920,
                 });
-                
+
                 Object.defineProperty(screen, 'availHeight', {
                     get: () => 1040,
                 });
-                
+
                 // Enhanced Chrome object
                 window.chrome = {
                     runtime: {},
                     loadTimes: function() {},
                     csi: function() {},
                 };
-                
+
                 // Mock permissions API to appear more realistic
                 const originalQuery = window.navigator.permissions.query;
                 window.navigator.permissions.query = (parameters) => (
@@ -436,7 +437,7 @@ class ConsolidatedScraperBase:
                         Promise.resolve({ state: Notification.permission }) :
                         originalQuery(parameters)
                 );
-                
+
                 // Canvas fingerprint spoofing with slight noise injection
                 const getImageData = HTMLCanvasElement.prototype.getImageData;
                 HTMLCanvasElement.prototype.getImageData = function(sx, sy, sw, sh) {
@@ -449,7 +450,7 @@ class ConsolidatedScraperBase:
                     }
                     return imageData;
                 };
-                
+
                 // WebGL fingerprint protection
                 const getParameter = WebGLRenderingContext.prototype.getParameter;
                 WebGLRenderingContext.prototype.getParameter = function(parameter) {
@@ -1394,10 +1395,9 @@ class ConsolidatedScraperBase:
                 )
 
                 return fallback_path
-            else:
-                self.logger.warning(
-                    "No database-tracked fallback file found, trying filesystem scan"
-                )
+            self.logger.warning(
+                "No database-tracked fallback file found, trying filesystem scan"
+            )
 
         except Exception as e:
             self.logger.error(f"Error accessing database fallback file: {e}")
@@ -1481,8 +1481,7 @@ class ConsolidatedScraperBase:
                         f"Found valid filesystem fallback: {filename} (modified: {mtime})"
                     )
                     return file_path
-                else:
-                    self.logger.debug(f"Skipping invalid fallback file: {filename}")
+                self.logger.debug(f"Skipping invalid fallback file: {filename}")
 
             self.logger.warning("No valid fallback files found in filesystem scan")
             return None
@@ -1565,16 +1564,16 @@ class ConsolidatedScraperBase:
 
             if strategy == "csv_then_excel":
                 return self._read_csv_then_excel(file_path)
-            elif strategy == "html_then_excel":
+            if strategy == "html_then_excel":
                 return self._read_html_then_excel(file_path)
-            elif strategy == "excel":
+            if strategy == "excel":
                 return self._read_excel_file(file_path)
-            elif strategy == "csv":
+            if strategy == "csv":
                 return self._read_csv_file(file_path)
-            elif strategy == "html":
+            if strategy == "html":
                 return self._read_html_file(file_path)
-            else:  # auto
-                return self._read_auto_detect(file_path)
+            # auto
+            return self._read_auto_detect(file_path)
 
         except Exception as e:
             self.logger.error(f"Error reading file {file_path}: {e}")
@@ -1685,18 +1684,17 @@ class ConsolidatedScraperBase:
 
         if file_ext in [".csv"]:
             return self._read_csv_file(file_path)
-        elif file_ext in [".xlsx", ".xls", ".xlsm"]:
+        if file_ext in [".xlsx", ".xls", ".xlsm"]:
             return self._read_excel_file(file_path)
-        elif file_ext in [".html", ".htm"]:
+        if file_ext in [".html", ".htm"]:
             return self._read_html_file(file_path)
-        else:
-            # Try CSV first as fallback
-            df = self._read_csv_file(file_path)
-            if df is not None:
-                return df
+        # Try CSV first as fallback
+        df = self._read_csv_file(file_path)
+        if df is not None:
+            return df
 
-            # Then try Excel
-            return self._read_excel_file(file_path)
+        # Then try Excel
+        return self._read_excel_file(file_path)
 
     def transform_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
         """Apply comprehensive data transformations based on configuration.
@@ -2243,8 +2241,7 @@ class ConsolidatedScraperBase:
                     if new_extras:
                         merged = {**existing_extras, **new_extras}
                         return merged if merged else None
-                    else:
-                        return existing_extras if existing_extras else None
+                    return existing_extras if existing_extras else None
 
                 df["extras_json"] = df.apply(merge_with_existing_extras, axis=1)
                 self.logger.debug(
@@ -2591,11 +2588,10 @@ class ConsolidatedScraperBase:
                         f"Scrape completed for {self.source_name} using fallback: {loaded_count} records loaded"
                     )
                     return loaded_count
-                else:
-                    await self.cleanup_browser()
-                    raise Exception(
-                        "Setup phase failed - unable to initialize scraper and no fallback available"
-                    )
+                await self.cleanup_browser()
+                raise Exception(
+                    "Setup phase failed - unable to initialize scraper and no fallback available"
+                )
 
             # Extract phase
             file_path = await extract_method()

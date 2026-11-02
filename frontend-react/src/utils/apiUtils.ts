@@ -130,11 +130,11 @@ export const addErrorInterceptor = (interceptor: ErrorInterceptor): (() => void)
  */
 const applyRequestInterceptors = async (url: string, options: RequestInit): Promise<{ url: string; options: RequestInit }> => {
   let result = { url, options };
-  
+
   for (const interceptor of interceptors.request) {
     result = await interceptor(result.url, result.options);
   }
-  
+
   return result;
 };
 
@@ -143,11 +143,11 @@ const applyRequestInterceptors = async (url: string, options: RequestInit): Prom
  */
 const applyResponseInterceptors = async (response: Response): Promise<Response> => {
   let result = response;
-  
+
   for (const interceptor of interceptors.response) {
     result = await interceptor(result);
   }
-  
+
   return result;
 };
 
@@ -156,11 +156,11 @@ const applyResponseInterceptors = async (response: Response): Promise<Response> 
  */
 const applyErrorInterceptors = async (error: Error): Promise<Error> => {
   let result = error;
-  
+
   for (const interceptor of interceptors.error) {
     result = await interceptor(result);
   }
-  
+
   return result;
 };
 
@@ -175,16 +175,16 @@ export const fetchWithErrorHandling = async <T = unknown>(
   url: string,
   options: FetchOptions = {}
 ): Promise<T> => {
-  const { 
-    timeout = 30000, 
-    retry = {}, 
+  const {
+    timeout = 30000,
+    retry = {},
     skipInterceptors = false,
     abortController,
     deduplicate = false,
     deduplicationKey,
-    ...fetchOptions 
+    ...fetchOptions
   } = options;
-  
+
   // Always include credentials for cookie-based authentication
   const finalFetchOptions: RequestInit = {
     credentials: 'include' as RequestCredentials,
@@ -201,7 +201,7 @@ export const fetchWithErrorHandling = async <T = unknown>(
 
   // Handle request deduplication
   const finalDeduplicationKey = deduplicationKey || generateDeduplicationKey(requestParams.url, requestParams.options);
-  
+
   if (deduplicate) {
     const existingRequest = pendingRequests.get(finalDeduplicationKey);
     if (existingRequest) {
@@ -215,7 +215,7 @@ export const fetchWithErrorHandling = async <T = unknown>(
   // Store the request for deduplication
   if (deduplicate) {
     pendingRequests.set(finalDeduplicationKey, requestPromise);
-    
+
     // Clean up after request completes (success or failure)
     requestPromise.finally(() => {
       pendingRequests.delete(finalDeduplicationKey);
@@ -287,10 +287,10 @@ const executeRequest = async <T = unknown>(
         const apiError = new Error(
           errorData.error || errorData.message || `Request failed: ${response.statusText}`
         ) as ApiError;
-        
+
         apiError.status = response.status;
         apiError.statusText = response.statusText;
-        
+
         throw apiError;
       }
 
@@ -303,7 +303,7 @@ const executeRequest = async <T = unknown>(
       }
     } catch (error) {
       clearTimeout(timeoutId);
-      
+
       // Clean up abort event listener
       if (abortController) {
         abortController.signal.removeEventListener('abort', abortHandler);
@@ -603,7 +603,7 @@ export const buildApiUrl = (
   const base = baseUrl || '';
   const path = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
   const query = params ? buildQueryString(params) : '';
-  
+
   return `${base}${path}${query}`;
 };
 
@@ -669,9 +669,9 @@ export const createTimeoutController = (timeoutMs: number): AbortController => {
  */
 export const combineAbortControllers = (controllers: AbortController[]): AbortController => {
   const combinedController = new AbortController();
-  
+
   const abortHandler = () => combinedController.abort();
-  
+
   for (const controller of controllers) {
     if (controller.signal.aborted) {
       combinedController.abort();
@@ -679,16 +679,16 @@ export const combineAbortControllers = (controllers: AbortController[]): AbortCo
     }
     controller.signal.addEventListener('abort', abortHandler);
   }
-  
+
   // Cleanup function to remove event listeners
   const cleanup = () => {
     for (const controller of controllers) {
       controller.signal.removeEventListener('abort', abortHandler);
     }
   };
-  
+
   // Store cleanup function on the controller for later use
   (combinedController as AbortController & { cleanup: () => void }).cleanup = cleanup;
-  
+
   return combinedController;
 };

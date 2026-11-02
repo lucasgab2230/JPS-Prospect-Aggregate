@@ -56,15 +56,15 @@ Parsing Rules:
    - Single values: "$2.5 million", "NTE $500K", "up to $10M"
    - Abbreviations: K=thousand, M/MM=million, B=billion
    - Multi-year: "5-year $10M" = $10M total (not $50M)
-   
+
 2. RANGE DETECTION (Two distinct amounts = RANGE):
    Examples of RANGES:
    - "$100K to $500K" → RANGE
-   - "$100K - $500K" → RANGE  
+   - "$100K - $500K" → RANGE
    - "between $100K and $500K" → RANGE
    - "0K to 250K" → RANGE
    - ">$250K to <$750K" → RANGE
-   
+
 3. For RANGES:
    - min: lower bound amount
    - max: upper bound amount
@@ -73,7 +73,7 @@ Parsing Rules:
    Examples:
    - "0K to 250K" → min=0, max=250000, single=null
    - "$100K-$500K" → min=100000, max=500000, single=null
-   
+
 4. For SINGLE values:
    - single: the amount
    - min: MUST BE null
@@ -81,7 +81,7 @@ Parsing Rules:
    - is_range: false
    Examples:
    - "$250K" → single=250000, min=null, max=null
-   
+
 5. Special cases (these are SINGLE values, not ranges):
    - "Greater than X": single=X*1.5, min=null, max=null
    - "Less than X" or "Below X": single=X*0.75, min=null, max=null

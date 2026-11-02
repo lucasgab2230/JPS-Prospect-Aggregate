@@ -56,7 +56,7 @@ export const ToastContextProvider: React.FC<ToastProviderProps> = ({ children })
       id,
       duration: toast.duration ?? 5000,
     };
-    
+
     setToasts((current) => [...current, newToast]);
 
     // Auto-remove toast after duration
@@ -80,7 +80,7 @@ export const ToastContextProvider: React.FC<ToastProviderProps> = ({ children })
       title = error.userMessage || error.message;
       description = error.technicalDetails || '';
       severity = error.severity;
-      
+
       // Add recovery actions if available
       const primaryAction = error.recoveryActions?.find(a => a.primary);
       if (primaryAction) {
@@ -142,14 +142,14 @@ export const ToastContextProvider: React.FC<ToastProviderProps> = ({ children })
         info: 'info',
         warning: 'warning',
       };
-      
+
       showToast({
         title,
         description: message,
         variant: variantMap[type] || 'info',
         duration,
       });
-      
+
       // Return empty string as the global type expects
       return '';
     };

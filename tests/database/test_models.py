@@ -4,8 +4,9 @@ Comprehensive tests for database models.
 Tests model validation, relationships, and business logic.
 """
 
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import date, datetime
 from decimal import Decimal
 
@@ -34,7 +35,7 @@ def app():
     return app
 
 
-@pytest.fixture()
+@pytest.fixture
 def db_session(app):
     """Create test database session."""
     with app.app_context():
@@ -121,8 +122,8 @@ class TestProspectModel:
         cities = ["Washington", "New York", "Chicago", "Los Angeles"]
 
         prospects = []
-        agency_counts = {agency: 0 for agency in agencies}
-        city_counts = {city: 0 for city in cities}
+        agency_counts = dict.fromkeys(agencies, 0)
+        city_counts = dict.fromkeys(cities, 0)
 
         for i in range(num_prospects):
             prospect_id = "".join(
@@ -255,9 +256,7 @@ class TestProspectModel:
         )
         title = f"Enhancement Test {random.randint(1000, 9999)}"
 
-        prospect = Prospect(
-            id=prospect_id, title=title, loaded_at=datetime.now(UTC)
-        )
+        prospect = Prospect(id=prospect_id, title=title, loaded_at=datetime.now(UTC))
 
         db_session.add(prospect)
         db_session.commit()
@@ -304,9 +303,7 @@ class TestDataSourceModel:
         )
         url = f"https://{subdomain}.{random.choice(domains)}"
 
-        data_source = DataSource(
-            name=name, url=url, last_scraped=datetime.now(UTC)
-        )
+        data_source = DataSource(name=name, url=url, last_scraped=datetime.now(UTC))
 
         db_session.add(data_source)
         db_session.commit()
@@ -329,9 +326,7 @@ class TestDataSourceModel:
         )
         url = f"https://{subdomain}.gov"
 
-        data_source = DataSource(
-            name=name, url=url, last_scraped=datetime.now(UTC)
-        )
+        data_source = DataSource(name=name, url=url, last_scraped=datetime.now(UTC))
         db_session.add(data_source)
         db_session.flush()
 
@@ -381,9 +376,7 @@ class TestLLMOutputModel:
         )
         title = f"Prospect {random.randint(1000, 9999)}"
 
-        prospect = Prospect(
-            id=prospect_id, title=title, loaded_at=datetime.now(UTC)
-        )
+        prospect = Prospect(id=prospect_id, title=title, loaded_at=datetime.now(UTC))
         db_session.add(prospect)
         db_session.flush()
 
@@ -447,9 +440,7 @@ class TestInferredProspectDataModel:
         )
         title = f"Prospect {random.randint(1000, 9999)}"
 
-        prospect = Prospect(
-            id=prospect_id, title=title, loaded_at=datetime.now(UTC)
-        )
+        prospect = Prospect(id=prospect_id, title=title, loaded_at=datetime.now(UTC))
         db_session.add(prospect)
         db_session.flush()
 
@@ -580,9 +571,7 @@ class TestDecisionModel:
         )
         title = f"Opportunity {random.randint(1000, 9999)}"
 
-        prospect = Prospect(
-            id=prospect_id, title=title, loaded_at=datetime.now(UTC)
-        )
+        prospect = Prospect(id=prospect_id, title=title, loaded_at=datetime.now(UTC))
         db_session.add(prospect)
         db_session.flush()
 

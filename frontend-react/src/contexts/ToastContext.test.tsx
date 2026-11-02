@@ -6,8 +6,8 @@ import { AppError, ErrorSeverity, ErrorCategory } from '@/types/errors';
 
 // Mock the Toast UI components
 vi.mock('@/components/ui/Toast', () => ({
-  Toast: ({ children, onOpenChange, ...props }: any) => 
-    React.createElement('div', { 
+  Toast: ({ children, onOpenChange, ...props }: any) =>
+    React.createElement('div', {
       'data-testid': 'toast',
       'data-variant': props.variant,
       'data-severity': props.severity,
@@ -105,7 +105,7 @@ const generateAppError = (severity: ErrorSeverity = ErrorSeverity.ERROR): AppErr
   const messages = ['Operation failed', 'Invalid input', 'Access denied', 'System unavailable', 'User action required'];
   const userMessages = ['Something went wrong', 'Please check your input', 'Authentication required', 'Service temporarily unavailable', 'Please try again'];
   const categories = [ErrorCategory.SYSTEM, ErrorCategory.NETWORK, ErrorCategory.VALIDATION, ErrorCategory.USER, ErrorCategory.EXTERNAL];
-  
+
   return {
     code: errorCodes[Math.floor(Math.random() * errorCodes.length)],
     message: messages[Math.floor(Math.random() * messages.length)],
@@ -150,11 +150,11 @@ describe('ToastContext', () => {
   it('throws error when useToast is used outside provider', () => {
     // Suppress console.error for this test
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    
+
     expect(() => {
       render(<TestComponent />);
     }).toThrow('useToast must be used within a ToastProvider');
-  
+
     consoleSpy.mockRestore();
   });
 
@@ -287,11 +287,11 @@ describe('ToastContext', () => {
     expect(toast).toBeInTheDocument();
     expect(toast).toHaveAttribute('data-variant', 'destructive');
     expect(toast).toHaveAttribute('data-severity', 'error');
-    
+
     // Should display the user message from the generated error
     expect(screen.getByTestId('toast-title')).toHaveTextContent(testError.userMessage!);
     expect(screen.getByTestId('toast-description')).toHaveTextContent(testError.technicalDetails!);
-    
+
     // Should show recovery action with the generated label
     expect(screen.getByTestId('toast-action')).toHaveTextContent(testError.recoveryActions![0].label);
   });
@@ -441,7 +441,7 @@ describe('ToastContext', () => {
     expect(screen.getByTestId('toast')).toBeInTheDocument();
     expect(screen.getByTestId('toast-title')).toHaveTextContent(content.title);
     expect(screen.getByTestId('toast-description')).toHaveTextContent(content.description);
-    
+
     const toast = screen.getByTestId('toast');
     expect(toast).toHaveAttribute('data-variant', 'success');
   });

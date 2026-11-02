@@ -176,9 +176,8 @@ def normalize_naics_code(naics_str):
     # Verify it's a valid NAICS code (should be numeric and typically 2-6 digits)
     if naics_str.isdigit() and 2 <= len(naics_str) <= 6:
         return naics_str
-    else:
-        logger.warning(f"Invalid NAICS code format: {naics_str}")
-        return pd.NA
+    logger.warning(f"Invalid NAICS code format: {naics_str}")
+    return pd.NA
 
 
 def split_place(place_str):
@@ -223,17 +222,14 @@ def split_place(place_str):
         # Standard City, State format check
         if len(state_part) <= 3 and state_part.isalpha():
             return city.title(), state_part.upper()
-        else:
-            logger.warning(
-                f"Unexpected place format '{place_str}', treating as city: {city}"
-            )
-            return city.title(), pd.NA
-    elif len(parts) == 1:
+        logger.warning(
+            f"Unexpected place format '{place_str}', treating as city: {city}"
+        )
+        return city.title(), pd.NA
+    if len(parts) == 1:
         part = parts[0]
         if len(part) <= 3 and part.isalpha():
             return pd.NA, part.upper()
-        else:
-            return part.title(), pd.NA
-    else:
-        logger.warning(f"Could not confidently split place: {place_str}")
-        return pd.NA, pd.NA
+        return part.title(), pd.NA
+    logger.warning(f"Could not confidently split place: {place_str}")
+    return pd.NA, pd.NA

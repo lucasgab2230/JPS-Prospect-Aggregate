@@ -1,8 +1,8 @@
 """Admin API endpoints for system administration."""
 
 import datetime
-from datetime import timezone
-UTC = timezone.utc
+
+UTC = datetime.UTC
 
 from flask import Blueprint, jsonify, request, session
 from sqlalchemy import case, desc, func
@@ -62,7 +62,7 @@ def toggle_maintenance():
                 }
             )
 
-        elif request.method == "POST":
+        if request.method == "POST":
             # Toggle maintenance mode
             data = request.get_json() or {}
             enabled = data.get("enabled", None)
@@ -333,9 +333,7 @@ def get_admin_decision_stats():
         )
 
         # Recent activity (last 30 days)
-        thirty_days_ago = datetime.datetime.now(UTC) - datetime.timedelta(
-            days=30
-        )
+        thirty_days_ago = datetime.datetime.now(UTC) - datetime.timedelta(days=30)
         recent_decisions = (
             db.session.query(func.count(GoNoGoDecision.id))
             .filter(GoNoGoDecision.created_at >= thirty_days_ago)

@@ -194,12 +194,12 @@ export function DatabaseManagement() {
     const units = ['B', 'KB', 'MB', 'GB'];
     let size = bytes;
     let unitIndex = 0;
-    
+
     while (size >= 1024 && unitIndex < units.length - 1) {
       size /= 1024;
       unitIndex++;
     }
-    
+
     return `${size.toFixed(1)} ${units[unitIndex]}`;
   };
 
@@ -325,7 +325,7 @@ export function DatabaseManagement() {
                     confirmLabel: 'Clear AI Entries',
                     variant: 'destructive'
                   });
-                  
+
                   if (confirmed) {
                     clearAIMutation.mutate();
                   }
@@ -356,7 +356,7 @@ export function DatabaseManagement() {
                     confirmLabel: 'Clear Original Entries',
                     variant: 'destructive'
                   });
-                  
+
                   if (confirmed) {
                     clearOriginalMutation.mutate();
                   }
@@ -370,7 +370,7 @@ export function DatabaseManagement() {
             <div>
               <h4 className="font-medium text-gray-900 mb-2">Clear All Database</h4>
               <p className="text-sm text-gray-600 mb-3">
-                This will permanently delete ALL prospects and scraper status records from the database. 
+                This will permanently delete ALL prospects and scraper status records from the database.
                 Data sources will remain but their last_scraped timestamps will be reset.
               </p>
               <LoadingButton
@@ -389,7 +389,7 @@ export function DatabaseManagement() {
                     confirmLabel: 'Clear All Database',
                     variant: 'destructive'
                   });
-                  
+
                   if (confirmed) {
                     clearDatabaseMutation.mutate();
                   }
@@ -420,10 +420,10 @@ export function DatabaseManagement() {
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <span className="text-sm font-medium">
-                      Current Setting: 
+                      Current Setting:
                       <span className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold ${
-                        aiConfigData?.data?.preserve_ai_data_on_refresh 
-                          ? 'bg-green-100 text-green-800' 
+                        aiConfigData?.data?.preserve_ai_data_on_refresh
+                          ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                       }`}>
                         {aiConfigData?.data?.preserve_ai_data_on_refresh ? 'ENABLED' : 'DISABLED'}
@@ -432,7 +432,7 @@ export function DatabaseManagement() {
                   </div>
                 </div>
                 <div className="flex space-x-2 mt-4">
-                  <button 
+                  <button
                     className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 bg-green-600 text-white shadow-xs hover:bg-green-700 h-9 px-4 py-2"
                     disabled={updateAIConfigMutation.isPending || aiConfigData?.data?.preserve_ai_data_on_refresh}
                     onClick={() => updateAIConfigMutation.mutate({ preserve_ai_data_on_refresh: true })}
@@ -442,7 +442,7 @@ export function DatabaseManagement() {
                     ) : null}
                     Enable Protection
                   </button>
-                  <button 
+                  <button
                     className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 bg-orange-600 text-white shadow-xs hover:bg-orange-700 h-9 px-4 py-2"
                     disabled={updateAIConfigMutation.isPending || !aiConfigData?.data?.preserve_ai_data_on_refresh}
                     onClick={async () => {
@@ -460,7 +460,7 @@ export function DatabaseManagement() {
                         confirmLabel: 'Disable Protection',
                         variant: 'destructive'
                       });
-                      
+
                       if (confirmed) {
                         updateAIConfigMutation.mutate({ preserve_ai_data_on_refresh: false });
                       }
@@ -483,10 +483,10 @@ export function DatabaseManagement() {
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-2">
                     <span className="text-sm font-medium">
-                      Current Setting: 
+                      Current Setting:
                       <span className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold ${
-                        aiConfigData?.data?.enable_smart_duplicate_matching 
-                          ? 'bg-blue-100 text-blue-800' 
+                        aiConfigData?.data?.enable_smart_duplicate_matching
+                          ? 'bg-blue-100 text-blue-800'
                           : 'bg-gray-100 text-gray-800'
                       }`}>
                         {aiConfigData?.data?.enable_smart_duplicate_matching ? 'ENABLED' : 'DISABLED'}
@@ -495,7 +495,7 @@ export function DatabaseManagement() {
                   </div>
                 </div>
                 <div className="flex space-x-2 mt-4">
-                  <button 
+                  <button
                     className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white shadow-xs hover:bg-blue-700 h-9 px-4 py-2"
                     disabled={updateAIConfigMutation.isPending || aiConfigData?.data?.enable_smart_duplicate_matching}
                     onClick={() => updateAIConfigMutation.mutate({ enable_smart_duplicate_matching: true })}
@@ -505,7 +505,7 @@ export function DatabaseManagement() {
                     ) : null}
                     Enable Smart Matching
                   </button>
-                  <button 
+                  <button
                     className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 bg-gray-600 text-white shadow-xs hover:bg-gray-700 h-9 px-4 py-2"
                     disabled={updateAIConfigMutation.isPending || !aiConfigData?.data?.enable_smart_duplicate_matching}
                     onClick={async () => {
@@ -519,7 +519,7 @@ export function DatabaseManagement() {
                         confirmLabel: 'Disable Smart Matching',
                         variant: 'destructive'
                       });
-                      
+
                       if (confirmed) {
                         updateAIConfigMutation.mutate({ enable_smart_duplicate_matching: false });
                       }

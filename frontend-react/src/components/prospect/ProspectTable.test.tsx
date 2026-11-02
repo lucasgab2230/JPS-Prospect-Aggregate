@@ -11,11 +11,11 @@ function generateRandomProspect(index: number): Prospect {
   const naics = ['541511', '541512', '541519', '517311', '236220'];
   const setAsides = ['Small Business', '8(a) Set-Aside', 'WOSB', 'HUBZone', null];
   const locations = ['Washington, DC', 'Arlington, VA', 'New York, NY', 'San Francisco, CA'];
-  
+
   const id = Math.floor(Math.random() * 100000) + index;
   const hasAI = Math.random() > 0.5;
   const value = Math.floor(Math.random() * 1000000) + 10000;
-  
+
   return {
     id: String(id),
     title: `Contract ${id} - ${['Software', 'Hardware', 'Services', 'Research'][Math.floor(Math.random() * 4)]}`,
@@ -53,7 +53,7 @@ vi.mock('@tanstack/react-virtual', () => ({
       size: 50,
       key: `${i}`
     }));
-    
+
     return {
       getVirtualItems: () => items.slice(0, Math.min(2, items.length)),
       getTotalSize: () => itemCount * 50,
@@ -69,7 +69,7 @@ let _mockProspects: Prospect[] = [];
 
 function createMockTable(prospects: Prospect[]) {
   const headers = ['title', 'agency', 'naics', 'value', 'release_date'];
-  
+
   return {
     getHeaderGroups: () => [{
       id: `header-group-${Math.random()}`,
@@ -104,8 +104,8 @@ function createMockTable(prospects: Prospect[]) {
         getValue: (columnId: string) => prospect[columnId as keyof Prospect],
         getVisibleCells: () => headers.map(columnId => ({
           id: `${prospect.id}-${columnId}`,
-          column: { 
-            id: columnId, 
+          column: {
+            id: columnId,
             columnDef: {},
             getSize: () => 150  // Add getSize method to column
           },
@@ -158,7 +158,7 @@ function generateTestProspects(count: number = 2): Prospect[] {
 function generateProspectStatus() {
   const statuses = ['idle', 'queued', 'processing', 'completed', 'failed'];
   const status = statuses[Math.floor(Math.random() * statuses.length)];
-  
+
   return {
     status,
     currentStep: status === 'processing' ? `Step ${Math.floor(Math.random() * 5) + 1}` : null,
@@ -171,7 +171,7 @@ function createDefaultProps(prospects?: Prospect[]) {
   const testProspects = prospects || generateTestProspects(Math.floor(Math.random() * 5) + 2);
   _mockProspects = testProspects;
   mockTable = createMockTable(testProspects);
-  
+
   return {
     table: mockTable,
     prospects: testProspects,
@@ -212,7 +212,7 @@ describe('ProspectTable', () => {
   it('renders prospect table with data', () => {
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Verify prospects are rendered
     props.prospects.forEach(prospect => {
       if (prospect.title) {
@@ -227,14 +227,14 @@ describe('ProspectTable', () => {
   it('shows loading state', () => {
     const props = { ...createDefaultProps([]), isLoading: true };
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     expect(screen.getByText(/loading/i)).toBeInTheDocument();
   });
 
   it('shows empty state when no prospects', () => {
     const props = createDefaultProps([]);
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     expect(screen.getByText(/no prospects found/i)).toBeInTheDocument();
   });
 
@@ -242,19 +242,19 @@ describe('ProspectTable', () => {
     const user = userEvent.setup();
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Click on first prospect
     const firstProspect = props.prospects[0];
     const firstRow = screen.getByText(firstProspect.title);
     await user.click(firstRow);
-    
+
     expect(props.onProspectClick).toHaveBeenCalledWith(firstProspect);
   });
 
   it('displays AI enhancement indicators', () => {
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Check for AI indicators on prospects that have been processed
     const aiProspects = props.prospects.filter(p => p.ollama_processed_at);
     if (aiProspects.length > 0) {
@@ -266,7 +266,7 @@ describe('ProspectTable', () => {
   it('toggles between original and AI enhanced data', () => {
     const props = createDefaultProps();
     const { rerender } = renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Find a prospect with NAICS data
     const prospectWithNaics = props.prospects.find(p => p.naics_description);
     if (prospectWithNaics) {
@@ -274,14 +274,14 @@ describe('ProspectTable', () => {
         expect(screen.getByText(prospectWithNaics.naics_description)).toBeInTheDocument();
       }
     }
-    
+
     // Toggle to show AI enhanced data
     rerender(
       <QueryClientProvider client={new QueryClient()}>
         <ProspectTable {...props} />
       </QueryClientProvider>
     );
-    
+
     // Data should still be present
     props.prospects.forEach(prospect => {
       if (prospect.title) {
@@ -294,13 +294,13 @@ describe('ProspectTable', () => {
     const user = userEvent.setup();
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Find a sortable column header
     const headers = screen.getAllByRole('columnheader');
     if (headers.length > 0) {
       const firstHeader = headers[0];
       await user.click(firstHeader);
-      
+
       // Verify sorting was triggered (column has sorting methods)
       const column = mockTable.getHeaderGroups()[0].headers[0].column;
       expect(column.toggleSorting).toBeDefined();
@@ -320,9 +320,9 @@ describe('ProspectTable', () => {
       ];
       return statuses[callCount++ % statuses.length];
     });
-    
+
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Should display some status indicator
     const statusIndicators = screen.queryAllByText(/processing|queued|completed/i);
     expect(statusIndicators.length).toBeGreaterThanOrEqual(0);
@@ -331,7 +331,7 @@ describe('ProspectTable', () => {
   it('shows enhancement buttons for prospects', () => {
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     const enhanceButtons = screen.queryAllByText(/enhance|redo/i);
     // Should have enhancement buttons if prospects exist
     if (props.prospects.length > 0) {
@@ -343,7 +343,7 @@ describe('ProspectTable', () => {
     const user = userEvent.setup();
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     const enhanceButtons = screen.queryAllByText(/enhance|redo/i);
     if (enhanceButtons.length > 0) {
       await user.click(enhanceButtons[0]);
@@ -354,7 +354,7 @@ describe('ProspectTable', () => {
   it('displays contract values correctly', () => {
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Check that value text is displayed for prospects with values
     props.prospects.forEach(prospect => {
       if (prospect.estimated_value_text) {
@@ -366,9 +366,9 @@ describe('ProspectTable', () => {
   it('formats dates using provided formatter', () => {
     const props = createDefaultProps();
     props.formatUserDate = vi.fn((date: string) => `Formatted: ${date}`);
-    
+
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Check that dates are formatted
     const prospectWithDate = props.prospects.find(p => p.release_date);
     if (prospectWithDate) {
@@ -381,7 +381,7 @@ describe('ProspectTable', () => {
   it('displays NAICS codes and descriptions', () => {
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Check NAICS codes are displayed
     props.prospects.forEach(prospect => {
       if (prospect.naics) {
@@ -396,7 +396,7 @@ describe('ProspectTable', () => {
   it('shows set-aside information', () => {
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Check set-aside information is displayed
     props.prospects.forEach(prospect => {
       if (prospect.set_aside) {
@@ -409,14 +409,14 @@ describe('ProspectTable', () => {
     const user = userEvent.setup();
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     const table = screen.getByRole('table');
     await user.click(table);
-    
+
     // Test keyboard navigation
     await user.keyboard('{ArrowDown}');
     await user.keyboard('{Enter}');
-    
+
     // Keyboard navigation may trigger various actions
     // Can't predict exact behavior without implementation details
     expect(table).toBeInTheDocument();
@@ -426,12 +426,12 @@ describe('ProspectTable', () => {
     const user = userEvent.setup();
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     if (props.prospects.length > 0) {
       const firstProspect = props.prospects[0];
       const titleCell = screen.getByText(firstProspect.title);
       await user.hover(titleCell);
-      
+
       // Tooltip may show description
       await waitFor(() => {
         const _tooltip = firstProspect.description ? screen.queryByText(firstProspect.description) : null;
@@ -445,12 +445,12 @@ describe('ProspectTable', () => {
     const user = userEvent.setup();
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     const checkboxes = screen.queryAllByRole('checkbox');
     if (checkboxes.length > 0) {
       const isInitiallyChecked = (checkboxes[0] as HTMLInputElement).checked;
       await user.click(checkboxes[0]);
-      
+
       // State should change after click
       expect((checkboxes[0] as HTMLInputElement).checked).toBe(!isInitiallyChecked);
     }
@@ -460,18 +460,18 @@ describe('ProspectTable', () => {
     const user = userEvent.setup();
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     const resizeHandle = screen.queryByTestId('resize-handle');
     if (resizeHandle) {
       // Simulate drag to resize
       const initialX = Math.floor(Math.random() * 200);
       const deltaX = Math.floor(Math.random() * 100) + 50;
-      
+
       await user.hover(resizeHandle);
       fireEvent.mouseDown(resizeHandle, { clientX: initialX });
       fireEvent.mouseMove(resizeHandle, { clientX: initialX + deltaX });
       fireEvent.mouseUp(resizeHandle);
-      
+
       // Resize behavior depends on implementation
       expect(resizeHandle).toBeInTheDocument();
     }
@@ -481,11 +481,11 @@ describe('ProspectTable', () => {
     const user = userEvent.setup();
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     const actionsButtons = screen.queryAllByLabelText(/actions|menu|more/i);
     if (actionsButtons.length > 0) {
       await user.click(actionsButtons[0]);
-      
+
       // Menu should show some actions
       await waitFor(() => {
         const _menuItems = screen.queryAllByRole('menuitem');
@@ -500,9 +500,9 @@ describe('ProspectTable', () => {
     const prospectCount = Math.floor(Math.random() * 500) + 500;
     const manyProspects = generateTestProspects(prospectCount);
     const props = createDefaultProps(manyProspects);
-    
+
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Should only render a subset of rows for performance
     const renderedRows = screen.queryAllByRole('row');
     // Virtual scrolling should limit rendered rows
@@ -512,23 +512,23 @@ describe('ProspectTable', () => {
   it('preserves scroll position when data updates', () => {
     const props = createDefaultProps();
     const { rerender } = renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     const tableContainer = screen.queryByTestId('table-container');
     if (tableContainer) {
       // Simulate scroll
       const scrollPosition = Math.floor(Math.random() * 500) + 100;
       fireEvent.scroll(tableContainer, { target: { scrollTop: scrollPosition } });
-      
+
       // Add new prospect to data
       const updatedProspects = [...props.prospects, generateRandomProspect(props.prospects.length)];
       const updatedProps = { ...props, prospects: updatedProspects };
-      
+
       rerender(
         <QueryClientProvider client={new QueryClient()}>
           <ProspectTable {...updatedProps} />
         </QueryClientProvider>
       );
-      
+
       // Scroll position behavior depends on implementation
       expect(tableContainer).toBeInTheDocument();
     }
@@ -541,9 +541,9 @@ describe('ProspectTable', () => {
       isLoading: false,
       hasNextPage: true
     };
-    
+
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // May show skeleton rows for pagination
     const _skeletons = screen.queryAllByTestId('row-skeleton');
     // Skeleton behavior depends on implementation
@@ -558,14 +558,14 @@ describe('ProspectTable', () => {
       'Timeout error'
     ];
     const errorMessage = errorMessages[Math.floor(Math.random() * errorMessages.length)];
-    
+
     const props = {
       ...createDefaultProps([]),
       error: new Error(errorMessage)
     };
-    
+
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     // Should show error message
     const errorText = screen.queryByText(/error/i);
     if (errorText) {
@@ -576,21 +576,21 @@ describe('ProspectTable', () => {
   it('supports accessibility features', () => {
     const props = createDefaultProps();
     renderWithQueryClient(<ProspectTable {...props} />);
-    
+
     const table = screen.getByRole('table');
     // Should have accessibility attributes
     expect(table).toBeInTheDocument();
-    
+
     // Check for ARIA labels
     const ariaLabel = table.getAttribute('aria-label');
     if (ariaLabel) {
       expect(ariaLabel.toLowerCase()).toContain('prospect');
     }
-    
+
     // Check column headers have proper roles
     const columnHeaders = screen.queryAllByRole('columnheader');
     expect(columnHeaders.length).toBeGreaterThan(0);
-    
+
     // Headers may have sorting attributes
     columnHeaders.forEach(header => {
       const ariaSort = header.getAttribute('aria-sort');
