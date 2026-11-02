@@ -326,7 +326,7 @@ class TestConsolidatedScrapers:
 
         return data
 
-    @pytest.fixture()
+    @pytest.fixture
     def mock_browser_setup(self):
         """Mock browser setup for all scrapers."""
         with (
@@ -341,7 +341,7 @@ class TestConsolidatedScrapers:
         ):
             yield mock_setup, mock_cleanup
 
-    @pytest.fixture()
+    @pytest.fixture
     def mock_navigation(self):
         """Mock navigation methods."""
         with (
@@ -361,7 +361,7 @@ class TestConsolidatedScrapers:
         ):
             yield mock_nav, mock_wait, mock_timeout
 
-    @pytest.fixture()
+    @pytest.fixture
     def mock_interactions(self):
         """Mock page interaction methods."""
         with (
@@ -394,7 +394,7 @@ class TestConsolidatedScrapers:
             return f.name
 
     # Test each scraper with dynamic data
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_acquisition_gateway_scraper(
         self, mock_browser_setup, mock_navigation, mock_interactions, db_session
     ):
@@ -429,7 +429,7 @@ class TestConsolidatedScrapers:
             if os.path.exists(test_file):
                 os.unlink(test_file)
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_dhs_scraper(
         self, mock_browser_setup, mock_navigation, mock_interactions, db_session
     ):
@@ -459,7 +459,7 @@ class TestConsolidatedScrapers:
             if os.path.exists(test_file):
                 os.unlink(test_file)
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_treasury_scraper(
         self, mock_browser_setup, mock_navigation, mock_interactions, db_session
     ):
@@ -487,7 +487,7 @@ class TestConsolidatedScrapers:
             if os.path.exists(test_file):
                 os.unlink(test_file)
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_dot_scraper(
         self, mock_browser_setup, mock_navigation, mock_interactions, db_session
     ):
@@ -515,7 +515,7 @@ class TestConsolidatedScrapers:
             if os.path.exists(test_file):
                 os.unlink(test_file)
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_hhs_scraper(
         self, mock_browser_setup, mock_navigation, mock_interactions, db_session
     ):
@@ -551,7 +551,7 @@ class TestConsolidatedScrapers:
             if os.path.exists(test_file):
                 os.unlink(test_file)
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_ssa_scraper(
         self, mock_browser_setup, mock_navigation, mock_interactions, db_session
     ):
@@ -586,7 +586,7 @@ class TestConsolidatedScrapers:
             if os.path.exists(test_file):
                 os.unlink(test_file)
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_doc_scraper(
         self, mock_browser_setup, mock_navigation, mock_interactions, db_session
     ):
@@ -621,7 +621,7 @@ class TestConsolidatedScrapers:
             if os.path.exists(test_file):
                 os.unlink(test_file)
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_doj_scraper(
         self, mock_browser_setup, mock_navigation, mock_interactions, db_session
     ):
@@ -649,7 +649,7 @@ class TestConsolidatedScrapers:
             if os.path.exists(test_file):
                 os.unlink(test_file)
 
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_dos_scraper(
         self, mock_browser_setup, mock_navigation, mock_interactions, db_session
     ):
@@ -678,7 +678,7 @@ class TestConsolidatedScrapers:
                 os.unlink(test_file)
 
     # Test error handling
-    @pytest.mark.asyncio()
+    @pytest.mark.asyncio
     async def test_scraper_error_handling(self, mock_browser_setup, mock_navigation):
         """Test that scrapers handle errors gracefully."""
         error_messages = [
@@ -746,7 +746,7 @@ class TestConsolidatedScrapers:
             [
                 {
                     "native_id_primary": f"id-{random.randint(1000, 9999)}",
-                    "place_raw": f'{random.choice(["Washington", "New York", "Chicago"])}, {random.choice(["DC", "NY", "IL"])}',
+                    "place_raw": f"{random.choice(['Washington', 'New York', 'Chicago'])}, {random.choice(['DC', 'NY', 'IL'])}",
                 }
                 for _ in range(num_rows)
             ]
@@ -769,7 +769,7 @@ class TestConsolidatedScrapers:
             [
                 {
                     "description": f"Description {random.randint(1000, 9999)}",
-                    "place_raw": f'{random.choice(["Baltimore", "Chicago"])}, {random.choice(["MD", "IL"])}',
+                    "place_raw": f"{random.choice(['Baltimore', 'Chicago'])}, {random.choice(['MD', 'IL'])}",
                 }
                 for _ in range(num_rows)
             ]
@@ -814,14 +814,14 @@ class TestConsolidatedScrapers:
 
 
 # Standalone test functions for running individual scrapers
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_run_single_scraper_acquisition_gateway():
     """Run only the Acquisition Gateway scraper for testing."""
     # This allows running individual scraper tests
     # pytest tests/core/scrapers/test_scrapers.py::test_run_single_scraper_acquisition_gateway -v
 
 
-@pytest.mark.asyncio()
+@pytest.mark.asyncio
 async def test_run_single_scraper_dhs():
     """Run only the DHS scraper for testing."""
 

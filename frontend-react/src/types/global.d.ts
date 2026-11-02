@@ -5,4 +5,4 @@ interface Window {
     type?: 'success' | 'error' | 'info';
     duration?: number;
   }) => string;
-} 
+}

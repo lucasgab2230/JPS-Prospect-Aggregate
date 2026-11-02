@@ -1,5 +1,6 @@
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import date, datetime
 
 from flask import Blueprint, jsonify
@@ -414,7 +415,7 @@ def set_ai_preservation_config():
             active_config.PRESERVE_AI_DATA_ON_REFRESH = new_value
             os.environ["PRESERVE_AI_DATA_ON_REFRESH"] = "true" if new_value else "false"
             updated_fields.append(
-                f'AI preservation {"enabled" if new_value else "disabled"}'
+                f"AI preservation {'enabled' if new_value else 'disabled'}"
             )
             logger.info(f"AI data preservation setting updated to: {new_value}")
 
@@ -426,7 +427,7 @@ def set_ai_preservation_config():
                 "true" if new_value else "false"
             )
             updated_fields.append(
-                f'Smart duplicate matching {"enabled" if new_value else "disabled"}'
+                f"Smart duplicate matching {'enabled' if new_value else 'disabled'}"
             )
             logger.info(f"Smart duplicate matching setting updated to: {new_value}")
 
@@ -444,7 +445,7 @@ def set_ai_preservation_config():
                 "data": {
                     "preserve_ai_data_on_refresh": active_config.PRESERVE_AI_DATA_ON_REFRESH,
                     "enable_smart_duplicate_matching": active_config.ENABLE_SMART_DUPLICATE_MATCHING,
-                    "message": f'Configuration updated: {", ".join(updated_fields)}',
+                    "message": f"Configuration updated: {', '.join(updated_fields)}",
                 },
             }
         )

@@ -29,7 +29,7 @@ class TestEnhancedBulkUpsert:
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
         return app
 
-    @pytest.fixture()
+    @pytest.fixture
     def app_context(self, app):
         """Create Flask app context with real database."""
         with app.app_context():
@@ -38,7 +38,7 @@ class TestEnhancedBulkUpsert:
             db.session.rollback()
             db.drop_all()
 
-    @pytest.fixture()
+    @pytest.fixture
     def test_source(self, app_context):
         """Create a test data source with random attributes."""
         source_name = f"TEST_SOURCE_{random.randint(1000, 9999)}"

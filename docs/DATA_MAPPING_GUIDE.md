@@ -25,29 +25,31 @@ This guide provides detailed technical specifications for data mapping and field
 ```python
 # Example scraper configuration structure
 {
-    'raw_column_rename_map': {
+    "raw_column_rename_map": {
         # Direct column mappings (authoritative)
-        'Original Header': 'database_field',
+        "Original Header": "database_field",
     },
-    'required_fields_for_load': [
+    "required_fields_for_load": [
         # Fields that must be present to load record
-        'id', 'title', 'agency'
+        "id",
+        "title",
+        "agency",
     ],
-    'place_column_configs': {
+    "place_column_configs": {
         # Location parsing configuration
-        'combined_location': 'Place of Performance',
-        'city': 'Place City',
-        'state': 'Place State',
+        "combined_location": "Place of Performance",
+        "city": "Place City",
+        "state": "Place State",
     },
-    'date_column_configs': [
+    "date_column_configs": [
         # Date field mapping and parsing
-        {'column': 'Award Date', 'format': '%m/%d/%Y'}
+        {"column": "Award Date", "format": "%m/%d/%Y"}
     ],
-    'fiscal_year_configs': {
+    "fiscal_year_configs": {
         # Fiscal year and quarter parsing
-        'year_column': 'Fiscal Year',
-        'quarter_column': 'Fiscal Quarter'
-    }
+        "year_column": "Fiscal Year",
+        "quarter_column": "Fiscal Quarter",
+    },
 }
 ```
 
@@ -79,8 +81,8 @@ Sources provide location data in various formats that need standardization:
 # Input: "Washington, DC"
 # Configuration:
 place_column_configs = {
-    'combined_location': 'Place of Performance',
-    'default_country': 'USA'
+    "combined_location": "Place of Performance",
+    "default_country": "USA",
 }
 # Output:
 # place_city: "Washington"
@@ -94,9 +96,9 @@ place_column_configs = {
 # Input: Separate columns for city/state
 # Configuration:
 place_column_configs = {
-    'city': 'Performance City',
-    'state': 'Performance State',
-    'default_country': 'USA'
+    "city": "Performance City",
+    "state": "Performance State",
+    "default_country": "USA",
 }
 ```
 
@@ -115,24 +117,26 @@ Contact information appears in multiple formats across sources:
 
 ```python
 # DHS, DOJ pattern
-if 'Contact First Name' in df and 'Contact Last Name' in df:
-    df['primary_contact_name'] = df['Contact First Name'] + ' ' + df['Contact Last Name']
+if "Contact First Name" in df and "Contact Last Name" in df:
+    df["primary_contact_name"] = (
+        df["Contact First Name"] + " " + df["Contact Last Name"]
+    )
 ```
 
 #### Organization-Level Contacts
 
 ```python
 # Treasury pattern
-if 'Contracting Office' in df and not df['primary_contact_name']:
-    df['primary_contact_name'] = df['Contracting Office']
+if "Contracting Office" in df and not df["primary_contact_name"]:
+    df["primary_contact_name"] = df["Contracting Office"]
 ```
 
 #### Email Extraction
 
 ```python
 # Universal pattern
-if 'Contact Email' in df:
-    df['primary_contact_email'] = df['Contact Email'].str.lower().str.strip()
+if "Contact Email" in df:
+    df["primary_contact_email"] = df["Contact Email"].str.lower().str.strip()
 ```
 
 ### Date and Fiscal Quarter Parsing
@@ -143,9 +147,9 @@ Standardize temporal data across various formats:
 
 ```python
 date_column_configs = [
-    {'column': 'Award Date', 'format': '%m/%d/%Y'},
-    {'column': 'Release Date', 'format': '%Y-%m-%d'},
-    {'column': 'Target Date', 'format': '%B %Y'}  # "January 2025"
+    {"column": "Award Date", "format": "%m/%d/%Y"},
+    {"column": "Release Date", "format": "%Y-%m-%d"},
+    {"column": "Target Date", "format": "%B %Y"},  # "January 2025"
 ]
 ```
 
@@ -157,10 +161,10 @@ date_column_configs = [
 # Pattern 3: "2024 Q3"
 
 fiscal_year_configs = {
-    'year_column': 'Fiscal Year',
-    'quarter_column': 'Fiscal Quarter',
-    'combined_column': 'FY/Quarter',  # If combined
-    'pattern': r'(?:FY)?(\d{2,4})\s*Q(\d)'  # Regex for combined
+    "year_column": "Fiscal Year",
+    "quarter_column": "Fiscal Quarter",
+    "combined_column": "FY/Quarter",  # If combined
+    "pattern": r"(?:FY)?(\d{2,4})\s*Q(\d)",  # Regex for combined
 }
 ```
 
@@ -174,14 +178,10 @@ Contract values require special attention due to range vs. single value formats:
 # Text format: "Approximately $1M"
 
 value_configs = {
-    'value_column': 'Estimated Value',
-    'parse_ranges': True,
-    'currency_symbols': ['$', '€', '£'],
-    'multipliers': {
-        'K': 1000,
-        'M': 1000000,
-        'B': 1000000000
-    }
+    "value_column": "Estimated Value",
+    "parse_ranges": True,
+    "currency_symbols": ["$", "€", "£"],
+    "multipliers": {"K": 1000, "M": 1000000, "B": 1000000000},
 }
 ```
 
@@ -194,22 +194,22 @@ Define conservative fallback mappings that only apply to specific sources:
 ```python
 # Acquisition Gateway
 AG_FALLBACKS = {
-    'Body': 'description',  # Common variant
-    'NAICS': 'naics_code',  # Missing underscore
-    'Set Aside': 'set_aside'  # Space variant
+    "Body": "description",  # Common variant
+    "NAICS": "naics_code",  # Missing underscore
+    "Set Aside": "set_aside",  # Space variant
 }
 
 # Treasury
 TREASURY_FALLBACKS = {
-    'Place of Performance': 'place_raw',
-    'Contracting Agency': 'agency',
-    'Description of Requirement': 'description'
+    "Place of Performance": "place_raw",
+    "Contracting Agency": "agency",
+    "Description of Requirement": "description",
 }
 
 # Apply only if target field is empty
 for source_col, target_col in FALLBACKS.items():
     if source_col in df.columns and target_col in df.columns:
-        mask = df[target_col].isna() | (df[target_col] == '')
+        mask = df[target_col].isna() | (df[target_col] == "")
         df.loc[mask, target_col] = df.loc[mask, source_col]
 ```
 
@@ -290,18 +290,20 @@ CREATE INDEX idx_extras_gin ON prospects USING GIN (extras);
 def test_treasury_mapping():
     """Verify Treasury header mappings"""
     config = TREASURY_CONFIG
-    sample_data = pd.DataFrame({
-        'Title': ['Test Opportunity'],
-        'Contracting Agency': ['Treasury'],
-        'Place of Performance': ['Washington, DC']
-    })
-    
+    sample_data = pd.DataFrame(
+        {
+            "Title": ["Test Opportunity"],
+            "Contracting Agency": ["Treasury"],
+            "Place of Performance": ["Washington, DC"],
+        }
+    )
+
     mapped = apply_mappings(sample_data, config)
-    
-    assert 'title' in mapped.columns
-    assert 'agency' in mapped.columns
-    assert 'place_raw' in mapped.columns
-    assert mapped['title'].iloc[0] == 'Test Opportunity'
+
+    assert "title" in mapped.columns
+    assert "agency" in mapped.columns
+    assert "place_raw" in mapped.columns
+    assert mapped["title"].iloc[0] == "Test Opportunity"
 ```
 
 ### Regression Tests for Transforms

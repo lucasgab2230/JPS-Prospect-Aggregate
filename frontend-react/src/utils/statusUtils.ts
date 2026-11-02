@@ -38,11 +38,11 @@ export function formatScraperResults(results: Array<{
 }>, totalDuration: number): { successCount: number; failedCount: number; message: string } {
   const failedScrapers = results.filter(r => r.error);
   const successCount = results.length - failedScrapers.length;
-  
+
   const message = `${successCount}/${results.length} scrapers completed successfully in ${totalDuration}s${
     failedScrapers.length > 0 ? `. ${failedScrapers.length} failed.` : ''
   }`;
-  
+
   return {
     successCount,
     failedCount: failedScrapers.length,

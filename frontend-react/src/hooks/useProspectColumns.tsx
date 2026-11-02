@@ -27,10 +27,10 @@ export function useProspectColumns(showAIEnhanced: boolean) {
         const value = info.getValue();
         const row = info.row.original;
         const isAIEnhanced = showAIEnhanced && !!row.ai_enhanced_title && row.title !== row.ai_enhanced_title;
-        const title = isAIEnhanced 
-          ? `${value} (AI Enhanced)` 
+        const title = isAIEnhanced
+          ? `${value} (AI Enhanced)`
           : value || 'No Title';
-        
+
         return (
           <div className="w-full truncate" title={title}>
             <span className={isAIEnhanced ? 'text-blue-700 font-medium' : ''}>
@@ -48,9 +48,9 @@ export function useProspectColumns(showAIEnhanced: boolean) {
       // 2. The NAICS source is 'llm_inferred'
       // 3. There was no NAICS before (to avoid false positives from imports)
       const naics = row.naics;
-      
+
       if (!naics) return 'N/A';
-      
+
       // Show only NAICS code without description
       return naics;
     }, {
@@ -59,22 +59,22 @@ export function useProspectColumns(showAIEnhanced: boolean) {
       cell: info => {
         const value = info.getValue();
         const row = info.row.original;
-        
+
         // Check if NAICS was actually changed by AI:
         // Only show as AI enhanced if:
         // 1. LLM processed it (has llm_inferred source)
         // 2. The code was changed (not just description added)
         const originalNaics = row.extra?.original_naics as string | undefined;
-        const isAIEnhanced = showAIEnhanced && 
-                           row.naics_source === 'llm_inferred' && 
+        const isAIEnhanced = showAIEnhanced &&
+                           row.naics_source === 'llm_inferred' &&
                            row.ollama_processed_at &&
                            row.naics &&
                            (!originalNaics || originalNaics !== row.naics); // Code must be different
-        
-        const title = isAIEnhanced 
-          ? `${value} (AI Classified)` 
+
+        const title = isAIEnhanced
+          ? `${value} (AI Classified)`
           : value;
-        
+
         return (
           <div className="w-full truncate" title={title}>
             <span className={isAIEnhanced ? 'text-blue-700 font-medium' : ''}>
@@ -119,7 +119,7 @@ export function useProspectColumns(showAIEnhanced: boolean) {
           }
         }
       }
-      
+
       // Original value logic
       if (row.estimated_value_text) {
         return row.estimated_value_text;
@@ -135,7 +135,7 @@ export function useProspectColumns(showAIEnhanced: boolean) {
         const value = info.getValue();
         const row = info.row.original;
         const isAIEnhanced = showAIEnhanced && (!!row.estimated_value_single || (!!row.estimated_value_min && !!row.estimated_value_max));
-        
+
         return (
           <div title={value} className={isAIEnhanced ? 'text-green-700 font-medium' : ''}>
             {value}
@@ -151,13 +151,13 @@ export function useProspectColumns(showAIEnhanced: boolean) {
       // Determine which date is earlier (due date)
       const awardDate = row.award_date ? new Date(row.award_date) : null;
       const releaseDate = row.release_date ? new Date(row.release_date) : null;
-      
+
       if (!awardDate && !releaseDate) return null;
       if (!awardDate) return { date: releaseDate, type: 'release' };
       if (!releaseDate) return { date: awardDate, type: 'award' };
-      
+
       // Return the earlier date
-      return awardDate <= releaseDate 
+      return awardDate <= releaseDate
         ? { date: awardDate, type: 'award' }
         : { date: releaseDate, type: 'release' };
     }, {
@@ -166,11 +166,11 @@ export function useProspectColumns(showAIEnhanced: boolean) {
       cell: info => {
         const value = info.getValue();
         if (!value || !value.date) return <div>N/A</div>;
-        
+
         const dateStr = value.date.toLocaleDateString();
         const typeLabel = value.type === 'award' ? 'Award' : 'Release';
         const row = info.row.original;
-        
+
         // Check if this is a tentative award date from fiscal quarter
         const isTentativeAward = value.type === 'award' && row.extra?.award_date_is_tentative;
         const quarterNumber = (() => {
@@ -181,7 +181,7 @@ export function useProspectColumns(showAIEnhanced: boolean) {
           }
           return undefined;
         })();
-        
+
         return (
           <div className="w-full truncate" title={`${typeLabel}: ${dateStr}${isTentativeAward ? ' (Tentative from quarter)' : ''}`}>
             <span>{dateStr}</span>
@@ -208,12 +208,12 @@ export function useProspectColumns(showAIEnhanced: boolean) {
         const value = info.getValue();
         const row = info.row.original;
         // Check if AI enhanced: has standardized label that's different from original and not just 'N/A'
-        const isAIEnhanced = showAIEnhanced && 
-                           row.set_aside_standardized_label && 
+        const isAIEnhanced = showAIEnhanced &&
+                           row.set_aside_standardized_label &&
                            row.set_aside_standardized !== 'NOT_AVAILABLE' &&
                            row.set_aside_standardized_label !== row.set_aside &&
                            row.ollama_processed_at;
-        
+
         return (
           <div className="w-full truncate flex items-center" title={String(value) || 'N/A'}>
             <span className={isAIEnhanced ? 'text-blue-700 font-medium' : ''}>

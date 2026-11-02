@@ -44,9 +44,10 @@ app = create_app()
 
 # Verify database state
 from app.utils.database_initializer import get_database_initializer
+
 db_status = get_database_initializer().verify_database_state()
 
-if not db_status.get('overall_ready', False):
+if not db_status.get("overall_ready", False):
     logger.error("=" * 60)
     logger.error("DATABASE NOT READY - APPLICATION MAY NOT FUNCTION PROPERLY")
     logger.error(f"Business DB ready: {db_status['business_database']['ready']}")
@@ -64,7 +65,7 @@ def main():
     else:
         logger.info(f"Starting PRODUCTION server on http://{HOST}:{PORT}")
     logger.info("=" * 60)
-    
+
     if DEBUG:
         app.run(host=HOST, port=PORT, debug=True)
     else:

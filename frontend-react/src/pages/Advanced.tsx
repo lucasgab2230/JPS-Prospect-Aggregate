@@ -10,10 +10,10 @@ export default function Advanced() {
   const isAdmin = useIsAdmin();
   const isSuperAdmin = useIsSuperAdmin();
   const { confirm, ConfirmationDialog } = useConfirmationDialog();
-  
+
   // Use extracted hooks
   const { tabs, activeTab, activeSubTab, currentTab, setActiveTab } = useTabNavigation(isSuperAdmin);
-  
+
   // Only fetch data sources if super admin and on the data-sources tab
   const shouldFetchDataSources = isSuperAdmin && activeTab === 'data-sources';
   const { sources, isLoading, error, runAllScrapersMutation, clearDataMutation, handleClearData } = useDataSourceManagement(shouldFetchDataSources);
@@ -44,14 +44,14 @@ export default function Advanced() {
     if (runAllInProgress || runAllScrapersMutation.isPending) {
       return;
     }
-    
+
     const confirmed = await confirm({
       title: 'Run All Scrapers',
       description: 'This will run all scrapers synchronously. This may take several minutes.',
       confirmLabel: 'Run All Scrapers',
       variant: 'default'
     });
-    
+
     if (confirmed) {
       handleRunAllScrapers(runAllScrapersMutation);
     }
@@ -70,7 +70,7 @@ export default function Advanced() {
       confirmLabel: 'Clear Data',
       variant: 'destructive'
     });
-    
+
     if (confirmed) {
       await handleClearData(id, sourceName);
     }
@@ -144,7 +144,7 @@ export default function Advanced() {
         {/* Tab Content */}
         {renderTabContent()}
       </div>
-      
+
       {ConfirmationDialog}
     </PageLayout>
   );

@@ -10,8 +10,9 @@ Tests all endpoints in the llm_processing blueprint following production-level p
 
 import json
 import random
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime, timedelta
 from unittest.mock import patch
 
@@ -35,7 +36,7 @@ class TestLLMProcessingAPI:
         app.config["SECRET_KEY"] = f"test-secret-{random.randint(1000, 9999)}"
         return app
 
-    @pytest.fixture()
+    @pytest.fixture
     def client(self, app):
         """Create test client."""
         return app.test_client()
@@ -75,9 +76,9 @@ class TestLLMProcessingAPI:
 
                 prospect = Prospect(
                     id=f"LLM-TEST-{random.randint(1000, 9999)}-{i}",
-                    title=f'{random.choice(["Software", "Hardware", "Consulting"])} Contract {i}',
+                    title=f"{random.choice(['Software', 'Hardware', 'Consulting'])} Contract {i}",
                     description=f"Description for contract {i}",
-                    agency=f'Agency {random.choice(["A", "B", "C"])}',
+                    agency=f"Agency {random.choice(['A', 'B', 'C'])}",
                     naics="541511" if has_naics and random.random() > 0.5 else None,
                     naics_source="original"
                     if has_naics and random.random() > 0.7
@@ -101,9 +102,7 @@ class TestLLMProcessingAPI:
                     source_id=random.choice(sources).id,
                     loaded_at=datetime.now(UTC)
                     - timedelta(hours=random.randint(0, 168)),
-                    ollama_processed_at=datetime.now(UTC)
-                    if is_processed
-                    else None,
+                    ollama_processed_at=datetime.now(UTC) if is_processed else None,
                     ollama_model_version="test-model-v1" if is_processed else None,
                     enhancement_status=random.choice(
                         ["idle", "queued", "processing", "completed", "failed"]
@@ -141,7 +140,7 @@ class TestLLMProcessingAPI:
         with patch("app.api.llm_processing.llm_service") as mock_llm:
             mock_llm.check_ollama_status.return_value = {
                 "available": random.choice([True, False]),
-                "model": f'model-{random.choice(["a", "b", "c"])}',
+                "model": f"model-{random.choice(['a', 'b', 'c'])}",
             }
 
             # Mock enhancement queue (external service)

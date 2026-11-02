@@ -7,8 +7,9 @@ following production-level testing principles.
 
 import random
 import string
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime, timedelta
 
 import pandas as pd
@@ -33,7 +34,7 @@ class TestAIDataPreservation:
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
         return app
 
-    @pytest.fixture()
+    @pytest.fixture
     def app_context(self, app):
         """Create Flask app context with real database."""
         with app.app_context():
@@ -42,7 +43,7 @@ class TestAIDataPreservation:
             db.session.rollback()
             db.drop_all()
 
-    @pytest.fixture()
+    @pytest.fixture
     def test_source(self, app_context):
         """Create a test data source with random attributes."""
         source = DataSource(

@@ -6,8 +6,9 @@ Tests for common vulnerabilities like SQL injection, XSS, CSRF, etc.
 import json
 import os
 import tempfile
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime
 from unittest.mock import patch
 
@@ -61,13 +62,13 @@ def app():
     os.unlink(db_path)
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app):
     """Create a test client."""
     return app.test_client()
 
 
-@pytest.fixture()
+@pytest.fixture
 def auth_client(app, client):
     """Create an authenticated test client."""
     with patch("app.api.auth.get_current_user") as mock_auth:

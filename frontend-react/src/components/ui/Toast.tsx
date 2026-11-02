@@ -129,7 +129,7 @@ type ToastActionElement = React.ReactElement<typeof ToastAction>
 // Icon component for different toast types
 const ToastIcon = ({ variant, severity }: { variant?: string; severity?: ErrorSeverity }) => {
   const iconClass = "h-5 w-5 mr-2 flex-shrink-0";
-  
+
   if (severity) {
     switch (severity) {
       case ErrorSeverity.CRITICAL:
@@ -142,7 +142,7 @@ const ToastIcon = ({ variant, severity }: { variant?: string; severity?: ErrorSe
         return <Info className={cn(iconClass, "text-blue-600")} />;
     }
   }
-  
+
   switch (variant) {
     case 'destructive':
       return <AlertCircle className={cn(iconClass, "text-red-600")} />;

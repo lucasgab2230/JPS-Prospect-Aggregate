@@ -12,8 +12,9 @@ Following production-level testing principles:
 import random
 import threading
 import time
-from datetime import timezone
-UTC = timezone.utc
+from datetime import UTC
+
+UTC = UTC
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
 
@@ -103,12 +104,12 @@ class TestMockQueueItem:
 class TestEnhancementQueue:
     """Test the SimpleEnhancementQueue class following black-box testing principles."""
 
-    @pytest.fixture()
+    @pytest.fixture
     def queue(self):
         """Create an enhancement queue instance."""
         return SimpleEnhancementQueue()
 
-    @pytest.fixture()
+    @pytest.fixture
     def mock_llm_service(self):
         """Create a mock LLM service."""
         mock_service = Mock()
@@ -140,7 +141,9 @@ class TestEnhancementQueue:
         user_ids = [random.randint(1, 100) for _ in range(num_items)]
 
         positions = []
-        for i, (prospect_id, user_id) in enumerate(zip(prospect_ids, user_ids, strict=False)):
+        for i, (prospect_id, user_id) in enumerate(
+            zip(prospect_ids, user_ids, strict=False)
+        ):
             enhancement_types = random.choice(
                 [["values"], ["titles"], ["naics"], ["values", "titles"], ["all"]]
             )

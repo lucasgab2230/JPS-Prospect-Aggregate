@@ -93,4 +93,4 @@ export function DataPageLayout<T>({
       </div>
     </PageLayout>
   );
-} 
+}

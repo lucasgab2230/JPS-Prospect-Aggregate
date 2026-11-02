@@ -37,7 +37,7 @@ export function useExecuteScript() {
   return useMutation({
     mutationFn: async ({ scriptId, parameters }: ExecuteScriptParams) => {
       const response = await post<ApiResponse<{ execution_id: string; message: string }>>(
-        `/api/tools/execute/${scriptId}`, 
+        `/api/tools/execute/${scriptId}`,
         { parameters }
       );
       return response;

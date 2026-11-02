@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""Script to populate initial data sources
-"""
+"""Script to populate initial data sources"""
 
 import os
 import sys

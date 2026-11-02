@@ -60,7 +60,7 @@ repos:
         language: system
         files: ^frontend-react/.*\.(ts|tsx|js|jsx)$
         pass_filenames: false
-        
+
       - id: typescript-check
         name: TypeScript Check (frontend)
         entry: bash -c 'cd frontend-react && npx tsc --noEmit'

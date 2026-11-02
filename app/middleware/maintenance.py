@@ -56,7 +56,7 @@ def make_maintenance_response():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Down for Maintenance</title>
         <style>
-            body { 
+            body {
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 background-color: #f8f9fa;
                 color: #333;
@@ -72,7 +72,7 @@ def make_maintenance_response():
                 border-radius: 8px;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             }
-            h1 { 
+            h1 {
                 color: #dc3545;
                 margin-bottom: 20px;
             }

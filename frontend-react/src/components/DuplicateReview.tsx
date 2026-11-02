@@ -86,13 +86,13 @@ export function DuplicateReview() {
     queryFn: async () => {
       setScanProgress(null);
       setCurrentScanId(null);
-      
+
       const result = await post<{ status: string; data: DuplicateDetectionResult & { scan_id?: string } }>('/api/duplicates/detect', {
         source_id: selectedSourceId,
         min_confidence: minConfidence,
         limit: scanLimit || 10000, // Use a high number when "All" is selected
       });
-      
+
       // Set scan ID for progress tracking if provided
       if (result.data?.scan_id) {
         // Setting scan ID
@@ -100,9 +100,9 @@ export function DuplicateReview() {
       } else {
         // No scan_id in response
       }
-      
+
       // Response received
-      
+
       return result;
     },
     enabled: false, // Only run when manually triggered
@@ -151,7 +151,7 @@ export function DuplicateReview() {
   const handleGroupSelection = (groupIndex: number, selected: boolean) => {
     const newSelected = new Set(selectedGroups);
     const newKeepRecords = new Map(selectedKeepRecords);
-    
+
     if (selected) {
       newSelected.add(groupIndex);
       // Default to keeping the original record when group is first selected
@@ -163,7 +163,7 @@ export function DuplicateReview() {
       newSelected.delete(groupIndex);
       newKeepRecords.delete(groupIndex);
     }
-    
+
     setSelectedGroups(newSelected);
     setSelectedKeepRecords(newKeepRecords);
   };
@@ -187,7 +187,7 @@ export function DuplicateReview() {
     if (groupsToMerge.length === 0) return;
 
     const totalMerges = groupsToMerge.reduce((sum, group) => sum + group.matches.length, 0);
-    
+
     const confirmed = await confirm({
       title: `Merge ${totalMerges} Duplicate Record${totalMerges !== 1 ? 's' : ''}`,
       description: 'Are you sure you want to merge the selected duplicate records?',
@@ -201,7 +201,7 @@ export function DuplicateReview() {
       confirmLabel: 'Merge Duplicates',
       variant: 'destructive'
     });
-    
+
     if (!confirmed) {
       return;
     }
@@ -211,13 +211,13 @@ export function DuplicateReview() {
       const group = duplicateGroups[groupIndex];
       if (group) {
         const keepId = selectedKeepRecords.get(groupIndex) || group.original.id;
-        
+
         // Build remove list - all records except the one we're keeping
         const allRecords = [group.original, ...group.matches];
         const removeIds = allRecords
           .filter(record => record.id !== keepId)
           .map(record => record.id);
-        
+
         mergeDuplicatesMutation.mutate({ keepId, removeIds });
       }
     });
@@ -248,11 +248,11 @@ export function DuplicateReview() {
     if (progressData?.data) {
       // Progress update received
       setScanProgress(progressData.data);
-      
+
       // Stop polling when scan is complete and show results
       if (progressData.data.status === 'completed' && progressData.data.results) {
         // Scan finished with results, updating duplicate data
-        
+
         // Update the duplicates query cache with the results
         queryClient.setQueryData(
           ['duplicateDetection', selectedSourceId, minConfidence, scanLimit],
@@ -261,11 +261,11 @@ export function DuplicateReview() {
             data: progressData.data.results
           }
         );
-        
+
         setCurrentScanId(null);
       } else if (progressData.data.status === 'error') {
         // Scan failed, stopping polling
-        
+
         // Set error state in the duplicates query cache
         queryClient.setQueryData(
           ['duplicateDetection', selectedSourceId, minConfidence, scanLimit],
@@ -274,7 +274,7 @@ export function DuplicateReview() {
             error: new Error(progressData.data.message || 'Duplicate scan failed')
           }
         );
-        
+
         setCurrentScanId(null);
       }
     }
@@ -314,14 +314,14 @@ export function DuplicateReview() {
               {scanProgress.current} / {scanProgress.total} ({percentage}%)
             </span>
           </div>
-          
+
           <div className="w-full bg-blue-200 rounded-full h-2 mb-2">
             <div
               className="bg-blue-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${percentage}%` }}
             ></div>
           </div>
-          
+
           <div className="flex justify-between text-xs text-blue-600">
             <span>Elapsed: {scanProgress.elapsed_time}s</span>
             {eta && <span>ETA: {eta}s</span>}
@@ -339,7 +339,7 @@ export function DuplicateReview() {
             Scanning for duplicates... This may take a few minutes for large datasets.
           </span>
         </div>
-        
+
         <div className="w-full bg-blue-200 rounded-full h-2 mt-3">
           <div className="bg-blue-600 h-2 rounded-full animate-pulse"></div>
         </div>
@@ -463,7 +463,7 @@ export function DuplicateReview() {
                 onClick={() => {
                   const allGroupIndexes = duplicateGroups.map((_, i: number) => i);
                   setSelectedGroups(new Set(allGroupIndexes));
-                  
+
                   // Initialize keep records for all groups (default to original)
                   const newKeepRecords = new Map(selectedKeepRecords);
                   allGroupIndexes.forEach((groupIndex: number) => {
@@ -561,8 +561,8 @@ export function DuplicateReview() {
                       )}
                     </div>
                     <div className={`rounded p-3 text-sm border ${
-                      selectedGroups.has(groupIndex) && selectedKeepRecords.get(groupIndex) === group.original.id 
-                        ? 'bg-green-100 border-green-300' 
+                      selectedGroups.has(groupIndex) && selectedKeepRecords.get(groupIndex) === group.original.id
+                        ? 'bg-green-100 border-green-300'
                         : 'bg-green-50 border-green-200'
                     }`}>
                       <div className="grid grid-cols-2 gap-2">
@@ -662,7 +662,7 @@ export function DuplicateReview() {
           </CardContent>
         </Card>
       )}
-      
+
       {ConfirmationDialog}
     </div>
   );
