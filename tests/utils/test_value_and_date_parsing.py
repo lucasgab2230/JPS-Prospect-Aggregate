@@ -4,7 +4,6 @@ Comprehensive tests for value and date parsing utilities.
 Tests critical data processing functions for contract values and dates.
 """
 
-
 import pandas as pd
 
 from app.utils.value_and_date_parsing import (
@@ -36,17 +35,17 @@ class TestValueRangeParsing:
             expected_num, expected_unit = expected
 
             if pd.notna(expected_num) and pd.notna(numeric_val):
-                assert (
-                    abs(numeric_val - expected_num) < 0.01
-                ), f"Failed for {input_value}: got ({numeric_val}, {unit_str}), expected {expected}"
+                assert abs(numeric_val - expected_num) < 0.01, (
+                    f"Failed for {input_value}: got ({numeric_val}, {unit_str}), expected {expected}"
+                )
             else:
-                assert (
-                    pd.isna(numeric_val) and pd.isna(expected_num)
-                ), f"Failed for {input_value}: got ({numeric_val}, {unit_str}), expected {expected}"
+                assert pd.isna(numeric_val) and pd.isna(expected_num), (
+                    f"Failed for {input_value}: got ({numeric_val}, {unit_str}), expected {expected}"
+                )
 
-            assert (
-                unit_str == expected_unit
-            ), f"Unit failed for {input_value}: got {unit_str}, expected {expected_unit}"
+            assert unit_str == expected_unit, (
+                f"Unit failed for {input_value}: got {unit_str}, expected {expected_unit}"
+            )
 
     def test_parse_value_range_ranges(self):
         """Test parsing value ranges."""
@@ -66,12 +65,12 @@ class TestValueRangeParsing:
             expected_num, expected_unit = expected
 
             if pd.notna(expected_num) and pd.notna(numeric_val):
-                assert (
-                    abs(numeric_val - expected_num) < 0.01
-                ), f"Value failed for {input_value}: got {numeric_val}, expected {expected_num}"
-            assert (
-                unit_str == expected_unit
-            ), f"Unit failed for {input_value}: got {unit_str}, expected {expected_unit}"
+                assert abs(numeric_val - expected_num) < 0.01, (
+                    f"Value failed for {input_value}: got {numeric_val}, expected {expected_num}"
+                )
+            assert unit_str == expected_unit, (
+                f"Unit failed for {input_value}: got {unit_str}, expected {expected_unit}"
+            )
 
     def test_parse_value_range_edge_cases(self):
         """Test edge cases in value range parsing."""
@@ -114,12 +113,12 @@ class TestFiscalQuarterToDate:
             expected_date, expected_fy = expected
 
             if pd.notna(expected_date):
-                assert (
-                    date_result == expected_date
-                ), f"Date failed for {input_quarter}: got {date_result}, expected {expected_date}"
-                assert (
-                    fy_result == expected_fy
-                ), f"FY failed for {input_quarter}: got {fy_result}, expected {expected_fy}"
+                assert date_result == expected_date, (
+                    f"Date failed for {input_quarter}: got {date_result}, expected {expected_date}"
+                )
+                assert fy_result == expected_fy, (
+                    f"FY failed for {input_quarter}: got {fy_result}, expected {expected_fy}"
+                )
 
     def test_fiscal_quarter_to_date_edge_cases(self):
         """Test edge cases for fiscal quarter conversion."""
@@ -160,9 +159,9 @@ class TestNormalizeNAICSCode:
 
         for input_code, expected in test_cases:
             result = normalize_naics_code(input_code)
-            assert (
-                result == expected
-            ), f"Failed for {input_code}: got {result}, expected {expected}"
+            assert result == expected, (
+                f"Failed for {input_code}: got {result}, expected {expected}"
+            )
 
     def test_normalize_naics_code_edge_cases(self):
         """Test edge cases for NAICS code normalization."""
@@ -199,22 +198,22 @@ class TestSplitPlace:
             expected_city, expected_state = expected
 
             if pd.notna(expected_city):
-                assert (
-                    city == expected_city
-                ), f"City failed for {input_place}: got {city}, expected {expected_city}"
+                assert city == expected_city, (
+                    f"City failed for {input_place}: got {city}, expected {expected_city}"
+                )
             else:
-                assert pd.isna(
-                    city
-                ), f"Expected NA for city in {input_place}, got {city}"
+                assert pd.isna(city), (
+                    f"Expected NA for city in {input_place}, got {city}"
+                )
 
             if pd.notna(expected_state):
-                assert (
-                    state == expected_state
-                ), f"State failed for {input_place}: got {state}, expected {expected_state}"
+                assert state == expected_state, (
+                    f"State failed for {input_place}: got {state}, expected {expected_state}"
+                )
             else:
-                assert pd.isna(
-                    state
-                ), f"Expected NA for state in {input_place}, got {state}"
+                assert pd.isna(state), (
+                    f"Expected NA for state in {input_place}, got {state}"
+                )
 
     def test_split_place_edge_cases(self):
         """Test edge cases for place splitting."""
@@ -264,17 +263,17 @@ class TestPerformanceAndEdgeCases:
             expected_num, expected_unit = expected
 
             if pd.notna(expected_num) and pd.notna(numeric_val):
-                assert (
-                    abs(numeric_val - expected_num) < 1
-                ), f"Failed for large value {input_value}: got {numeric_val}"
+                assert abs(numeric_val - expected_num) < 1, (
+                    f"Failed for large value {input_value}: got {numeric_val}"
+                )
             else:
-                assert pd.isna(numeric_val) and pd.isna(
-                    expected_num
-                ), f"Failed for {input_value}"
+                assert pd.isna(numeric_val) and pd.isna(expected_num), (
+                    f"Failed for {input_value}"
+                )
 
-            assert (
-                unit_str == expected_unit
-            ), f"Unit failed for {input_value}: got {unit_str}, expected {expected_unit}"
+            assert unit_str == expected_unit, (
+                f"Unit failed for {input_value}: got {unit_str}, expected {expected_unit}"
+            )
 
     def test_unicode_and_special_characters(self):
         """Test handling of unicode and special characters."""
@@ -290,17 +289,17 @@ class TestPerformanceAndEdgeCases:
             expected_num, expected_unit = expected
 
             if pd.notna(expected_num) and pd.notna(numeric_val):
-                assert (
-                    abs(numeric_val - expected_num) < 0.01
-                ), f"Failed for unicode input {input_value}"
+                assert abs(numeric_val - expected_num) < 0.01, (
+                    f"Failed for unicode input {input_value}"
+                )
             else:
-                assert pd.isna(numeric_val) and pd.isna(
-                    expected_num
-                ), f"Failed for {input_value}"
+                assert pd.isna(numeric_val) and pd.isna(expected_num), (
+                    f"Failed for {input_value}"
+                )
 
-            assert (
-                unit_str == expected_unit
-            ), f"Unit failed for {input_value}: got {unit_str}, expected {expected_unit}"
+            assert unit_str == expected_unit, (
+                f"Unit failed for {input_value}: got {unit_str}, expected {expected_unit}"
+            )
 
     def test_parsing_performance(self):
         """Test parsing performance with many inputs."""

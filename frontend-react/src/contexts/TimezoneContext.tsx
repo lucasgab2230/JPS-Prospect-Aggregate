@@ -67,7 +67,7 @@ export function TimezoneProvider({ children, user }: TimezoneProviderProps) {
     } else {
       const savedTimezone = localStorage.getItem('userTimezone');
       const savedLocale = localStorage.getItem('userLocale');
-      
+
       if (savedTimezone) {
         initialTimezone = savedTimezone;
         initialLocale = savedLocale || 'en-US';

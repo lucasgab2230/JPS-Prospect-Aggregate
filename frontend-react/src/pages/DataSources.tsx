@@ -21,7 +21,7 @@ export default function DataSources() {
     error,
     refetch
   } = useListDataSources();
-  
+
   const data = dataSourcesData?.data || [];
   const { showInfoToast } = useToast();
   const { handleError } = useError();
@@ -81,9 +81,9 @@ export default function DataSources() {
                   <TableCell>{source.status || 'Unknown'}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => showInfoToast('Coming Soon', 'Edit functionality will be available in a future update.')}
                       >
                         Edit
@@ -106,4 +106,4 @@ export default function DataSources() {
       </div>
     </DataPageLayout>
   );
-} 
+}

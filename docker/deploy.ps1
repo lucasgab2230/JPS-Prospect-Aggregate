@@ -69,31 +69,31 @@ function Start-Deployment {
 
     # Enable maintenance mode
     Enable-Maintenance
-    
+
     # Backup databases
     Backup-Databases
-    
+
     # Pull latest images
     Write-ColorOutput Yellow "Pulling latest images..."
     docker-compose pull
-    
+
     # Build new image
     Write-ColorOutput Yellow "Building application image..."
     docker-compose build web
-    
+
     # Stop current web container
     Write-ColorOutput Yellow "Stopping current web container..."
     docker-compose stop web
-    
+
     # Start new web container
     Write-ColorOutput Yellow "Starting new web container..."
     docker-compose up -d web
-    
+
     # Wait for web to be healthy
     Write-ColorOutput Yellow "Waiting for application to be ready..."
     $attempts = 0
     $maxAttempts = 30
-    
+
     while ($attempts -lt $maxAttempts) {
         Start-Sleep -Seconds 2
         try {
@@ -110,13 +110,13 @@ function Start-Deployment {
             }
         }
     }
-    
+
     # Run migrations
     Run-Migrations
-    
+
     # Disable maintenance mode
     Disable-Maintenance
-    
+
     # Final health check
     try {
         $response = Invoke-WebRequest -Uri http://localhost:5001/health -UseBasicParsing

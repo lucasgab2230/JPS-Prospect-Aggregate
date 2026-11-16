@@ -27,7 +27,9 @@ def run_command(command, description):
         # Use the current Python interpreter explicitly
         if command.startswith("python "):
             command = command.replace("python ", f"{sys.executable} ", 1)
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, check=False)
+        result = subprocess.run(
+            command, shell=True, capture_output=True, text=True, check=False
+        )
         if result.returncode == 0:
             logger.success(f"{description} - Success!")
             if result.stdout:
