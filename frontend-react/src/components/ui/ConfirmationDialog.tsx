@@ -64,8 +64,8 @@ export function ConfirmationDialog({
 
         {details && details.length > 0 && (
           <div className={`rounded-md p-4 ${
-            variant === 'destructive' 
-              ? 'bg-red-50 border border-red-200' 
+            variant === 'destructive'
+              ? 'bg-red-50 border border-red-200'
               : 'bg-blue-50 border border-blue-200'
           }`}>
             <ul className="space-y-1 text-sm">

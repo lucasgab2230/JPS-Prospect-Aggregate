@@ -24,11 +24,11 @@ if ollama list | grep -q "qwen3:latest"; then
     echo "qwen3:latest model is already installed!"
 else
     echo "Downloading qwen3:latest model (5.2GB - this may take several minutes)..."
-    
+
     # Download with retry logic
     MAX_RETRIES=3
     RETRY_COUNT=0
-    
+
     while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
         if ollama pull qwen3:latest; then
             echo "Successfully downloaded qwen3:latest model!"
@@ -50,7 +50,7 @@ fi
 echo "Verifying model installation..."
 if ollama list | grep -q "qwen3:latest"; then
     echo "✓ qwen3:latest model is ready for use!"
-    
+
     # Test the model with a simple query to ensure it works
     echo "Testing model functionality..."
     if echo "Hello" | ollama run qwen3:latest --max-tokens 5 > /dev/null 2>&1; then

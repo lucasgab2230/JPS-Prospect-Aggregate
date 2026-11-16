@@ -14,7 +14,7 @@ const generateDataSource = (): DataSource => {
   ];
   const department = departments[Math.floor(Math.random() * departments.length)];
   const id = Math.floor(Math.random() * 10000) + 1;
-  
+
   return {
     id,
     name: department,
@@ -48,7 +48,7 @@ const createDefaultProps = (dataSources: DataSource[] = generateDataSources()) =
 
 describe('ProspectFilters', () => {
   let defaultProps: any;
-  
+
   beforeEach(() => {
     vi.clearAllMocks();
     defaultProps = createDefaultProps();
@@ -56,7 +56,7 @@ describe('ProspectFilters', () => {
 
   it('renders all filter components', () => {
     render(<ProspectFilters {...defaultProps} />);
-    
+
     expect(screen.getByText('Filters')).toBeInTheDocument();
     expect(screen.getByLabelText('Keywords')).toBeInTheDocument();
     expect(screen.getByLabelText('NAICS Code')).toBeInTheDocument();
@@ -68,13 +68,13 @@ describe('ProspectFilters', () => {
 
   it('shows clear all button when filters are active', () => {
     render(<ProspectFilters {...defaultProps} hasActiveFilters={true} />);
-    
+
     expect(screen.getByText('Clear All')).toBeInTheDocument();
   });
 
   it('hides clear all button when no filters are active', () => {
     render(<ProspectFilters {...defaultProps} hasActiveFilters={false} />);
-    
+
     expect(screen.queryByText('Clear All')).not.toBeInTheDocument();
   });
 
@@ -82,12 +82,12 @@ describe('ProspectFilters', () => {
     const user = userEvent.setup();
     const onFilterChange = vi.fn();
     const props = { ...defaultProps, onFilterChange };
-    
+
     render(<ProspectFilters {...props} />);
-    
+
     const keywordsInput = screen.getByLabelText('Keywords');
     await user.type(keywordsInput, 'software');
-    
+
     // Check that onChange was called progressively for each character
     expect(onFilterChange).toHaveBeenCalledTimes(8);
     expect(onFilterChange).toHaveBeenNthCalledWith(1, 'keywords', 's');
@@ -98,12 +98,12 @@ describe('ProspectFilters', () => {
     const user = userEvent.setup();
     const onFilterChange = vi.fn();
     const props = { ...defaultProps, onFilterChange };
-    
+
     render(<ProspectFilters {...props} />);
-    
+
     const naicsInput = screen.getByLabelText('NAICS Code');
     await user.type(naicsInput, '54151');
-    
+
     expect(onFilterChange).toHaveBeenCalledTimes(5);
     expect(onFilterChange).toHaveBeenNthCalledWith(1, 'naics', '5');
     expect(onFilterChange).toHaveBeenNthCalledWith(5, 'naics', '1');
@@ -113,12 +113,12 @@ describe('ProspectFilters', () => {
     const user = userEvent.setup();
     const onFilterChange = vi.fn();
     const props = { ...defaultProps, onFilterChange };
-    
+
     render(<ProspectFilters {...props} />);
-    
+
     const agencyInput = screen.getByLabelText('Agency');
     await user.type(agencyInput, 'DOD');
-    
+
     expect(onFilterChange).toHaveBeenCalledTimes(3);
     expect(onFilterChange).toHaveBeenNthCalledWith(1, 'agency', 'D');
     expect(onFilterChange).toHaveBeenNthCalledWith(2, 'agency', 'O');
@@ -127,12 +127,12 @@ describe('ProspectFilters', () => {
 
   it('displays all data sources with checkboxes', () => {
     render(<ProspectFilters {...defaultProps} />);
-    
+
     // Verify all data sources are displayed
     defaultProps.dataSources.forEach((dataSource: DataSource) => {
       expect(screen.getByText(dataSource.name)).toBeInTheDocument();
     });
-    
+
     const checkboxes = screen.getAllByRole('checkbox');
     expect(checkboxes).toHaveLength(defaultProps.dataSources.length);
   });
@@ -140,12 +140,12 @@ describe('ProspectFilters', () => {
   it('handles data source toggle', async () => {
     const user = userEvent.setup();
     render(<ProspectFilters {...defaultProps} />);
-    
+
     // Use the first data source for testing
     const firstDataSource = defaultProps.dataSources[0];
     const checkbox = screen.getByRole('checkbox', { name: new RegExp(firstDataSource.name, 'i') });
     await user.click(checkbox);
-    
+
     expect(defaultProps.onDataSourceToggle).toHaveBeenCalledWith(firstDataSource.id);
   });
 
@@ -156,15 +156,15 @@ describe('ProspectFilters', () => {
       ...defaultFilters,
       dataSourceIds: selectedIds
     };
-    
+
     render(<ProspectFilters {...defaultProps} filters={filtersWithSources} />);
-    
+
     // Check the first two are selected
     defaultProps.dataSources.slice(0, 2).forEach((dataSource: DataSource) => {
       const checkbox = screen.getByRole('checkbox', { name: new RegExp(dataSource.name, 'i') });
       expect(checkbox).toBeChecked();
     });
-    
+
     // Check the third one is not selected (if it exists)
     if (defaultProps.dataSources.length > 2) {
       const thirdDataSource = defaultProps.dataSources[2];
@@ -176,13 +176,13 @@ describe('ProspectFilters', () => {
   it('shows message when no data sources available', () => {
     const emptyProps = createDefaultProps([]);
     render(<ProspectFilters {...emptyProps} />);
-    
+
     expect(screen.getByText('No data sources available')).toBeInTheDocument();
   });
 
   it('renders AI enrichment select with correct initial value', () => {
     render(<ProspectFilters {...defaultProps} />);
-    
+
     const select = screen.getByRole('combobox');
     expect(select).toBeInTheDocument();
     expect(select).toHaveAttribute('data-state', 'closed');
@@ -191,30 +191,30 @@ describe('ProspectFilters', () => {
   it('handles show AI enhancements toggle', async () => {
     const user = userEvent.setup();
     render(<ProspectFilters {...defaultProps} />);
-    
+
     const toggle = screen.getByRole('switch');
     await user.click(toggle);
-    
+
     expect(defaultProps.onShowAIEnhancedChange).toHaveBeenCalledWith(true);
   });
 
   it('shows correct toggle state and description', () => {
     const { rerender } = render(<ProspectFilters {...defaultProps} showAIEnhanced={false} />);
-    
+
     expect(screen.getByText('Showing original data only')).toBeInTheDocument();
-    
+
     rerender(<ProspectFilters {...defaultProps} showAIEnhanced={true} />);
-    
+
     expect(screen.getByText('Showing AI-enhanced data in table')).toBeInTheDocument();
   });
 
   it('handles clear all filters button click', async () => {
     const user = userEvent.setup();
     render(<ProspectFilters {...defaultProps} hasActiveFilters={true} />);
-    
+
     const clearButton = screen.getByText('Clear All');
     await user.click(clearButton);
-    
+
     expect(defaultProps.onClearFilters).toHaveBeenCalled();
   });
 
@@ -227,15 +227,15 @@ describe('ProspectFilters', () => {
       dataSourceIds: selectedDataSources.map((ds: DataSource) => ds.id),
       ai_enrichment: 'enhanced'
     };
-    
+
     render(<ProspectFilters {...defaultProps} filters={activeFilters} hasActiveFilters={true} />);
-    
+
     expect(screen.getByText('Active filters:')).toBeInTheDocument();
     expect(screen.getByText('Keywords: software')).toBeInTheDocument();
     expect(screen.getByText('NAICS: 541511')).toBeInTheDocument();
     expect(screen.getByText('Agency: DOD')).toBeInTheDocument();
     expect(screen.getByText('AI: Enhanced Only')).toBeInTheDocument();
-    
+
     // Check for the actual data source names
     selectedDataSources.forEach((dataSource: DataSource) => {
       expect(screen.getByText(`Source: ${dataSource.name}`)).toBeInTheDocument();
@@ -252,38 +252,38 @@ describe('ProspectFilters', () => {
       dataSourceIds: [selectedDataSource.id],
       ai_enrichment: 'enhanced'
     };
-    
+
     render(<ProspectFilters {...defaultProps} filters={activeFilters} hasActiveFilters={true} />);
-    
+
     // Remove keywords filter
     const keywordsRemoveButton = screen.getByText('Keywords: software').nextElementSibling;
     await user.click(keywordsRemoveButton as Element);
-    
+
     expect(defaultProps.onFilterChange).toHaveBeenCalledWith('keywords', '');
-    
+
     // Remove NAICS filter
     const naicsRemoveButton = screen.getByText('NAICS: 541511').nextElementSibling;
     await user.click(naicsRemoveButton as Element);
-    
+
     expect(defaultProps.onFilterChange).toHaveBeenCalledWith('naics', '');
-    
+
     // Remove agency filter
     const agencyRemoveButton = screen.getByText('Agency: DOD').nextElementSibling;
     await user.click(agencyRemoveButton as Element);
-    
+
     expect(defaultProps.onFilterChange).toHaveBeenCalledWith('agency', '');
-    
+
     // Remove AI enrichment filter
     const aiRemoveButton = screen.getByText('AI: Enhanced Only').nextElementSibling;
     await user.click(aiRemoveButton as Element);
-    
+
     expect(defaultProps.onFilterChange).toHaveBeenCalledWith('ai_enrichment', 'all');
-    
+
     // Remove data source filter - use the first selected data source
     const firstDataSource = defaultProps.dataSources[0];
     const sourceRemoveButton = screen.getByText(`Source: ${firstDataSource.name}`).nextElementSibling;
     await user.click(sourceRemoveButton as Element);
-    
+
     expect(defaultProps.onDataSourceToggle).toHaveBeenCalledWith(firstDataSource.id);
   });
 
@@ -295,9 +295,9 @@ describe('ProspectFilters', () => {
       dataSourceIds: [2],
       ai_enrichment: 'original'
     };
-    
+
     render(<ProspectFilters {...defaultProps} filters={filtersWithValues} />);
-    
+
     expect(screen.getByDisplayValue('AI development')).toBeInTheDocument();
     expect(screen.getByDisplayValue('541511')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Defense')).toBeInTheDocument();
@@ -305,7 +305,7 @@ describe('ProspectFilters', () => {
 
   it('shows correct placeholder text in inputs', () => {
     render(<ProspectFilters {...defaultProps} />);
-    
+
     expect(screen.getByPlaceholderText('Search in title, description...')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('e.g., 541511, 334')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('e.g., DOD, HHS, DHS')).toBeInTheDocument();
@@ -314,37 +314,37 @@ describe('ProspectFilters', () => {
   it('handles keyboard navigation in inputs', async () => {
     const user = userEvent.setup();
     render(<ProspectFilters {...defaultProps} />);
-    
+
     const keywordsInput = screen.getByLabelText('Keywords');
     const naicsInput = screen.getByLabelText('NAICS Code');
-    
+
     await user.click(keywordsInput);
     await user.keyboard('{Tab}');
-    
+
     expect(naicsInput).toHaveFocus();
   });
 
   it('maintains focus after filter changes', async () => {
     const user = userEvent.setup();
     render(<ProspectFilters {...defaultProps} />);
-    
+
     const keywordsInput = screen.getByLabelText('Keywords');
     await user.click(keywordsInput);
     await user.type(keywordsInput, 'test');
-    
+
     expect(keywordsInput).toHaveFocus();
   });
 
   it('shows data source count in scrollable container', () => {
     const manyDataSources = generateDataSources(10);
     const manyProps = createDefaultProps(manyDataSources);
-    
+
     render(<ProspectFilters {...manyProps} />);
-    
+
     const firstDataSourceName = manyDataSources[0].name;
     const dataSourceContainer = screen.getByText(firstDataSourceName).closest('.max-h-48');
     expect(dataSourceContainer).toHaveClass('overflow-y-auto');
-    
+
     // All data sources should be rendered
     manyDataSources.forEach((dataSource) => {
       expect(screen.getByText(dataSource.name)).toBeInTheDocument();
@@ -359,13 +359,13 @@ describe('ProspectFilters', () => {
       dataSourceIds: undefined as any,
       ai_enrichment: undefined as any
     };
-    
+
     render(<ProspectFilters {...defaultProps} filters={undefinedFilters} />);
-    
+
     const keywordsInput = screen.getByLabelText('Keywords');
     const naicsInput = screen.getByLabelText('NAICS Code');
     const agencyInput = screen.getByLabelText('Agency');
-    
+
     expect(keywordsInput).toHaveValue('');
     expect(naicsInput).toHaveValue('');
     expect(agencyInput).toHaveValue('');
@@ -373,7 +373,7 @@ describe('ProspectFilters', () => {
 
   it('shows AI enrichment select component', () => {
     render(<ProspectFilters {...defaultProps} />);
-    
+
     const select = screen.getByRole('combobox');
     expect(select).toBeInTheDocument();
     expect(screen.getByText('AI Enrichment')).toBeInTheDocument();
@@ -381,26 +381,26 @@ describe('ProspectFilters', () => {
 
   it('applies correct styling classes', () => {
     render(<ProspectFilters {...defaultProps} />);
-    
+
     const container = screen.getByText('Filters').closest('.w-80');
     expect(container).toHaveClass('flex-shrink-0');
-    
+
     const card = screen.getByText('Filters').closest('.shadow-lg');
     expect(card).toBeInTheDocument();
   });
 
   it('supports accessibility features', () => {
     render(<ProspectFilters {...defaultProps} />);
-    
+
     // Labels should be associated with inputs
     const keywordsInput = screen.getByLabelText('Keywords');
     const naicsInput = screen.getByLabelText('NAICS Code');
     const agencyInput = screen.getByLabelText('Agency');
-    
+
     expect(keywordsInput).toHaveAttribute('id', 'keywords');
     expect(naicsInput).toHaveAttribute('id', 'naics');
     expect(agencyInput).toHaveAttribute('id', 'agency');
-    
+
     // Switch should have proper labeling
     const aiSwitch = screen.getByRole('switch');
     expect(aiSwitch).toHaveAttribute('id', 'show-ai-table');

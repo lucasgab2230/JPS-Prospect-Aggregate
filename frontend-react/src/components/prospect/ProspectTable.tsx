@@ -17,12 +17,12 @@ interface ProspectTableProps {
   onRowClick: (prospect: Prospect) => void;
 }
 
-export function ProspectTable({ 
-  table, 
-  prospects, 
-  isLoading, 
-  isFetching, 
-  onRowClick 
+export function ProspectTable({
+  table,
+  prospects,
+  isLoading,
+  isFetching,
+  onRowClick
 }: ProspectTableProps) {
   if (isLoading) {
     return (
@@ -54,8 +54,8 @@ export function ProspectTable({
           {table.getHeaderGroups().map(headerGroup => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map(header => (
-                <TableHead 
-                  key={header.id} 
+                <TableHead
+                  key={header.id}
                   className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap"
                   style={{ width: header.getSize() !== 0 ? header.getSize() : undefined }}
                 >
@@ -73,10 +73,10 @@ export function ProspectTable({
         <TableBody className="bg-white divide-y divide-gray-200">
           {table.getRowModel().rows.map((row, rowIndex) => {
             const isRecentlyUpdated = false; // Animation removed for performance
-            
+
             return (
-              <TableRow 
-                key={row.id} 
+              <TableRow
+                key={row.id}
                 className={`transition-all duration-300 ease-in-out hover:bg-gray-100 cursor-pointer ${
                   rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
                 } data-[state=selected]:bg-blue-50 data-[state=selected]:hover:bg-blue-100 ${
@@ -88,10 +88,10 @@ export function ProspectTable({
                 }}
               >
                 {row.getVisibleCells().map(cell => (
-                  <TableCell 
-                    key={cell.id} 
+                  <TableCell
+                    key={cell.id}
                     className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 align-top overflow-hidden"
-                    style={{ 
+                    style={{
                       width: cell.column.getSize() !== 0 ? cell.column.getSize() : undefined,
                       maxWidth: cell.column.getSize() !== 0 ? cell.column.getSize() : undefined
                     }}
