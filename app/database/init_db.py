@@ -49,9 +49,8 @@ def initialize_all_databases(app):
     if business_success and user_success:
         logger.info("All databases initialized successfully!")
         return True
-    else:
-        logger.error("Failed to initialize one or more databases")
-        return False
+    logger.error("Failed to initialize one or more databases")
+    return False
 
 
 if __name__ == "__main__":

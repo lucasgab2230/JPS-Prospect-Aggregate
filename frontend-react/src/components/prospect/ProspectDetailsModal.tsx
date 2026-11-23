@@ -50,7 +50,7 @@ export function ProspectDetailsModal({
   const isSuperAdmin = useIsSuperAdmin();
   const [showRawData, setShowRawData] = useState(false);
   const [enhancementStarted, setEnhancementStarted] = useState(false);
-  
+
   // Monitor enhancement status and reset the started flag when completed
   useEffect(() => {
     if (selectedProspect) {
@@ -64,7 +64,7 @@ export function ProspectDetailsModal({
       }
     }
   }, [selectedProspect, getProspectStatus]);
-  
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -92,12 +92,12 @@ export function ProspectDetailsModal({
               const status = getProspectStatus(selectedProspect.id);
               const isActive = status?.status ? ['queued', 'processing'].includes(status.status) : false;
               if (!isActive) return null;
-              
+
               return (
                 <div className="inline-flex items-center ml-3 px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
                   <ReloadIcon className="mr-1 h-3 w-3 animate-spin" />
-                  {status?.status === 'queued' ? 
-                    `Queued (#${status?.queuePosition || 1})` : 
+                  {status?.status === 'queued' ?
+                    `Queued (#${status?.queuePosition || 1})` :
                     `Processing${status?.queuePosition ? ` (#${status.queuePosition})` : ''}`
                   }
                 </div>
@@ -108,7 +108,7 @@ export function ProspectDetailsModal({
             Full details for this prospect opportunity
           </DialogDescription>
         </DialogHeader>
-        
+
         {selectedProspect && (
           <div className="space-y-6 mt-6">
             {/* Enhancement Status and Button */}
@@ -122,27 +122,27 @@ export function ProspectDetailsModal({
                   </div>
                 </div>
               )}
-              
+
               {/* Spacer when no enhancement status */}
               {!selectedProspect.ollama_processed_at && <div />}
-              
+
               {/* Enhancement Button - Right side */}
               <EnhancementErrorBoundary>
-                <EnhancementButtonWithSelector 
+                <EnhancementButtonWithSelector
                   prospect={selectedProspect}
                   userId={1}
                   onEnhancementStart={() => setEnhancementStarted(true)}
                 />
               </EnhancementErrorBoundary>
             </div>
-            
+
             {/* Enhancement Progress */}
             <EnhancementErrorBoundary>
-              <EnhancementProgress 
+              <EnhancementProgress
                 status={(() => {
                   const enhancementState = getProspectStatus(selectedProspect?.id || '');
                   if (!enhancementState) return null;
-                  
+
                   const status = {
                     currentStep: enhancementState.currentStep,
                     progress: enhancementState.progress,
@@ -160,7 +160,7 @@ export function ProspectDetailsModal({
                 })()}
               />
             </EnhancementErrorBoundary>
-            
+
             {/* AI Enhancement Toggle */}
             <div className="bg-gray-50 border border-gray-200 p-3 rounded-lg">
               <div className="flex items-center justify-between">
@@ -182,10 +182,10 @@ export function ProspectDetailsModal({
 
             {/* Go/No-Go Decision */}
             <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-              <GoNoGoDecision 
-                prospectId={selectedProspect.id} 
+              <GoNoGoDecision
+                prospectId={selectedProspect.id}
                 prospectTitle={selectedProspect.ai_enhanced_title || selectedProspect.title}
-                compact={false} 
+                compact={false}
               />
             </div>
 
@@ -195,20 +195,20 @@ export function ProspectDetailsModal({
               <div className="grid grid-cols-1 gap-4 bg-gray-50 p-4 rounded-lg">
                 <div className={`${(() => {
                   const status = getProspectStatus(selectedProspect.id);
-                  const isTitleActive = status?.currentStep?.toLowerCase().includes('title') || 
+                  const isTitleActive = status?.currentStep?.toLowerCase().includes('title') ||
                                       status?.currentStep?.toLowerCase().includes('enhancing');
                   const isTitleCompleted = status?.progress?.titles?.completed;
-                  
+
                   // Only show animation if actively processing titles and not yet completed
                   return (isTitleActive && !isTitleCompleted) ? 'animate-pulse bg-blue-50 border border-blue-200 rounded p-2' : '';
                 })()}`}>
                   <span className="font-medium text-gray-700">Title:</span>
                   {(() => {
                     const status = getProspectStatus(selectedProspect.id);
-                    const isTitleActive = status?.currentStep?.toLowerCase().includes('title') || 
+                    const isTitleActive = status?.currentStep?.toLowerCase().includes('title') ||
                                         status?.currentStep?.toLowerCase().includes('enhancing');
                     const isTitleCompleted = status?.progress?.titles?.completed;
-                    
+
                     // Only show spinner if actively processing titles and not yet completed
                     return (isTitleActive && !isTitleCompleted) ? (
                       <span className="ml-2 text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 animate-pulse inline-flex items-center">
@@ -219,8 +219,8 @@ export function ProspectDetailsModal({
                   })()}
                   <p className={`mt-1 ${(() => {
                     // Check if title is AI enhanced
-                    const isAIEnhanced = showAIEnhanced && 
-                                       selectedProspect.ai_enhanced_title && 
+                    const isAIEnhanced = showAIEnhanced &&
+                                       selectedProspect.ai_enhanced_title &&
                                        selectedProspect.title !== selectedProspect.ai_enhanced_title;
                     return isAIEnhanced ? 'text-blue-700 font-medium' : 'text-gray-900';
                   })()}`}>{(() => {
@@ -254,19 +254,19 @@ export function ProspectDetailsModal({
                   </div>
                   <div className={`${(() => {
                     const status = getProspectStatus(selectedProspect.id);
-                    const isNaicsActive = status?.currentStep?.toLowerCase().includes('naics') || 
+                    const isNaicsActive = status?.currentStep?.toLowerCase().includes('naics') ||
                                         status?.currentStep?.toLowerCase().includes('classifying');
                     const isNaicsCompleted = status?.progress?.naics?.completed;
-                    
+
                     return (isNaicsActive && !isNaicsCompleted) ? 'animate-pulse bg-blue-50 border border-blue-200 rounded p-2' : '';
                   })()}`}>
                     <span className="font-medium text-gray-700">NAICS:</span>
                     {(() => {
                       const status = getProspectStatus(selectedProspect.id);
-                      const isNaicsActive = status?.currentStep?.toLowerCase().includes('naics') || 
+                      const isNaicsActive = status?.currentStep?.toLowerCase().includes('naics') ||
                                           status?.currentStep?.toLowerCase().includes('classifying');
                       const isNaicsCompleted = status?.progress?.naics?.completed;
-                      
+
                       return (isNaicsActive && !isNaicsCompleted) ? (
                         <span className="ml-2 text-xs px-2 py-1 rounded bg-blue-100 text-blue-700 animate-pulse inline-flex items-center">
                           <ReloadIcon className="w-3 h-3 mr-1 animate-spin" />
@@ -281,18 +281,18 @@ export function ProspectDetailsModal({
                       })()}
                       {(() => {
                         const status = getProspectStatus(selectedProspect.id);
-                        const isNaicsActive = status?.currentStep?.toLowerCase().includes('naics') || 
+                        const isNaicsActive = status?.currentStep?.toLowerCase().includes('naics') ||
                                             status?.currentStep?.toLowerCase().includes('classifying');
                         const isNaicsCompleted = status?.progress?.naics?.completed;
-                        
+
                         // Check if NAICS was actually changed by AI
                         const originalNaics = selectedProspect.extra?.original_naics as string | undefined;
-                        const isAIEnhanced = showAIEnhanced && 
-                                           selectedProspect.naics_source === 'llm_inferred' && 
+                        const isAIEnhanced = showAIEnhanced &&
+                                           selectedProspect.naics_source === 'llm_inferred' &&
                                            selectedProspect.ollama_processed_at &&
                                            selectedProspect.naics &&
                                            (!originalNaics || originalNaics !== selectedProspect.naics);
-                        
+
                         return isAIEnhanced && !(isNaicsActive && !isNaicsCompleted);
                       })() && (
                         <span className="ml-2 text-xs px-2 py-1 rounded bg-blue-100 text-blue-700">
@@ -320,14 +320,14 @@ export function ProspectDetailsModal({
                     {selectedProspect.est_value_unit && ` ${selectedProspect.est_value_unit}`}
                   </p>
                 </div>
-                
+
                 {/* AI-parsed values with progress indicator */}
                 {(() => {
                   const status = getProspectStatus(selectedProspect.id);
-                  const isValuesActive = status?.currentStep?.toLowerCase().includes('value') || 
+                  const isValuesActive = status?.currentStep?.toLowerCase().includes('value') ||
                                        status?.currentStep?.toLowerCase().includes('parsing');
                   const isValuesCompleted = status?.progress?.values?.completed;
-                  
+
                   return (isValuesActive && !isValuesCompleted) ? (
                     <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 animate-pulse">
                       <div className="flex items-center mb-2">
@@ -338,14 +338,14 @@ export function ProspectDetailsModal({
                     </div>
                   ) : null;
                 })()}
-                
+
                 {/* AI-parsed values */}
                 {(() => {
                   const status = getProspectStatus(selectedProspect.id);
-                  const isValuesActive = status?.currentStep?.toLowerCase().includes('value') || 
+                  const isValuesActive = status?.currentStep?.toLowerCase().includes('value') ||
                                        status?.currentStep?.toLowerCase().includes('parsing');
                   const isValuesCompleted = status?.progress?.values?.completed;
-                  
+
                   return showAIEnhanced && (selectedProspect.estimated_value_min || selectedProspect.estimated_value_max || selectedProspect.estimated_value_single) && !(isValuesActive && !isValuesCompleted);
                 })() && (
                   <div className="bg-green-50 p-3 rounded-lg border border-green-200">
@@ -357,7 +357,7 @@ export function ProspectDetailsModal({
                       {/* Show range if min/max exist and single is null */}
                       {selectedProspect.estimated_value_min && selectedProspect.estimated_value_max && !selectedProspect.estimated_value_single && (
                         <p className="text-gray-900">
-                          <span className="text-sm text-gray-600">Range:</span> 
+                          <span className="text-sm text-gray-600">Range:</span>
                           {(() => {
                             const min = parseFloat(selectedProspect.estimated_value_min);
                             const max = parseFloat(selectedProspect.estimated_value_max);
@@ -371,7 +371,7 @@ export function ProspectDetailsModal({
                       {/* Show single value if it exists */}
                       {selectedProspect.estimated_value_single && (
                         <p className="text-gray-900">
-                          <span className="text-sm text-gray-600">Value:</span> 
+                          <span className="text-sm text-gray-600">Value:</span>
                           {(() => {
                             const single = parseFloat(selectedProspect.estimated_value_single);
                             if (!isNaN(single)) {
@@ -384,7 +384,7 @@ export function ProspectDetailsModal({
                     </div>
                   </div>
                 )}
-                
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <span className="font-medium text-gray-700">Contract Type:</span>
@@ -395,14 +395,14 @@ export function ProspectDetailsModal({
                     <p className="mt-1 text-gray-900">
                       {(() => {
                         // Show AI-enhanced set-aside if toggle is on and available
-                        if (showAIEnhanced && selectedProspect.set_aside_standardized_label && 
+                        if (showAIEnhanced && selectedProspect.set_aside_standardized_label &&
                             selectedProspect.set_aside_standardized !== 'NOT_AVAILABLE') {
                           return selectedProspect.set_aside_standardized_label;
                         }
                         return selectedProspect.set_aside || 'N/A';
                       })()}
-                      {showAIEnhanced && 
-                       selectedProspect.set_aside_standardized_label && 
+                      {showAIEnhanced &&
+                       selectedProspect.set_aside_standardized_label &&
                        selectedProspect.set_aside_standardized !== 'NOT_AVAILABLE' &&
                        selectedProspect.set_aside_standardized_label !== selectedProspect.set_aside &&
                        selectedProspect.ollama_processed_at && (
@@ -427,7 +427,7 @@ export function ProspectDetailsModal({
                 <div>
                   <span className="font-medium text-gray-700">Release Date:</span>
                   <p className="mt-1 text-gray-900">
-                    {selectedProspect.release_date 
+                    {selectedProspect.release_date
                       ? formatUserDate(selectedProspect.release_date, 'date')
                       : 'N/A'}
                   </p>
@@ -435,7 +435,7 @@ export function ProspectDetailsModal({
                 <div>
                   <span className="font-medium text-gray-700">Award Date:</span>
                   <p className="mt-1 text-gray-900">
-                    {selectedProspect.award_date 
+                    {selectedProspect.award_date
                       ? formatUserDate(selectedProspect.award_date, 'date')
                       : 'N/A'}
                     {/* Tentative date indicator following AI Enhanced pattern */}
@@ -471,10 +471,10 @@ export function ProspectDetailsModal({
             {/* Contact Information with progress indicator */}
             {(() => {
               const status = getProspectStatus(selectedProspect.id);
-              const isContactsActive = status?.currentStep?.toLowerCase().includes('contact') || 
+              const isContactsActive = status?.currentStep?.toLowerCase().includes('contact') ||
                                      status?.currentStep?.toLowerCase().includes('extracting');
               const isContactsCompleted = status?.progress?.contacts?.completed;
-              
+
               return (isContactsActive && !isContactsCompleted) ? (
                 <div>
                   <div className="flex items-center mb-3">
@@ -492,10 +492,10 @@ export function ProspectDetailsModal({
             {/* Contact Information */}
             {(() => {
               const status = getProspectStatus(selectedProspect.id);
-              const isContactsActive = status?.currentStep?.toLowerCase().includes('contact') || 
+              const isContactsActive = status?.currentStep?.toLowerCase().includes('contact') ||
                                      status?.currentStep?.toLowerCase().includes('extracting');
               const isContactsCompleted = status?.progress?.contacts?.completed;
-              
+
               return !(isContactsActive && !isContactsCompleted) && (selectedProspect.primary_contact_email || selectedProspect.primary_contact_name);
             })() && (
               <div>
@@ -517,7 +517,7 @@ export function ProspectDetailsModal({
                         Email:
                       </span>
                       <p className="mt-1 text-gray-900">
-                        <a href={`mailto:${selectedProspect.primary_contact_email}`} 
+                        <a href={`mailto:${selectedProspect.primary_contact_email}`}
                            className="text-blue-600 hover:text-blue-800 underline">
                           {selectedProspect.primary_contact_email}
                         </a>
@@ -543,7 +543,7 @@ export function ProspectDetailsModal({
                 <div>
                   <span className="font-medium text-gray-700">Loaded At:</span>
                   <p className="mt-1 text-gray-900">
-                    {selectedProspect.loaded_at 
+                    {selectedProspect.loaded_at
                       ? formatUserDate(selectedProspect.loaded_at)
                       : 'N/A'}
                   </p>
@@ -597,7 +597,7 @@ export function ProspectDetailsModal({
             {/* Super Admin Raw Data Debug Section */}
             {isSuperAdmin && (
               <div className="mt-6 border-t pt-4">
-                <button 
+                <button
                   onClick={() => setShowRawData(!showRawData)}
                   className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
                 >

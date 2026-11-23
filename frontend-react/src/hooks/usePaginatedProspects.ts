@@ -14,7 +14,7 @@ const fetchProspects = async (page: number, limit: number, filters?: ProspectFil
   const queryParams = new URLSearchParams();
   queryParams.append('page', page.toString());
   queryParams.append('limit', limit.toString());
-  
+
   if (filters) {
     if (filters.naics) queryParams.append('naics', filters.naics);
     if (filters.keywords) queryParams.append('keywords', filters.keywords);
@@ -25,18 +25,18 @@ const fetchProspects = async (page: number, limit: number, filters?: ProspectFil
       queryParams.append('source_ids', filters.dataSourceIds.join(','));
     }
   }
-  
+
   const url = `/api/prospects?${queryParams.toString()}`;
-  
+
   const response = await fetch(url);
-  
+
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ message: 'Failed to fetch prospects and parse error response' }));
     throw new Error(errorData.error || `Network response was not ok: ${response.statusText}`);
   }
-  
+
   const result: { prospects: Prospect[], pagination: { total_items: number, total_pages: number, page: number, per_page: number } } = await response.json();
-  
+
   return {
     data: result.prospects,
     total: result.pagination.total_items,
@@ -47,9 +47,9 @@ const fetchProspects = async (page: number, limit: number, filters?: ProspectFil
 export function usePaginatedProspects(filters: ProspectFilters) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  
+
   const { hasAnyActivity } = useEnhancementActivityMonitor();
-  
+
   const { data: prospectsData, isLoading, isFetching, refetch } = useQuery({
     queryKey: ['prospects', currentPage, itemsPerPage, filters],
     queryFn: () => fetchProspects(currentPage, itemsPerPage, filters),

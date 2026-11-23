@@ -28,22 +28,22 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     // Update state with error info for more detailed reporting
     this.setState({ errorInfo });
-    
+
     // Create a boundary error and handle it through the error service
     const boundaryError = createBoundaryError(error, {
       componentStack: errorInfo.componentStack || '',
       errorBoundary: 'ErrorBoundary',
       timestamp: new Date(),
     });
-    
+
     // Handle through error service for centralized logging
     errorService.handleError(boundaryError);
-    
+
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
   }
-  
+
   // Reset error state when props change if resetOnPropsChange is true
   componentDidUpdate(prevProps: ErrorBoundaryProps) {
     // Reset the error state if resetOnPropsChange is true and children have changed
@@ -66,7 +66,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       if (this.props.fallback) {
         return this.props.fallback;
       }
-      
+
       // Render default fallback UI
       return (
         <div className="p-4 border border-red-500 bg-red-50 rounded-md shadow-md my-4 text-gray-700 dark:border-red-500 dark:bg-red-900/20 dark:text-gray-300">
@@ -96,4 +96,4 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 }
 
-export { ErrorBoundary }; 
+export { ErrorBoundary };

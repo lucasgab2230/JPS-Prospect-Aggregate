@@ -38,7 +38,7 @@ class DocScraper(ConsolidatedScraperBase):
                     df["Estimated Solicitation Fiscal Quarter"]
                     .astype(str)
                     .apply(
-                        lambda x: f'Q{x.split(".")[0]}' if pd.notna(x) and x else None
+                        lambda x: f"Q{x.split('.')[0]}" if pd.notna(x) and x else None
                     )
                 )
                 df["solicitation_fyq_combined"] = (
@@ -48,9 +48,11 @@ class DocScraper(ConsolidatedScraperBase):
                 )
 
                 parsed_sol_date_info = df["solicitation_fyq_combined"].apply(
-                    lambda x: fiscal_quarter_to_date(x.strip())
-                    if pd.notna(x) and x.strip()
-                    else (None, None)
+                    lambda x: (
+                        fiscal_quarter_to_date(x.strip())
+                        if pd.notna(x) and x.strip()
+                        else (None, None)
+                    )
                 )
                 df["release_date_final"] = parsed_sol_date_info.apply(
                     lambda x: x[0].date() if x[0] else None

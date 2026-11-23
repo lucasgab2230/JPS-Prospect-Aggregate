@@ -125,7 +125,7 @@ export class ErrorService {
    */
   handleError(error: unknown, context?: Record<string, unknown>): AppError {
     const normalizedError = this.normalizeError(error);
-    
+
     // Add context if provided
     if (context) {
       normalizedError.context = { ...normalizedError.context, ...context };
@@ -176,14 +176,14 @@ export class ErrorService {
    */
   private getErrorCodeFromStatus(status?: number): string {
     if (!status) return ERROR_CODES.UNKNOWN_ERROR;
-    
+
     if (status >= 500) return ERROR_CODES.API_SERVER_ERROR;
     if (status === 401) return ERROR_CODES.AUTH_UNAUTHORIZED;
     if (status === 403) return ERROR_CODES.AUTH_FORBIDDEN;
     if (status === 404) return ERROR_CODES.ENTITY_NOT_FOUND;
     if (status === 409) return ERROR_CODES.DUPLICATE_ENTITY;
     if (status >= 400) return ERROR_CODES.API_CLIENT_ERROR;
-    
+
     return ERROR_CODES.UNKNOWN_ERROR;
   }
 
@@ -278,14 +278,14 @@ export class ErrorService {
     // Exponential backoff with jitter
     const baseDelay = 1000; // 1 second
     const maxDelay = 30000; // 30 seconds
-    
+
     if (error.code === ERROR_CODES.API_SERVER_ERROR) {
       // Longer delays for server errors
       const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
       const jitter = Math.random() * 0.3 * delay; // 30% jitter
       return delay + jitter;
     }
-    
+
     // Shorter delays for network errors
     const delay = Math.min(baseDelay * attempt, 10000); // Max 10 seconds
     const jitter = Math.random() * 0.2 * delay; // 20% jitter

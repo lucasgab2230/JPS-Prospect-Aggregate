@@ -45,7 +45,7 @@ function generateMockDecision() {
     'Strong technical fit',
     'Resource constraints'
   ];
-  
+
   return {
     id: Math.floor(Math.random() * 1000) + 1,
     decision: decisions[Math.floor(Math.random() * decisions.length)],
@@ -72,7 +72,7 @@ function renderWithQueryClient(component: React.ReactElement) {
 describe('GoNoGoDecision', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     const { useCreateDecision, useProspectDecisions, useDeleteDecision } = require('../hooks/api');
     useCreateDecision.mockReturnValue(mockCreateDecision);
     useDeleteDecision.mockReturnValue(mockDeleteDecision);
@@ -109,7 +109,7 @@ describe('GoNoGoDecision', () => {
     it('shows existing decision badge when decision exists', () => {
       const mockDecision = generateMockDecision();
       mockDecision.decision = 'go'; // Ensure it's a GO decision for this test
-      
+
       const { useProspectDecisions } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -131,7 +131,7 @@ describe('GoNoGoDecision', () => {
     it('shows NO-GO badge for no-go decisions', () => {
       const mockDecision = generateMockDecision();
       mockDecision.decision = 'no-go'; // Ensure it's a NO-GO decision for this test
-      
+
       const { useProspectDecisions } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -153,7 +153,7 @@ describe('GoNoGoDecision', () => {
     it('does not show reason indicator when no reason exists', () => {
       const mockDecision = generateMockDecision();
       mockDecision.reason = ''; // Ensure no reason for this test
-      
+
       const { useProspectDecisions } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -188,7 +188,7 @@ describe('GoNoGoDecision', () => {
     it('shows existing decision details in full mode', () => {
       const mockDecision = generateMockDecision();
       mockDecision.decision = 'go'; // Set to GO for this test
-      
+
       const { useProspectDecisions } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -213,7 +213,7 @@ describe('GoNoGoDecision', () => {
     it('shows change decision options when decision exists', () => {
       const mockDecision = generateMockDecision();
       mockDecision.decision = 'go'; // Set to GO for this test
-      
+
       const { useProspectDecisions } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -236,7 +236,7 @@ describe('GoNoGoDecision', () => {
     it('shows opposite change button based on current decision', () => {
       const mockDecision = generateMockDecision();
       mockDecision.decision = 'no-go'; // Set to NO-GO for this test
-      
+
       const { useProspectDecisions } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -413,7 +413,7 @@ describe('GoNoGoDecision', () => {
     it('calls delete mutation when undo is clicked', async () => {
       const user = userEvent.setup();
       const mockDecision = generateMockDecision();
-      
+
       const { useProspectDecisions } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -436,7 +436,7 @@ describe('GoNoGoDecision', () => {
 
     it('shows undoing state during deletion', () => {
       const mockDecision = generateMockDecision();
-      
+
       const { useProspectDecisions, useDeleteDecision } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -478,7 +478,7 @@ describe('GoNoGoDecision', () => {
     it('disables change buttons when create mutation is pending', () => {
       const mockDecision = generateMockDecision();
       mockDecision.decision = 'go';
-      
+
       const { useProspectDecisions, useCreateDecision } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -502,7 +502,7 @@ describe('GoNoGoDecision', () => {
 
     it('disables undo button when delete mutation is pending', () => {
       const mockDecision = generateMockDecision();
-      
+
       const { useProspectDecisions, useDeleteDecision } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -581,7 +581,7 @@ describe('GoNoGoDecision', () => {
     it('applies correct styling for GO badge', () => {
       const mockDecision = generateMockDecision();
       mockDecision.decision = 'go';
-      
+
       const { useProspectDecisions } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -603,7 +603,7 @@ describe('GoNoGoDecision', () => {
     it('applies correct styling for NO-GO badge', () => {
       const mockDecision = generateMockDecision();
       mockDecision.decision = 'no-go';
-      
+
       const { useProspectDecisions } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,
@@ -665,7 +665,7 @@ describe('GoNoGoDecision', () => {
       if (!mockDecision.reason) {
         mockDecision.reason = 'Test reason for tooltip';
       }
-      
+
       const { useProspectDecisions } = require('../hooks/api');
       useProspectDecisions.mockReturnValue({
         ...mockProspectDecisions,

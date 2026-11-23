@@ -51,7 +51,7 @@ init_launcher_state() {
     if [ ! -d "$LAUNCHER_STATE_DIR" ]; then
         mkdir -p "$LAUNCHER_STATE_DIR"
     fi
-    
+
     # Initialize log file
     if [ ! -f "$LOG_FILE" ]; then
         touch "$LOG_FILE"
@@ -112,7 +112,7 @@ show_spinner() {
     local message=$2
     local spinner='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
     local i=0
-    
+
     echo -n "$message "
     while kill -0 $pid 2>/dev/null; do
         i=$(( (i+1) %10 ))
@@ -129,12 +129,12 @@ show_progress() {
     local width=50
     local percentage=$((current * 100 / total))
     local filled=$((current * width / total))
-    
+
     printf "\r["
     printf "%${filled}s" | tr ' ' '='
     printf "%$((width - filled))s" | tr ' ' ' '
     printf "] %d%%" $percentage
-    
+
     if [ $current -eq $total ]; then
         echo ""
     fi
@@ -145,14 +145,14 @@ prompt_user() {
     local prompt="$1"
     local default="$2"
     local response
-    
+
     if [ -n "$default" ]; then
         read -p "$prompt [$default]: " response
         response="${response:-$default}"
     else
         read -p "$prompt: " response
     fi
-    
+
     echo "$response"
 }
 
@@ -161,18 +161,18 @@ confirm() {
     local prompt="$1"
     local default="${2:-n}"
     local response
-    
+
     if [ "$default" = "y" ]; then
         read -p "$prompt (Y/n): " -n 1 -r response
     else
         read -p "$prompt (y/N): " -n 1 -r response
     fi
     echo
-    
+
     if [ -z "$response" ]; then
         response="$default"
     fi
-    
+
     [[ "$response" =~ ^[Yy]$ ]]
 }
 
@@ -188,7 +188,7 @@ command_exists() {
 detect_os() {
     local os_type=""
     local os_name=""
-    
+
     case "$(uname -s)" in
         Darwin*)
             os_type="macos"
@@ -218,10 +218,10 @@ detect_os() {
             os_name="Unknown"
             ;;
     esac
-    
+
     export OS_TYPE="$os_type"
     export OS_NAME="$os_name"
-    
+
     log_message "INFO" "Detected OS: $OS_NAME ($OS_TYPE)"
 }
 
@@ -255,28 +255,28 @@ get_open_command() {
 
 check_python() {
     print_info "Checking Python installation..."
-    
+
     local python_cmd=""
     local python_version=""
-    
+
     # Try different Python commands
     for cmd in python3 python python3.11 python3.12; do
         if command_exists "$cmd"; then
             python_version=$($cmd --version 2>&1 | cut -d' ' -f2)
             local major=$(echo $python_version | cut -d. -f1)
             local minor=$(echo $python_version | cut -d. -f2)
-            
+
             if [ "$major" -eq 3 ] && [ "$minor" -ge 11 ]; then
                 python_cmd="$cmd"
                 break
             fi
         fi
     done
-    
+
     if [ -z "$python_cmd" ]; then
         print_error "Python 3.11+ not found"
         print_info "Please install Python 3.11 or higher"
-        
+
         case "$OS_TYPE" in
             macos)
                 print_info "Install with: brew install python@3.11"
@@ -289,31 +289,31 @@ check_python() {
                 print_info "Download from: https://www.python.org/downloads/"
                 ;;
         esac
-        
+
         return 1
     fi
-    
+
     export PYTHON_CMD="$python_cmd"
     export PYTHON_VERSION="$python_version"
     print_success "Python $python_version found ($python_cmd)"
-    
+
     # Check for virtual environment
     if [ -n "$VIRTUAL_ENV" ]; then
         print_info "Virtual environment active: $VIRTUAL_ENV"
     elif [ -n "$CONDA_DEFAULT_ENV" ]; then
         print_info "Conda environment active: $CONDA_DEFAULT_ENV"
     fi
-    
+
     return 0
 }
 
 check_node() {
     print_info "Checking Node.js installation..."
-    
+
     if ! command_exists node; then
         print_error "Node.js not found"
         print_info "Please install Node.js 20.x"
-        
+
         case "$OS_TYPE" in
             macos)
                 print_info "Install with: brew install node@20"
@@ -326,48 +326,48 @@ check_node() {
                 print_info "Download from: https://nodejs.org/"
                 ;;
         esac
-        
+
         return 1
     fi
-    
+
     local node_version=$(node --version | cut -d'v' -f2)
     local major=$(echo $node_version | cut -d. -f1)
-    
+
     if [ "$major" -lt 20 ]; then
         print_warning "Node.js version $node_version found, but 20.x is recommended"
     else
         print_success "Node.js $node_version found"
     fi
-    
+
     if ! command_exists npm; then
         print_error "npm not found"
         return 1
     fi
-    
+
     local npm_version=$(npm --version)
     print_success "npm $npm_version found"
-    
+
     return 0
 }
 
 check_docker() {
     print_info "Checking Docker installation..."
-    
+
     if ! command_exists docker; then
         print_warning "Docker not found (required for production mode)"
         return 1
     fi
-    
+
     local docker_version=$(docker --version | cut -d' ' -f3 | cut -d',' -f1)
     print_success "Docker $docker_version found"
-    
+
     # Check if Docker daemon is running
     if ! docker info >/dev/null 2>&1; then
         print_warning "Docker daemon is not running"
         print_info "Start Docker Desktop or run: sudo systemctl start docker"
         return 1
     fi
-    
+
     # Check Docker Compose
     if command_exists docker-compose; then
         local compose_version=$(docker-compose --version | cut -d' ' -f3 | cut -d',' -f1)
@@ -378,29 +378,29 @@ check_docker() {
         print_warning "Docker Compose not found"
         return 1
     fi
-    
+
     return 0
 }
 
 check_ollama() {
     print_info "Checking Ollama installation..."
-    
+
     if ! command_exists ollama; then
         print_warning "Ollama not found (optional - for LLM features)"
         print_info "Install from: https://ollama.ai/"
         return 1
     fi
-    
+
     local ollama_version=$(ollama --version | head -n1)
     print_success "Ollama found: $ollama_version"
-    
+
     # Check if Ollama is running
     if ! curl -s http://localhost:11434/api/tags >/dev/null 2>&1; then
         print_warning "Ollama service is not running"
         print_info "Start with: ollama serve"
         return 1
     fi
-    
+
     # Check for qwen3 model
     if ollama list 2>/dev/null | grep -q "qwen3:latest"; then
         print_success "qwen3:latest model found"
@@ -412,7 +412,7 @@ check_ollama() {
             print_success "Model downloaded successfully"
         fi
     fi
-    
+
     return 0
 }
 
@@ -421,39 +421,39 @@ check_git() {
         print_error "Git not found"
         return 1
     fi
-    
+
     local git_version=$(git --version | cut -d' ' -f3)
     print_success "Git $git_version found"
-    
+
     # Check if we're in a git repository
     if git rev-parse --git-dir >/dev/null 2>&1; then
         local branch=$(git branch --show-current)
         print_info "Git repository detected (branch: $branch)"
     fi
-    
+
     return 0
 }
 
 check_prerequisites() {
     print_header "Checking Prerequisites"
-    
+
     local all_good=true
-    
+
     check_git || all_good=false
     check_python || all_good=false
     check_node || all_good=false
-    
+
     # Docker is optional for development
     check_docker || print_info "Docker is optional for development mode"
-    
+
     # Ollama is optional
     check_ollama || print_info "Ollama is optional (LLM features will be disabled)"
-    
+
     if [ "$all_good" = false ]; then
         print_error "Some prerequisites are missing"
         return 1
     fi
-    
+
     print_success "All required prerequisites found!"
     return 0
 }
@@ -474,12 +474,12 @@ detect_current_environment() {
 save_preference() {
     local key="$1"
     local value="$2"
-    
+
     # Create preferences file if it doesn't exist
     if [ ! -f "$PREFERENCES_FILE" ]; then
         echo "{}" > "$PREFERENCES_FILE"
     fi
-    
+
     # Update preference (simple implementation - could use jq if available)
     local temp_file="$PREFERENCES_FILE.tmp"
     if command_exists jq; then
@@ -494,7 +494,7 @@ save_preference() {
 get_preference() {
     local key="$1"
     local default="$2"
-    
+
     if [ -f "$PREFERENCES_FILE" ] && command_exists jq; then
         local value=$(jq -r --arg key "$key" '.[$key] // empty' "$PREFERENCES_FILE")
         if [ -n "$value" ]; then
@@ -515,7 +515,7 @@ get_preference() {
 
 setup_python_env() {
     print_info "Checking Python environment..."
-    
+
     # Check if we're already in a virtual environment
     if [ -n "$VIRTUAL_ENV" ]; then
         print_success "Using virtual environment: $VIRTUAL_ENV"
@@ -577,31 +577,31 @@ setup_python_env() {
             fi
         fi
     fi
-    
+
     return 0
 }
 
 install_python_deps() {
     print_info "Checking Python dependencies..."
-    
+
     if [ ! -f "requirements.txt" ]; then
         print_error "requirements.txt not found"
         return 1
     fi
-    
+
     # Quick check - try importing key packages
     if $PYTHON_CMD -c "import flask, sqlalchemy, playwright" 2>/dev/null; then
         print_success "Python packages ready"
     else
         print_info "Installing missing Python packages..."
-        
+
         # Try to install packages and check for success
         if $PYTHON_CMD -m pip install -r requirements.txt --quiet --disable-pip-version-check 2>/dev/null; then
             print_success "Python packages installed"
         else
             # Installation failed - likely due to PEP 668
             print_error "Failed to install Python packages"
-            
+
             # Check if we're in base environment
             if [ "$CONDA_DEFAULT_ENV" = "base" ]; then
                 print_error "Cannot install packages in conda base environment"
@@ -617,7 +617,7 @@ install_python_deps() {
                 return 1
             fi
         fi
-        
+
         # Install Playwright browsers if needed
         if command_exists playwright; then
             if ! [ -d "$HOME/.cache/ms-playwright" ] && ! [ -d "$HOME/Library/Caches/ms-playwright" ]; then
@@ -626,20 +626,20 @@ install_python_deps() {
             fi
         fi
     fi
-    
+
     return 0
 }
 
 setup_frontend() {
     print_info "Checking frontend..."
-    
+
     if [ ! -d "frontend-react" ]; then
         print_error "frontend-react directory not found"
         return 1
     fi
-    
+
     cd frontend-react
-    
+
     # Only install if node_modules is missing
     if [ ! -d "node_modules" ]; then
         print_info "Installing frontend dependencies (first time setup)..."
@@ -648,7 +648,7 @@ setup_frontend() {
     else
         print_success "Frontend packages ready"
     fi
-    
+
     # Check for required UI utility files
     if [ ! -f "src/lib/utils.ts" ]; then
         print_warning "UI utility file missing, creating src/lib/utils.ts..."
@@ -663,28 +663,28 @@ export function cn(...inputs: ClassValue[]) {
 EOF
         print_success "Created src/lib/utils.ts (required for UI components)"
     fi
-    
+
     cd ..
     return 0
 }
 
 setup_databases() {
     print_info "Checking databases..."
-    
+
     # Create data directory if it doesn't exist
     if [ ! -d "data" ]; then
         mkdir -p data
     fi
-    
+
     # Check if databases exist
     local needs_init=false
     if [ ! -f "data/jps_aggregate.db" ] || [ ! -f "data/jps_users.db" ]; then
         needs_init=true
     fi
-    
+
     if [ "$needs_init" = true ]; then
         print_info "Initializing databases (first time setup)..."
-        
+
         # Run setup script
         if [ -f "scripts/setup_databases.py" ]; then
             $PYTHON_CMD scripts/setup_databases.py
@@ -704,13 +704,13 @@ setup_databases() {
         fi
         print_success "Databases ready"
     fi
-    
+
     return 0
 }
 
 configure_env() {
     local mode="${1:-development}"
-    
+
     # Check if .env exists and has the right environment
     if [ -f ".env" ]; then
         local current_env=$(grep "^ENVIRONMENT=" .env 2>/dev/null | cut -d'=' -f2)
@@ -719,26 +719,26 @@ configure_env() {
             return 0
         fi
     fi
-    
+
     print_info "Creating $mode configuration..."
-    
+
     # Preserve existing values if available
     local existing_secret=""
     local existing_domain=""
     local existing_cloudflare=""
-    
+
     if [ -f ".env" ]; then
         existing_secret=$(grep "^SECRET_KEY=" .env 2>/dev/null | cut -d'=' -f2)
         existing_domain=$(grep "^PRODUCTION_DOMAIN=" .env 2>/dev/null | cut -d'=' -f2)
         existing_cloudflare=$(grep "^CLOUDFLARE_TUNNEL_TOKEN=" .env 2>/dev/null | cut -d'=' -f2)
     fi
-    
+
     # Generate or preserve SECRET_KEY
     local secret_key="$existing_secret"
     if [ -z "$secret_key" ]; then
         secret_key=$($PYTHON_CMD -c "import secrets; print(secrets.token_hex(32))")
     fi
-    
+
     # Base configuration for both environments
     cat > .env << EOF
 # JPS Prospect Aggregate - $(echo $mode | tr '[:lower:]' '[:upper:]') Environment
@@ -754,7 +754,7 @@ FLASK_APP=run.py
 # USER_DATABASE_URL=  # DO NOT SET - leave commented
 
 EOF
-    
+
     if [ "$mode" = "development" ]; then
         cat >> .env << EOF
 # Development Settings
@@ -800,7 +800,7 @@ EOF
                 return 1
             fi
         fi
-        
+
         # Cloudflare tunnel (optional)
         local cloudflare_token="$existing_cloudflare"
         if [ -n "$existing_cloudflare" ]; then
@@ -817,7 +817,7 @@ EOF
                 cloudflare_token=$(prompt_user "Enter Cloudflare tunnel token" "")
             fi
         fi
-        
+
         cat >> .env << EOF
 # Production Settings
 PRODUCTION_DOMAIN=$domain
@@ -853,7 +853,7 @@ WORKERS=12
 TIMEOUT=120
 EOF
     fi
-    
+
     print_success "$mode configuration created"
     return 0
 }
@@ -871,9 +871,9 @@ show_useful_commands() {
     local mode="$1"
     local backend_port="${2:-5001}"
     local frontend_port="${3:-3000}"
-    
+
     print_header "Useful Commands"
-    
+
     if [ "$mode" = "development" ]; then
         echo "📋 Development Commands:"
         echo ""
@@ -914,7 +914,7 @@ show_useful_commands() {
         if ! command_exists docker-compose; then
             compose_cmd="docker compose"
         fi
-        
+
         echo "📋 Your containers are running in the background. Use these commands to manage them:"
         echo ""
         echo "  View Status & Logs:"
@@ -925,14 +925,14 @@ show_useful_commands() {
         echo ""
         echo "  Stop & Restart Services:"
         echo "    ./launch.sh --stop                     # Stop all services properly"
-        
+
         # Check if Cloudflare is enabled and show appropriate manual command
         if grep -q "CLOUDFLARE_TUNNEL_TOKEN=." .env 2>/dev/null; then
             echo "    $compose_cmd --profile cloudflare down # Manual stop (includes Cloudflare)"
         else
             echo "    $compose_cmd down                      # Manual stop command"
         fi
-        
+
         echo "    $compose_cmd stop                      # Stop containers (keep data)"
         echo "    $compose_cmd restart                   # Restart all services"
         echo "    $compose_cmd restart web               # Restart web service only"
@@ -962,7 +962,7 @@ show_useful_commands() {
         echo "    ./deploy-production-v2.sh               # Redeploy application"
         echo "    ./switch-env.sh dev                     # Switch to development mode"
         echo ""
-        
+
         # Add Cloudflare-specific commands if configured
         if grep -q "CLOUDFLARE_TUNNEL_TOKEN=." .env 2>/dev/null; then
             echo "  Cloudflare Tunnel:"
@@ -971,7 +971,7 @@ show_useful_commands() {
             echo ""
         fi
     fi
-    
+
     echo "💡 Tips:"
     echo "  • Use './launch.sh --help' for more options"
     echo "  • Check './launch.sh' maintenance menu (option 4) for more tools"
@@ -981,11 +981,11 @@ show_useful_commands() {
 
 start_dev_servers() {
     print_header "Starting Development Servers"
-    
+
     # Check if ports are available
     local backend_port=5001
     local frontend_port=3000
-    
+
     if ! check_port $backend_port; then
         print_warning "Port $backend_port is already in use"
         if confirm "Kill existing process on port $backend_port?"; then
@@ -998,7 +998,7 @@ start_dev_servers() {
             sed -i.bak "s/PORT=.*/PORT=$backend_port/" .env
         fi
     fi
-    
+
     if ! check_port $frontend_port; then
         print_warning "Port $frontend_port is already in use"
         if confirm "Kill existing process on port $frontend_port?"; then
@@ -1010,13 +1010,13 @@ start_dev_servers() {
             return 1
         fi
     fi
-    
+
     # Start backend
     print_info "Starting backend server on port $backend_port..."
     $PYTHON_CMD run.py > "$LAUNCHER_STATE_DIR/backend.log" 2>&1 &
     local backend_pid=$!
     echo $backend_pid > "$LAUNCHER_STATE_DIR/backend.pid"
-    
+
     # Wait for backend to start
     local count=0
     while ! curl -s http://localhost:$backend_port/health >/dev/null 2>&1; do
@@ -1029,7 +1029,7 @@ start_dev_servers() {
         fi
     done
     print_success "Backend server started (PID: $backend_pid)"
-    
+
     # Start frontend
     print_info "Starting frontend server on port $frontend_port..."
     cd frontend-react
@@ -1037,32 +1037,32 @@ start_dev_servers() {
     local frontend_pid=$!
     echo $frontend_pid > "$LAUNCHER_STATE_DIR/frontend.pid"
     cd ..
-    
+
     # Wait for frontend to start
     sleep 3
     print_success "Frontend server started (PID: $frontend_pid)"
-    
+
     # Open browser
     local open_cmd=$(get_open_command)
     if [ -n "$open_cmd" ]; then
         print_info "Opening browser..."
         $open_cmd "http://localhost:$frontend_port" 2>/dev/null || true
     fi
-    
+
     print_success "Development servers are running!"
     print_info "Backend: http://localhost:$backend_port"
     print_info "Frontend: http://localhost:$frontend_port"
-    
+
     # Show useful commands
     show_useful_commands "development" "$backend_port" "$frontend_port"
-    
+
     print_info "Press Ctrl+C to stop servers"
-    
+
     # Save state
     save_preference "last_mode" "development"
     save_preference "backend_port" "$backend_port"
     save_preference "frontend_port" "$frontend_port"
-    
+
     # Wait for interrupt
     trap 'stop_dev_servers; exit 0' INT TERM
     wait $backend_pid $frontend_pid
@@ -1070,23 +1070,23 @@ start_dev_servers() {
 
 stop_dev_servers() {
     print_info "Stopping servers..."
-    
+
     if [ -f "$LAUNCHER_STATE_DIR/backend.pid" ]; then
         kill $(cat "$LAUNCHER_STATE_DIR/backend.pid") 2>/dev/null || true
         rm "$LAUNCHER_STATE_DIR/backend.pid"
     fi
-    
+
     if [ -f "$LAUNCHER_STATE_DIR/frontend.pid" ]; then
         kill $(cat "$LAUNCHER_STATE_DIR/frontend.pid") 2>/dev/null || true
         rm "$LAUNCHER_STATE_DIR/frontend.pid"
     fi
-    
+
     print_success "Servers stopped"
 }
 
 setup_development() {
     print_header "Starting Development Mode"
-    
+
     # Quick setup - only do what's necessary
     configure_env "development" || return 1   # Create .env if missing
     setup_python_env || return 1              # Activate/create venv
@@ -1094,7 +1094,7 @@ setup_development() {
     setup_frontend || return 1                # Install only if node_modules missing
     setup_databases || return 1               # Create only if missing, auto-migrate
     start_dev_servers || return 1             # Start the servers
-    
+
     return 0
 }
 
@@ -1106,47 +1106,47 @@ setup_development() {
 
 build_docker_images() {
     print_info "Building Docker images..."
-    
+
     if ! check_docker; then
         print_error "Docker is required for production mode"
         return 1
     fi
-    
+
     # Use docker-compose or docker compose depending on what's available
     local compose_cmd="docker-compose"
     if ! command_exists docker-compose; then
         compose_cmd="docker compose"
     fi
-    
+
     print_info "Building images (this may take a few minutes)..."
     $compose_cmd build || {
         print_error "Docker build failed"
         return 1
     }
-    
+
     print_success "Docker images built successfully"
     return 0
 }
 
 start_docker_services() {
     print_info "Starting Docker services..."
-    
+
     local compose_cmd="docker-compose"
     if ! command_exists docker-compose; then
         compose_cmd="docker compose"
     fi
-    
+
     # Stop existing containers (including all profiles)
     print_info "Stopping existing containers..."
     # Always use cloudflare profile when stopping to ensure all containers are removed
     $compose_cmd --profile cloudflare down 2>/dev/null || true
-    
+
     # Check for Cloudflare tunnel
     local cloudflare_enabled=false
     if grep -q "CLOUDFLARE_TUNNEL_TOKEN=." .env 2>/dev/null; then
         cloudflare_enabled=true
     fi
-    
+
     # Start services
     if [ "$cloudflare_enabled" = true ]; then
         print_info "Starting services with Cloudflare tunnel..."
@@ -1155,25 +1155,25 @@ start_docker_services() {
         print_info "Starting services..."
         $compose_cmd up -d
     fi
-    
+
     print_success "Docker services started"
     return 0
 }
 
 stop_docker_services() {
     print_info "Stopping Docker services..."
-    
+
     local compose_cmd="docker-compose"
     if ! command_exists docker-compose; then
         compose_cmd="docker compose"
     fi
-    
+
     # Check for Cloudflare tunnel to use correct profile
     local cloudflare_enabled=false
     if grep -q "CLOUDFLARE_TUNNEL_TOKEN=." .env 2>/dev/null; then
         cloudflare_enabled=true
     fi
-    
+
     # Stop services with appropriate profile
     if [ "$cloudflare_enabled" = true ]; then
         print_info "Stopping services with Cloudflare tunnel..."
@@ -1182,24 +1182,24 @@ stop_docker_services() {
         print_info "Stopping services..."
         $compose_cmd down
     fi
-    
+
     # Verify all containers are stopped
     if docker ps | grep -q "jps-"; then
         print_warning "Some containers may still be running. Forcing cleanup..."
         docker ps | grep "jps-" | awk '{print $1}' | xargs -r docker stop 2>/dev/null || true
     fi
-    
+
     print_success "Docker services stopped"
     return 0
 }
 
 verify_deployment() {
     print_info "Verifying deployment..."
-    
+
     # Wait for services to be ready
     print_info "Waiting for services to start..."
     sleep 10
-    
+
     # Check health endpoint
     if curl -f http://localhost:5001/health >/dev/null 2>&1; then
         print_success "Application is healthy!"
@@ -1208,17 +1208,17 @@ verify_deployment() {
         docker-compose logs --tail=50 web
         return 1
     fi
-    
+
     # Display status
     print_header "Deployment Status"
     docker-compose ps
-    
+
     # Get domain from .env
     local domain=$(grep "PRODUCTION_DOMAIN=" .env | cut -d'=' -f2)
-    
+
     print_header "Access Information"
     print_success "Production deployment complete!"
-    
+
     if grep -q "CLOUDFLARE_TUNNEL_TOKEN=." .env 2>/dev/null; then
         print_info "Application URL: https://$domain"
         print_info "Cloudflare tunnel is active"
@@ -1227,27 +1227,27 @@ verify_deployment() {
         print_info "Configure your reverse proxy to point to port 5001"
         print_info "Domain configured: $domain"
     fi
-    
+
     # Show useful commands
     show_useful_commands "production"
-    
+
     print_info "The application is running in Docker containers (background mode)"
     print_info "Use the commands above to manage your deployment"
-    
+
     # Save state
     save_preference "last_mode" "production"
-    
+
     return 0
 }
 
 setup_production() {
     print_header "Production Mode Setup"
-    
+
     configure_env "production" || return 1
     build_docker_images || return 1
     start_docker_services || return 1
     verify_deployment || return 1
-    
+
     return 0
 }
 
@@ -1257,19 +1257,19 @@ setup_production() {
 
 quick_start() {
     print_header "Quick Start"
-    
+
     print_info "Auto-detecting best configuration..."
-    
+
     # Check what's available
     local has_docker=false
     if check_docker 2>/dev/null; then
         has_docker=true
     fi
-    
+
     # Check current environment
     local current_env=$(detect_current_environment)
     local last_mode=$(get_preference "last_mode" "")
-    
+
     # Decide what to do
     if [ -n "$last_mode" ]; then
         print_info "Last used mode: $last_mode"
@@ -1320,9 +1320,9 @@ maintenance_menu() {
         echo "  [10] Run tests"
         echo "  [0] Back to main menu"
         echo ""
-        
+
         local choice=$(prompt_user "Select option" "")
-        
+
         case $choice in
             1)
                 backup_database
@@ -1361,7 +1361,7 @@ maintenance_menu() {
                 print_error "Invalid option"
                 ;;
         esac
-        
+
         echo ""
         read -p "Press Enter to continue..."
     done
@@ -1369,18 +1369,18 @@ maintenance_menu() {
 
 backup_database() {
     print_header "Database Backup"
-    
+
     local timestamp=$(date +%Y%m%d_%H%M%S)
     local backup_dir="$PROJECT_ROOT/backups"
-    
+
     mkdir -p "$backup_dir"
-    
+
     if [ -f "data/jps_aggregate.db" ]; then
         local backup_file="$backup_dir/jps_aggregate_$timestamp.db"
         cp "data/jps_aggregate.db" "$backup_file"
         print_success "Main database backed up to: $backup_file"
     fi
-    
+
     if [ -f "data/jps_users.db" ]; then
         local backup_file="$backup_dir/jps_users_$timestamp.db"
         cp "data/jps_users.db" "$backup_file"
@@ -1390,22 +1390,22 @@ backup_database() {
 
 restore_database() {
     print_header "Database Restore"
-    
+
     local backup_dir="$PROJECT_ROOT/backups"
-    
+
     if [ ! -d "$backup_dir" ]; then
         print_error "No backups found"
         return 1
     fi
-    
+
     print_info "Available backups:"
     ls -la "$backup_dir"/*.db 2>/dev/null || {
         print_error "No backup files found"
         return 1
     }
-    
+
     local backup_file=$(prompt_user "Enter backup filename to restore" "")
-    
+
     if [ -f "$backup_dir/$backup_file" ]; then
         if confirm "Restore from $backup_file? This will overwrite current database!"; then
             # Determine which database to restore
@@ -1424,7 +1424,7 @@ restore_database() {
 
 run_all_scrapers() {
     print_header "Run All Scrapers"
-    
+
     if [ -f "scripts/run_all_scrapers.py" ]; then
         print_info "Starting all scrapers..."
         $PYTHON_CMD scripts/run_all_scrapers.py
@@ -1435,7 +1435,7 @@ run_all_scrapers() {
 
 run_specific_scraper() {
     print_header "Run Specific Scraper"
-    
+
     print_info "Available scrapers:"
     echo "  1. DHS - Department of Homeland Security"
     echo "  2. DOC - Department of Commerce"
@@ -1446,11 +1446,11 @@ run_specific_scraper() {
     echo "  7. SSA - Social Security Administration"
     echo "  8. TREAS - Department of Treasury"
     echo "  9. ACQGW - Acquisition Gateway"
-    
+
     local choice=$(prompt_user "Select scraper" "")
-    
+
     local scrapers=("DHS" "DOC" "DOJ" "DOS" "DOT" "HHS" "SSA" "TREAS" "ACQGW")
-    
+
     if [ "$choice" -ge 1 ] && [ "$choice" -le 9 ]; then
         local scraper=${scrapers[$((choice-1))]}
         print_info "Running $scraper scraper..."
@@ -1462,11 +1462,11 @@ run_specific_scraper() {
 
 clean_data_files() {
     print_header "Clean Old Data Files"
-    
+
     if [ -f "app/utils/data_retention.py" ]; then
         print_info "Analyzing data files..."
         $PYTHON_CMD app/utils/data_retention.py
-        
+
         if confirm "Execute cleanup?"; then
             $PYTHON_CMD app/utils/data_retention.py --execute
             print_success "Data files cleaned"
@@ -1478,17 +1478,17 @@ clean_data_files() {
 
 check_system_health() {
     print_header "System Health Check"
-    
+
     # Check disk space
     print_info "Disk usage:"
     df -h "$PROJECT_ROOT" | tail -1
-    
+
     # Check database sizes
     if [ -f "data/jps_aggregate.db" ]; then
         local size=$(du -h "data/jps_aggregate.db" | cut -f1)
         print_info "Main database size: $size"
     fi
-    
+
     # Check if services are running
     if [ -f "$LAUNCHER_STATE_DIR/backend.pid" ]; then
         if kill -0 $(cat "$LAUNCHER_STATE_DIR/backend.pid") 2>/dev/null; then
@@ -1497,14 +1497,14 @@ check_system_health() {
             print_warning "Backend PID exists but process not running"
         fi
     fi
-    
+
     # Check API health
     if curl -f http://localhost:5001/health >/dev/null 2>&1; then
         print_success "API is healthy"
     else
         print_warning "API health check failed"
     fi
-    
+
     # Check Docker if in production
     if [ "$(detect_current_environment)" = "production" ]; then
         if command_exists docker; then
@@ -1516,15 +1516,15 @@ check_system_health() {
 
 view_logs_menu() {
     print_header "View Logs"
-    
+
     echo "  [1] Application logs"
     echo "  [2] Launcher logs"
     echo "  [3] Backend logs (development)"
     echo "  [4] Frontend logs (development)"
     echo "  [5] Docker logs (production)"
-    
+
     local choice=$(prompt_user "Select log to view" "")
-    
+
     case $choice in
         1)
             if [ -f "logs/app.log" ]; then
@@ -1571,7 +1571,7 @@ view_logs_menu() {
 
 reset_environment() {
     print_header "Reset & Reinstall Options"
-    
+
     echo "Choose what to reset:"
     echo "  [1] Reset configuration (.env file)"
     echo "  [2] Reinstall Python packages"
@@ -1581,9 +1581,9 @@ reset_environment() {
     echo "  [6] Clear caches and temporary files"
     echo "  [0] Cancel"
     echo ""
-    
+
     local choice=$(prompt_user "Select option" "0")
-    
+
     case $choice in
         1)
             print_info "Resetting configuration..."
@@ -1623,18 +1623,18 @@ reset_environment() {
         5)
             if confirm "This will reset EVERYTHING. Are you sure?" "n"; then
                 print_warning "Performing full reset..."
-                
+
                 # Backup .env
                 if [ -f ".env" ]; then
                     cp .env ".env.backup-$(date +%Y%m%d_%H%M%S)"
                 fi
-                
+
                 # Reset everything
                 rm -f .env
                 rm -f data/jps_aggregate.db data/jps_users.db
                 rm -rf frontend-react/node_modules
                 rm -rf "$LAUNCHER_STATE_DIR"
-                
+
                 print_success "Full reset complete"
                 print_info "Run './launch.sh' to set up fresh"
             fi
@@ -1658,13 +1658,13 @@ reset_environment() {
 
 update_dependencies() {
     print_header "Update Dependencies"
-    
+
     if confirm "Update Python packages?"; then
         print_info "Updating Python packages..."
         $PYTHON_CMD -m pip install --upgrade -r requirements.txt
         print_success "Python packages updated"
     fi
-    
+
     if confirm "Update npm packages?"; then
         print_info "Updating frontend packages..."
         cd frontend-react
@@ -1672,7 +1672,7 @@ update_dependencies() {
         cd ..
         print_success "Frontend packages updated"
     fi
-    
+
     if command_exists docker && confirm "Update Docker images?" "n"; then
         print_info "Pulling latest Docker images..."
         docker pull ollama/ollama:latest
@@ -1682,20 +1682,20 @@ update_dependencies() {
 
 run_tests() {
     print_header "Run Tests"
-    
+
     echo "  [1] Backend tests"
     echo "  [2] Frontend tests"
     echo "  [3] All tests"
-    
+
     local choice=$(prompt_user "Select tests to run" "3")
-    
+
     case $choice in
         1|3)
             print_info "Running backend tests..."
             $PYTHON_CMD -m pytest tests/ -v
             ;;
     esac
-    
+
     case $choice in
         2|3)
             print_info "Running frontend tests..."
@@ -1713,7 +1713,7 @@ run_tests() {
 show_banner() {
     clear
     print_color "$CYAN" "
-     ██╗██████╗ ███████╗    ██╗      █████╗ ██╗   ██╗███╗   ██╗ ██████╗██╗  ██╗███████╗██████╗ 
+     ██╗██████╗ ███████╗    ██╗      █████╗ ██╗   ██╗███╗   ██╗ ██████╗██╗  ██╗███████╗██████╗
      ██║██╔══██╗██╔════╝    ██║     ██╔══██╗██║   ██║████╗  ██║██╔════╝██║  ██║██╔════╝██╔══██╗
      ██║██████╔╝███████╗    ██║     ███████║██║   ██║██╔██╗ ██║██║     ███████║█████╗  ██████╔╝
 ██   ██║██╔═══╝ ╚════██║    ██║     ██╔══██║██║   ██║██║╚██╗██║██║     ██╔══██║██╔══╝  ██╔══██╗
@@ -1728,13 +1728,13 @@ show_banner() {
 main_menu() {
     while true; do
         show_banner
-        
+
         # Show current status
         local current_env=$(detect_current_environment)
         if [ "$current_env" != "none" ]; then
             print_info "Current environment: $current_env"
         fi
-        
+
         print_header "Main Menu"
         echo "  $ROCKET [1] Development Mode (Local)"
         echo "  $GLOBE [2] Production Mode (Docker)"
@@ -1742,9 +1742,9 @@ main_menu() {
         echo "  $GEAR [4] Maintenance & Tools"
         echo "  ❌ [5] Exit"
         echo ""
-        
+
         local choice=$(prompt_user "Select option" "3")
-        
+
         case $choice in
             1)
                 setup_development
@@ -1781,7 +1781,7 @@ main() {
     # Initialize
     init_launcher_state
     detect_os
-    
+
     # Parse command line arguments
     case "${1:-}" in
         --help|-h)

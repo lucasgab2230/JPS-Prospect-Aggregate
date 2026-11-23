@@ -44,7 +44,7 @@ class SetAsideStandardizer:
 
 CLASSIFICATION RULES:
 1. "Small Business" - All small business set-asides including SDB, small business total, small disadvantaged business
-2. "8(a)" - Any 8(a) program references (competitive, sole source, non-competitive)  
+2. "8(a)" - Any 8(a) program references (competitive, sole source, non-competitive)
 3. "HUBZone" - HUBZone program references (any variation of spelling)
 4. "Women-Owned" - WOSB, EDWOSB, women-owned small business, economically disadvantaged women-owned
 5. "Veteran-Owned" - SDVOSB, VOSB, service-disabled veteran-owned, veteran-owned small business
@@ -61,7 +61,7 @@ When multiple data sources are provided, prioritize the most specific informatio
 
 EXAMPLES:
 - "Small Business Set-Aside" → Small Business
-- "8(a) Competitive" → 8(a)  
+- "8(a) Competitive" → 8(a)
 - "WOSB Sole Source" → Women-Owned
 - "Service-Disabled Veteran Owned" → Veteran-Owned
 - "HubZone" → HUBZone

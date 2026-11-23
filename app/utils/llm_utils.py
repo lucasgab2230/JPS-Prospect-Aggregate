@@ -11,7 +11,11 @@ from app.utils.logger import logger
 DEFAULT_OLLAMA_BASE = "http://localhost:11434"
 OLLAMA_BASE = os.getenv("OLLAMA_BASE_URL", DEFAULT_OLLAMA_BASE)
 # Construct the full API endpoint
-OLLAMA_BASE_URL = f"{OLLAMA_BASE}/api/generate" if not OLLAMA_BASE.endswith("/api/generate") else OLLAMA_BASE
+OLLAMA_BASE_URL = (
+    f"{OLLAMA_BASE}/api/generate"
+    if not OLLAMA_BASE.endswith("/api/generate")
+    else OLLAMA_BASE
+)
 # Default timeout for the API request in seconds
 DEFAULT_TIMEOUT = 240  # Adjust as needed, inference can be slow (Increased from 120)
 
@@ -31,7 +35,9 @@ def call_ollama(
     Returns:
         The generated text content as a string, or None if an error occurs.
     """
-    logger.debug(f"Attempting to call Ollama model '{model_name}' at {OLLAMA_BASE_URL}...")
+    logger.debug(
+        f"Attempting to call Ollama model '{model_name}' at {OLLAMA_BASE_URL}..."
+    )
 
     # 1. Construct the request payload
     # Ensure 'stream' is set to False to get the full response at once.
@@ -73,11 +79,10 @@ def call_ollama(
                 f"Ollama response received successfully for model '{model_name}'."
             )
             return generated_text.strip()
-        else:
-            logger.warning(
-                f"Ollama response for model '{model_name}' did not contain expected 'response' field. Full response: {response_data}"
-            )
-            return None
+        logger.warning(
+            f"Ollama response for model '{model_name}' did not contain expected 'response' field. Full response: {response_data}"
+        )
+        return None
 
     # 6. Handle Potential Errors
     except requests.exceptions.ConnectionError as e:
