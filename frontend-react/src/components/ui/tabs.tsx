@@ -26,7 +26,7 @@ interface TabsProps {
 
 function Tabs({ value, defaultValue, onValueChange, children, className }: TabsProps) {
   const [internalValue, setInternalValue] = React.useState(defaultValue || "");
-  
+
   const currentValue = value !== undefined ? value : internalValue;
   const handleValueChange = React.useCallback((newValue: string) => {
     if (value === undefined) {
@@ -100,7 +100,7 @@ interface TabsContentProps {
 
 function TabsContent({ value, children, className }: TabsContentProps) {
   const { value: currentValue } = useTabsContext();
-  
+
   if (currentValue !== value) {
     return null;
   }

@@ -22,7 +22,7 @@ export function useTimezoneDate() {
 
   const formatAIEnhanced = (dateString: string | null | undefined) => {
     if (!dateString) return 'Not enhanced';
-    
+
     return `AI Enhanced on ${formatDate(dateString, {
       timezone,
       locale,
@@ -32,7 +32,7 @@ export function useTimezoneDate() {
 
   const formatLastProcessed = (dateString: string | null | undefined) => {
     if (!dateString) return 'Never processed';
-    
+
     return formatDate(dateString, {
       timezone,
       locale,

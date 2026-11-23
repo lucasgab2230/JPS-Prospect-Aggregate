@@ -34,20 +34,20 @@ def create_super_admin(email: str, first_name: str = None) -> bool:
         # Get first name if not provided
         if not first_name:
             first_name = input("Enter first name: ").strip()
-            
+
             if not first_name:
                 logger.error("First name is required")
                 return False
 
         # Create new user
         user = User(email=email, first_name=first_name, role="super-admin")
-        
+
         db.session.add(user)
         db.session.commit()
-        
+
         logger.info(f"Super admin user created successfully: {email}")
         return True
-        
+
     except Exception as e:
         logger.error(f"Error creating super admin: {e}")
         db.session.rollback()
@@ -58,21 +58,21 @@ def promote_to_super_admin(email: str) -> bool:
     """Promote an existing user to super admin."""
     try:
         user = User.query.filter_by(email=email).first()
-        
+
         if not user:
             logger.error(f"User with email {email} not found")
             return False
-            
+
         if user.role == "super-admin":
             logger.info(f"User {email} is already a super admin")
             return True
-            
+
         user.role = "super-admin"
         db.session.commit()
-        
+
         logger.info(f"User {email} promoted to super admin")
         return True
-        
+
     except Exception as e:
         logger.error(f"Error promoting user: {e}")
         db.session.rollback()
@@ -83,20 +83,24 @@ def list_users() -> None:
     """List all users in the system."""
     try:
         users = User.query.all()
-        
+
         if not users:
             print("No users found")
             return
-            
+
         print(f"\n{'Email':<40} {'Role':<15} {'Created':<20}")
         print("-" * 75)
-        
+
         for user in users:
-            created = user.created_at.strftime("%Y-%m-%d %H:%M") if user.created_at else "Unknown"
+            created = (
+                user.created_at.strftime("%Y-%m-%d %H:%M")
+                if user.created_at
+                else "Unknown"
+            )
             print(f"{user.email:<40} {user.role or 'user':<15} {created:<20}")
-            
+
         print(f"\nTotal users: {len(users)}")
-        
+
     except Exception as e:
         logger.error(f"Error listing users: {e}")
 
@@ -105,41 +109,47 @@ def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Manage JPS Prospect Aggregate users")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
-    
+
     # Create admin command
-    create_parser = subparsers.add_parser("create-admin", help="Create a new super admin user")
+    create_parser = subparsers.add_parser(
+        "create-admin", help="Create a new super admin user"
+    )
     create_parser.add_argument("email", help="Email address for the new admin")
-    create_parser.add_argument("--first-name", help="First name (will prompt if not provided)")
-    
+    create_parser.add_argument(
+        "--first-name", help="First name (will prompt if not provided)"
+    )
+
     # Promote command
-    promote_parser = subparsers.add_parser("promote", help="Promote existing user to super admin")
+    promote_parser = subparsers.add_parser(
+        "promote", help="Promote existing user to super admin"
+    )
     promote_parser.add_argument("email", help="Email address of user to promote")
-    
+
     # List users command
     subparsers.add_parser("list-users", help="List all users")
-    
+
     args = parser.parse_args()
-    
+
     if not args.command:
         parser.print_help()
         return 1
-    
+
     # Create app context
     app = create_app()
-    
+
     with app.app_context():
         if args.command == "create-admin":
             success = create_super_admin(args.email, args.first_name)
             return 0 if success else 1
-            
-        elif args.command == "promote":
+
+        if args.command == "promote":
             success = promote_to_super_admin(args.email)
             return 0 if success else 1
-            
-        elif args.command == "list-users":
+
+        if args.command == "list-users":
             list_users()
             return 0
-    
+
     return 0
 
 

@@ -35,7 +35,7 @@ export function useDataSourceManagement(enabled: boolean = true) {
       message: string;
       total_duration: number;
       results?: ScraperResult[];
-    }>('/api/data-sources/run-all', undefined, { 
+    }>('/api/data-sources/run-all', undefined, {
       deduplicate: true,
       deduplicationKey: 'run-all-scrapers'
     }),
@@ -47,7 +47,7 @@ export function useDataSourceManagement(enabled: boolean = true) {
       // All scrapers completed - show results
       if (data.results) {
         const { message, failedCount } = formatScraperResults(data.results, data.total_duration);
-        
+
         // Show appropriate toast based on results
         if (failedCount === 0) {
           showSuccessToast('All Scrapers Completed', message);
@@ -109,11 +109,11 @@ export function useDataSourceManagement(enabled: boolean = true) {
     sources,
     isLoading,
     error,
-    
+
     // Mutations
     runAllScrapersMutation,
     clearDataMutation,
-    
+
     // Handlers
     handleClearData,
   };

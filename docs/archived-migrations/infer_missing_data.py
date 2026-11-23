@@ -220,7 +220,7 @@ def infer_missing_prospect_data():
                 )
 
                 select_sql = f"""
-                SELECT p.id, p.requirement_title, p.requirement_description, p.solicitation_date 
+                SELECT p.id, p.requirement_title, p.requirement_description, p.solicitation_date
                 FROM prospects p
                 LEFT JOIN inferred_prospect_data ipd ON p.id = ipd.prospect_id
                 WHERE (p.{prospects_col} IS NULL OR p.{prospects_col} = '')
@@ -360,25 +360,24 @@ def infer_missing_prospect_data():
                                 )
                                 update_successful = True
                                 break  # Exit retry loop, value is validated
-                            else:
-                                logger.warning(
-                                    f"Post-check vote FAILED for {prospect_id} ({inferred_col}) on attempt {attempt + 1}. Inferred value: '{current_inferred_value[:100]}...'"
+                            logger.warning(
+                                f"Post-check vote FAILED for {prospect_id} ({inferred_col}) on attempt {attempt + 1}. Inferred value: '{current_inferred_value[:100]}...'"
+                            )
+                            if attempt >= MAX_RETRIES:
+                                logger.error(
+                                    f"Post-check vote failed after final attempt for {prospect_id} ({inferred_col}). Discarding value."
                                 )
-                                if attempt >= MAX_RETRIES:
-                                    logger.error(
-                                        f"Post-check vote failed after final attempt for {prospect_id} ({inferred_col}). Discarding value."
-                                    )
-                                    total_failed_post_check += 1
+                                total_failed_post_check += 1
                                 # else: loop continues for retry
 
                         # 4. Update Database if Successful
                         if update_successful and inferred_value:
                             try:
                                 upsert_sql = f"""
-                                INSERT INTO inferred_prospect_data (prospect_id, {inferred_col}, inferred_by_model) 
-                                VALUES (?, ?, ?) 
-                                ON CONFLICT(prospect_id) DO UPDATE SET 
-                                {inferred_col}=excluded.{inferred_col}, 
+                                INSERT INTO inferred_prospect_data (prospect_id, {inferred_col}, inferred_by_model)
+                                VALUES (?, ?, ?)
+                                ON CONFLICT(prospect_id) DO UPDATE SET
+                                {inferred_col}=excluded.{inferred_col},
                                 inferred_by_model=excluded.inferred_by_model,
                                 inferred_at=CURRENT_TIMESTAMP;
                                 """

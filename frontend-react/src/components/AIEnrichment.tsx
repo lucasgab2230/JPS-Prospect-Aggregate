@@ -14,9 +14,9 @@ export function AIEnrichment() {
   const [enhancementType, setEnhancementType] = useState<EnhancementType>('all');
   const [skipExisting, setSkipExisting] = useState<'skip' | 'fill'>('skip');
   const [expandedOutputs, setExpandedOutputs] = useState<Set<number>>(new Set());
-  
+
   const { formatLastProcessed, formatUserDate } = useTimezoneDate();
-  
+
   const {
     enrichmentStatus: status,
     iterativeProgress: progress,
@@ -34,7 +34,7 @@ export function AIEnrichment() {
   const isProcessing = progress?.status === 'processing' || progress?.status === 'stopping';
 
   const handleStart = () => {
-    startIterative({ 
+    startIterative({
       enhancement_type: enhancementType,
       skip_existing: skipExisting === 'skip'
     });
@@ -176,8 +176,8 @@ export function AIEnrichment() {
               {/* Enhancement Type Selection */}
               <div className="space-y-2">
                 <Label htmlFor="enhancement-type">Enhancement Type</Label>
-                <Select 
-                  value={enhancementType} 
+                <Select
+                  value={enhancementType}
                   onValueChange={(value: EnhancementType) => setEnhancementType(value)}
                   disabled={isProcessing}
                 >
@@ -266,7 +266,7 @@ export function AIEnrichment() {
                       </span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-3">
-                      <div 
+                      <div
                         className="bg-blue-600 h-3 rounded-full transition-all duration-500"
                         style={{ width: `${progress.percentage}%` }}
                       />
@@ -361,7 +361,7 @@ export function AIEnrichment() {
                               <span className="text-gray-500 ml-2">({output.enhancement_type})</span>
                             </div>
                           </div>
-                          
+
                           {/* Quick summary of result when collapsed */}
                           {!isExpanded && output.parsed_result && (
                             <div className="ml-6 mt-1 text-xs text-gray-600">
@@ -387,7 +387,7 @@ export function AIEnrichment() {
                           <span className="text-xs text-gray-500">{formatUserDate(output.timestamp, 'datetime')}</span>
                         </div>
                       </div>
-                      
+
                       {/* Expandable details */}
                       {isExpanded && (
                         <div className="mt-3 space-y-2">
@@ -398,7 +398,7 @@ export function AIEnrichment() {
                               {output.response}
                             </pre>
                           </div>
-                          
+
                           {/* Parsed Result */}
                           {output.parsed_result && (
                             <div className="text-sm">
@@ -408,7 +408,7 @@ export function AIEnrichment() {
                               </pre>
                             </div>
                           )}
-                          
+
                           {/* Error Message */}
                           {output.error_message && (
                             <div className="text-sm text-red-600">

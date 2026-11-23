@@ -71,9 +71,9 @@ class DOSForecastScraper(ConsolidatedScraperBase):
                     parsed_qtr_info = df.loc[
                         needs_qtr_parse_mask, "award_qtr_raw"
                     ].apply(
-                        lambda x: fiscal_quarter_to_date(x)
-                        if pd.notna(x)
-                        else (None, None)
+                        lambda x: (
+                            fiscal_quarter_to_date(x) if pd.notna(x) else (None, None)
+                        )
                     )
                     df.loc[needs_qtr_parse_mask, "award_date_final"] = (
                         parsed_qtr_info.apply(lambda x: x[0].date() if x[0] else None)

@@ -61,7 +61,7 @@ def update_alembic_ini():
         # If no replacement was made, add the line
         updated_content = updated_content.replace(
             "[alembic]",
-            f'[alembic]\nsqlalchemy.url = {db_url if "db_url" in locals() else "%(DATABASE_URL)s"}',
+            f"[alembic]\nsqlalchemy.url = {db_url if 'db_url' in locals() else '%(DATABASE_URL)s'}",
         )
 
     # Write updated configuration
